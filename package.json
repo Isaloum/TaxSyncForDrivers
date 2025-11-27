@@ -1,0 +1,21 @@
+{
+  "name": "taxsyncqc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Isaloum/TaxSyncQC.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Isaloum/TaxSyncQC/issues"
+  },
+  "homepage": "https://github.com/Isaloum/TaxSyncQC#readme"
+}
