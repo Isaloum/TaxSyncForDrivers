@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TaxSyncQC — Estimation officielle Québec 2025</title>
   <style>
     :root {
@@ -85,12 +85,7 @@
       margin-bottom: 1.25rem;
     }
 
-    h1 {
-      margin: 0 0 0.5rem;
-      font-size: 1.8rem;
-      letter-spacing: -0.02em;
-    }
-
+    h1 { margin: 0 0 0.5rem; font-size: 1.8rem; letter-spacing: -0.02em; }
     h2 { margin: 0.5rem 0 0.75rem; }
     h3 { margin-top: 0; }
 
@@ -105,7 +100,6 @@
       min-width: 52px;
       transition: all 0.2s ease;
     }
-
     .lang-toggle button:hover { border-color: var(--accent); color: var(--accent); }
     .lang-toggle button[style*="bold"] { background: var(--accent); color: #fff; border-color: var(--accent); }
 
@@ -128,7 +122,6 @@
       box-shadow: var(--shadow);
       transition: all 0.2s ease;
     }
-
     .tab-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
     .tab-btn.active { background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #fff; border-color: transparent; }
 
@@ -153,12 +146,11 @@
     input, select, textarea {
       width: 100%;
       padding: 0.65rem 0.75rem;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border, #ccc);
       border-radius: 8px;
       background: #fff;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       outline: none;
@@ -190,21 +182,10 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       box-shadow: var(--shadow);
     }
-
     .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25); }
     .btn:active { transform: translateY(0); }
-
-    .btn.secondary {
-      background: linear-gradient(135deg, #0f9d58, #10b981);
-      margin-left: 0;
-    }
-
-    .btn.ghost {
-      background: #fff;
-      color: var(--text);
-      border: 1px solid var(--border);
-      box-shadow: none;
-    }
+    .btn.secondary { background: linear-gradient(135deg, #0f9d58, #10b981); margin-left: 0; }
+    .btn.ghost { background: #fff; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
 
     .action-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin: 1rem 0; }
 
@@ -216,10 +197,6 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-
-    .result h3 { margin-bottom: 0.5rem; }
-    .result p { margin: 0.35rem 0; }
-    .result hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
 
     .warnings { color: var(--warning); margin-top: 1rem; font-weight: 600; }
     .warnings ul { margin: 0.35rem 0 0; padding-left: 1.1rem; color: var(--text); }
@@ -289,9 +266,9 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('rl1')" data-i18n="tabRL1">RL-1 (Revenu Québec)</button>
-      <button class="tab-btn" onclick="showTab('t4')" data-i18n="tabT4">T4 (ARC)</button>
-      <button class="tab-btn" onclick="showTab('both')" data-i18n="tabBoth">Les deux</button>
+      <button class="tab-btn active" onclick="showTab('rl1', event)" data-tab="rl1">RL-1 (Revenu Québec)</button>
+      <button class="tab-btn" onclick="showTab('t4', event)" data-tab="t4">T4 (ARC)</button>
+      <button class="tab-btn" onclick="showTab('both', event)" data-tab="both">Les deux</button>
     </div>
 
     <div class="surface">
@@ -642,17 +619,20 @@
     function toggleMode() {
       const advanced = document.getElementById('modeToggle').checked;
       ['rl1Deductions', 'rl1Benefits', 't4Deductions', 't4Benefits'].forEach(id => {
-        document.getElementById(id).style.display = advanced ? 'block' : 'none';
+        const el = document.getElementById(id);
+        if (el) el.style.display = advanced ? 'block' : 'none';
       });
       document.getElementById('exportBtn').style.display = advanced && lastCalculationData ? 'inline-block' : 'none';
     }
 
-    function showTab(tabId) {
+    function showTab(tabId, ev) {
       ['rl1Tab', 't4Tab', 'bothTab'].forEach(id => {
-        document.getElementById(id).classList.toggle('active', id === tabId + 'Tab');
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', id === `${tabId}Tab`);
       });
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
+      else if (ev && ev.target) ev.target.classList.add('active');
     }
 
     function toggleJSON() {
@@ -755,7 +735,7 @@
       const rl1 = sanitizeSlipFields(payload.rl1);
       const t4 = sanitizeSlipFields(payload.t4);
       const rrspRaw = payload.rrsp;
-      const hasContent = (rl1 && Object.keys(rl1).length > 0) || (t4 && Object.keys(t4).length > 0) || rrspRaw !== undefined && rrspRaw !== null;
+      const hasContent = (rl1 && Object.keys(rl1).length > 0) || (t4 && Object.keys(t4).length > 0) || (rrspRaw !== undefined && rrspRaw !== null);
       if (!hasContent) {
         return null;
       }
@@ -775,7 +755,7 @@
           document.getElementById('n8nUrl').value = saved;
         }
       } catch (e) {
-        // localStorage not available (unlikely in browser), ignore
+        // ignore
       }
     }
 
@@ -799,11 +779,7 @@
       setN8nStatus(null, lang === 'fr' ? 'Envoi au webhook n8n…' : 'Sending to n8n webhook…');
 
       try {
-        try {
-          localStorage.setItem('n8nWebhookUrl', url);
-        } catch (e) {
-          // ignore storage errors
-        }
+        try { localStorage.setItem('n8nWebhookUrl', url); } catch (e) { /* ignore */ }
 
         const response = await fetch(url, {
           method: 'POST',
@@ -811,9 +787,7 @@
           body: JSON.stringify({ text, lang, source: 'taxsyncqc-web' })
         });
 
-        if (!response.ok) {
-          throw new Error('Bad status');
-        }
+        if (!response.ok) throw new Error('Bad status');
 
         const payload = await response.json();
         const normalized = normalizeN8nPayload(payload);
@@ -826,15 +800,9 @@
         applyBtn.disabled = false;
 
         const summary = [];
-        if (normalized.rl1 && Object.keys(normalized.rl1).length > 0) {
-          summary.push(`RL-1: ${Object.keys(normalized.rl1).join(', ')}`);
-        }
-        if (normalized.t4 && Object.keys(normalized.t4).length > 0) {
-          summary.push(`T4: ${Object.keys(normalized.t4).join(', ')}`);
-        }
-        if (normalized.rrsp !== undefined && normalized.rrsp !== null) {
-          summary.push(`RRSP: ${normalized.rrsp}`);
-        }
+        if (normalized.rl1 && Object.keys(normalized.rl1).length > 0) summary.push(`RL-1: ${Object.keys(normalized.rl1).join(', ')}`);
+        if (normalized.t4 && Object.keys(normalized.t4).length > 0) summary.push(`T4: ${Object.keys(normalized.t4).join(', ')}`);
+        if (normalized.rrsp !== undefined && normalized.rrsp !== null) summary.push(`RRSP: ${normalized.rrsp}`);
 
         const statusText = (lang === 'fr' ? 'Champs reçus: ' : 'Fields received: ') + (summary.join(' | ') || 'OK');
         setN8nStatus(null, statusText);
@@ -920,9 +888,8 @@
         <p style="font-size: 1.2em; color: #1890ff;"><strong>${_('cashRefund')}: $${cashBack.toFixed(2)}</strong></p>
       </div>`;
 
-      // Smart warnings - only show if they save real money
       const warnings = [];
-      if (unionDues === null && income > 30000) {
+      if ((unionDues === null || unionDues === 0) && income > 30000) {
         warnings.push(_('warningUnionDues'));
       }
 
@@ -934,7 +901,6 @@
 
       document.getElementById('output').innerHTML = html;
 
-      // Store calculation data for export
       lastCalculationData = {
         ...data,
         analysis: {
@@ -945,10 +911,7 @@
         }
       };
 
-      // Show export button if in advanced mode
       document.getElementById('exportBtn').style.display = document.getElementById('modeToggle').checked ? 'inline-block' : 'none';
-      
-      // Pre-fill JSON but keep hidden
       document.getElementById('jsonOutput').textContent = JSON.stringify(lastCalculationData, null, 2);
       document.getElementById('jsonOutput').style.display = 'none';
     }
