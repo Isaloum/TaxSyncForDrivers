@@ -31,10 +31,9 @@ jobs:
           path: |
             ~/.npm
             ~/.npm/_cacache
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-npm-
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-npm-
 
       - name: Install dependencies
         run: npm ci
@@ -50,10 +49,8 @@ jobs:
           npm audit --audit-level=high --json > audit.json || {
             exit_code=$?
             cat audit.json
-            if [ $exit_code -ne 0 ]; then
-              echo "::error::npm audit found high or critical severity vulnerabilities"
-              exit $exit_code
-            fi
+            echo "::error::npm audit found high or critical severity vulnerabilities"
+            exit $exit_code
           }
 
       - name: Upload audit results
