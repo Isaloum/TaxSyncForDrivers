@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 function calculate() {
   const data = getFormData();
   const income = data.source === 'RL-1' ? data.rl1.A : data.t4['14'];
