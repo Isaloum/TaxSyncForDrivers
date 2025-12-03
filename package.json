@@ -5,7 +5,10 @@
   "main": "cli.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"No tests yet\" && exit 0"
+    "lint": "eslint . --ext .js --ext .html",
+    "format": "prettier --write \"**/*.{js,html,css,json,md}\"",
+    "test": "echo \"No tests yet\" && exit 0",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -28,5 +31,21 @@
   "bugs": {
     "url": "https://github.com/Isaloum/TaxSyncQC/issues"
   },
-  "homepage": "https://Isaloum.github.io/TaxSyncQC"
+  "homepage": "https://Isaloum.github.io/TaxSyncQC",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "prettier": "^2.9.0",
+    "eslint-config-prettier": "^8.8.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.html": [
+      "prettier --write"
+    ]
+  }
 }

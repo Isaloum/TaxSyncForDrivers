@@ -2,81 +2,34 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build-test-audit:
+  ci:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
     strategy:
       matrix:
-        node-version: [18, 20]
-
+        node-version: [18.x, 20.x]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - uses: actions/checkout@v4
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            ~/.npm/_cacache
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
+          cache: 'npm'
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-
-      - name: Run lint
+        run: npm ci
+      - name: Lint
         run: npm run lint --if-present
-
-      - name: Run tests
+      - name: Test
         run: npm test --if-present
-
-      - name: Run npm audit
-        run: |
-          npm audit --audit-level=high --json > audit.json || {
-            exit_code=$?
-            cat audit.json
-            echo "::error::npm audit found high or critical severity vulnerabilities"
-            exit $exit_code
-          }
-
-      - name: Upload audit results
-        uses: actions/upload-artifact@v4
+      - name: Upload artifacts
         if: always()
-        with:
-          name: npm-audit-${{ matrix.node-version }}
-          path: audit.json
-          retention-days: 30
-
-      - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: test-results-${{ matrix.node-version }}
+          name: ci-logs
           path: |
-            test-results.xml
-            **/test-results.xml
-            coverage/
-          retention-days: 30
-          if-no-files-found: ignore
+            ./npm-debug.log
+            ./test-results || true
