@@ -1,7 +1,18 @@
 // Flat config for ESLint v9+ (minimal, no extends/plugins)
 export default [
   {
-    ignores: ['index.html', '*.html', 'dist/', 'build/', 'node_modules/'],
+    ignores: [
+      'index.html',
+      '*.html',
+      'dist/',
+      'build/',
+      'node_modules/',
+      'coverage/',
+      'coverage/**',
+      'coverage/lcov-report/**',
+      '.nyc_output/',
+      'TaxSyncQC/',
+    ],
   },
   {
     languageOptions: {
