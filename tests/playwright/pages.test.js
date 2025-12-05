@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import axe from 'axe-core';
+import AxeBuilder from '@axe-core/playwright';
 
-const SITE = 'https://isaloum.github.io/TaxSyncQC/';
+const SITE = `file://${process.cwd()}/index.html`;
 
 test('homepage loads and has title', async ({ page }) => {
   await page.goto(SITE, { waitUntil: 'domcontentloaded' });
@@ -10,10 +10,8 @@ test('homepage loads and has title', async ({ page }) => {
 
 test('homepage accessibility quick scan', async ({ page }) => {
   await page.goto(SITE, { waitUntil: 'domcontentloaded' });
-  // inject axe-core and run a quick scan
-  // inject axe script; expose as window.axe
-  await page.addScriptTag({ content: `window.axe = (${axe.source})();` });
-  const results = await page.evaluate(async () => await window.axe.run());
+  // run axe via AxeBuilder
+  const results = await new AxeBuilder({ page }).analyze();
   if (results.violations && results.violations.length > 0) {
     console.error('A11Y violations:', JSON.stringify(results.violations, null, 2));
   }
