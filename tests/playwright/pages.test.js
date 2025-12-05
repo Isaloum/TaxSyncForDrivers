@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import axe from 'axe-core';
+import { injectAxe } from '@axe-core/playwright';
 
 const SITE = 'https://isaloum.github.io/TaxSyncQC/';
 
