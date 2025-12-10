@@ -17,9 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Setup Node.js (if you need to run build scripts in the future)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -37,10 +36,8 @@ jobs:
       # - name: Build
       #   run: npm run build
 
-      # Upload the site content to GitHub Pages
-      # Change 'path' below if your site is in a different directory (e.g., ./dist, ./public)
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./  # Publishing project root - change this if you have a build directory
 
@@ -56,4 +53,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
