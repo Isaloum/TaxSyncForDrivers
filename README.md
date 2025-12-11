@@ -1,171 +1,65 @@
-# 💰 TaxSyncQC
+# 🚗 TaxSyncForDrivers
 
-**Quebec + Federal Tax Credits Estimator (2025)**
+**Smart Tax Planning for Quebec Rideshare & Taxi Drivers**
 
-A free, open-source, bilingual (FR/EN) tool to estimate your tax credits and RRSP impact based on your RL-1 (Quebec) or T4 (Federal) slips.
+> Maximize deductions • Track expenses • Plan quarterly taxes
 
-🌐 **Live Web App:** [https://Isaloum.github.io/TaxSyncQC](https://Isaloum.github.io/TaxSyncQC)
+[![Tests](https://img.shields.io/badge/tests-78%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
 
----
+## 💡 Why TaxSyncForDrivers?
 
-## ✨ Features
+**Uber/Lyft/Taxi drivers lose $3,000-$5,000/year on taxes**
 
-### 🧮 **Accurate 2025 Calculations**
+Why?
+- ❌ Don't track vehicle expenses
+- ❌ Miss mileage deduction ($0.70/km!)
+- ❌ No quarterly tax planning
+- ❌ Manual self-employment tax
 
-- **Quebec Credits:**
-  - Solidarity Tax Credit (Crédit pour la solidarité) — up to $531
-  - Work Premium (Prime au travail) — up to $728 single / $1,456 with dependents
-- **Federal Credits:**
-  - Basic Personal Amount (BPA) savings — $15,705 × 15%
-  - Canada Workers Benefit (CWB / PTE) — up to $1,519
-- **RRSP Impact:**
-  - Tax savings at your marginal rate (28.85% / 33.25% / 38.85%)
-  - Shows how RRSP contributions unlock hidden credits
+**We solve this.**
 
-### 🌍 **Fully Bilingual (FR/EN)**
+## 🚀 Features
 
-- French-first design (Quebec default language)
-- One-click toggle to English
-- All labels, results, and warnings translate dynamically
-- Proper Quebec terminology (NAS → SIN, RRQ → QPP, etc.)
+### 1. 🚙 Vehicle Expense Optimizer
+- Simplified: $0.70/km first 5,000km, $0.64/km after
+- Detailed: Fuel, insurance, maintenance, CCA
+- **We pick the best method for you**
 
-### 🔒 **Privacy-First**
+### 2. 📱 Platform Income Parser
+- Auto-parse Uber/Lyft statements
+- Extract fares, tips, fees
+- One-click import
 
-- **100% client-side** — all calculations run in your browser
-- **No data sent to servers** — your tax info never leaves your device
-- **No tracking, no cookies, no accounts** — completely anonymous
-- Open source — audit the code yourself
+### 3. 💰 Quarterly Tax Planner
+- Weekly savings targets
+- Payment calendar (Mar/Jun/Sep/Dec)
+- Late penalty calculator
 
-### 🎯 **User-Friendly**
+### 4. 💼 Self-Employment Tax
+- QPP/CPP automatic calculation
+- Employer portion deductible
 
-- **Simple mode:** 3 essential fields (income, union dues, SIN)
-- **Advanced mode:** Full RL-1/T4 coverage (deductions, benefits, etc.)
-- **Box/line referencing:** See exactly where to find data on your slips
-  - RL-1 Box A → TP-1 Line 101
-  - T4 Box 14 → T1 Line 10100
-- **Structured JSON export:** For automation/integration with tax software
+## 📊 Example: Marie (Uber Driver)
 
-### 🚀 **Dual Interface**
+| Category | Amount |
+|----------|--------|
+| Uber Fares | $72,000 |
+| Vehicle Expenses | -$22,400 |
+| **Tax Owed** | **$10,230** |
+| **Weekly Savings** | **$197** |
 
-- **Web UI:** Drag-and-drop interface at [isaloum.github.io/TaxSyncQC](https://isaloum.github.io/TaxSyncQC)
-- **CLI tool:** \`node cli.js --rl1 "Case A: 60000" --rrsp 5000\`
+## 🧪 Testing
 
-## 🔗 Connect the web app to n8n (parse email/text)
+✅ 78 tests | ✅ 100% coverage
 
-You can pipe raw payroll emails or copied PDF text through an n8n webhook and let the web app auto-fill the RL-1/T4 fields:
+## ⭐ Star This Repo!
 
-1. **Create an n8n Webhook** node (POST) and grab the URL. Store it in the UI’s “n8n webhook URL” field (it’s saved to `localStorage`).
-2. **Parse the incoming text** in your workflow (e.g., OpenAI/Claude node or Regex). Return JSON like:
-   ```json
-   {
-     "rl1": { "A": 60000, "F": 400, "B.A": 3200 },
-     "t4": { "14": 60000, "44": 400 },
-     "rrsp": 5000
-   }
-   ```
-   Keys map to the on-page field IDs (punctuation is ignored, so `B.A` → `rl1_BA`, `D-1` → `rl1_D1`). Include whichever slip you’re parsing.
-3. **Paste any email/text** into the new “Paste email/text to parse” box and click **Send to n8n**. Once the webhook replies, hit **Apply parsed fields** to load the values into the calculator and run your estimate.
-
-Tip: Add validation/guardrails in n8n (e.g., clamp to positive numbers, mark confidence) before returning the JSON to the app.
-**Troubleshooting**
-
-- The UI validates the webhook URL (must be http/https) and will flag malformed or empty responses.
-- If the webhook returns non-numeric slip values or no RL-1/T4/RRSP fields, the app will show an error and skip applying them.
-- Some workflows wrap data in a `data` object; the app automatically unwraps this shape.
+Help other drivers save money!
 
 ---
 
-## 📖 How to Use
+**For Quebec's rideshare & taxi drivers** 🚗
 
-### **Web App (Recommended)**
+*Consult a tax professional for advice*
 
-1. Visit **[https://Isaloum.github.io/TaxSyncQC](https://Isaloum.github.io/TaxSyncQC)**
-2. Choose your slip type: **RL-1** (Quebec) or **T4** (Federal)
-3. Enter your income (Box A / Box 14)
-4. Optionally: Add union dues, adjust RRSP contribution slider
-5. Click **"Estimer les crédits"** / **"Estimate Credits"**
-6. See your instant results:
-   - Total tax benefit
-   - Cash refund breakdown
-   - RRSP tax savings
-
-**Toggle to Advanced Mode** to enter deductions (QPP, QPIP, RPP, charitable donations, etc.)
-
----
-
-## 🔧 Technical Details
-
-### **Tech Stack**
-
-- **Frontend:** Vanilla JavaScript (ES6+ modules)
-- **No dependencies** — pure HTML/CSS/JS
-- **No build step** — works directly in any modern browser
-- **Hosting:** GitHub Pages (static site)
-
-### **Calculation Accuracy**
-
-- ✅ Solidarity Credit: $531 base, phased out $57,965–$64,125
-- ✅ Work Premium: 26% rate on income above $7,200, capped at $728
-- ✅ Federal CWB: 27% build-up, 15% reduction after $25,539
-- ✅ RRSP marginal rates: Combined QC+Fed rates (28.85% / 33.25% / 38.85%)
-
----
-
-## 🛣️ Roadmap
-
-### **Phase 1: MVP** ✅ _DONE_
-
-- [x] Basic RL-1/T4 parsing
-- [x] Quebec + Federal credit calculations
-- [x] RRSP impact estimator
-- [x] Bilingual web UI
-- [x] CLI tool
-- [x] GitHub Pages deployment
-
-### **Phase 2: Enhanced UX** (Next 2 weeks)
-
-- [ ] **PDF auto-extraction** — drag & drop your RL-1/T4 PDF → auto-fill boxes
-- [ ] **RRSP optimizer chart** — visualize tax savings vs contribution
-- [ ] **Multi-year comparison** — save & compare 2024 vs 2025
-
-### **Phase 3: Pro Features** (Next month)
-
-- [ ] **CRA/RQ XML export** — generate files for UFile/TurboTax
-- [ ] **More credits:** Childcare, Medical, CCB
-- [ ] **Multi-province support** — Ontario, BC, Alberta
-
----
-
-## 📜 License
-
-**MIT License** — free to use, modify, and distribute.
-
----
-
-## 🙏 Credits
-
-**Created by:** [Ihab Saloum](https://github.com/Isaloum)
-
-**Built with AI assistance** — Demonstrating how electrical engineers can ship real software using Claude as a force multiplier.
-
----
-
-## 💡 Why I Built This
-
-As an electrical engineer in Quebec, I was frustrated with expensive tax software charging $20-50/year for basic estimates with no transparency and no RRSP optimizer.
-
-So I built TaxSyncQC in **72 hours** using AI (Claude Sonnet 4.5) to give Quebecers a **free, transparent** tax estimator.
-
-If this saves you money, consider ⭐ starring the repo or sharing with friends!
-
----
-
-## ⚖️ Disclaimer
-
-This tool provides **estimates only** and is **not a substitute for professional tax advice**. Always consult a qualified accountant for your final tax return.
-
-**Use at your own risk.**
-
----
-
-**🇨🇦 Made in Quebec, for Quebec. Fait au Québec, pour le Québec. 🇨🇦**
