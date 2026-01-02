@@ -80,6 +80,9 @@ const translations = {
     'footer.calc': '2025 client-side calculations',
     'footer.privacy': '100% private, no data transmitted',
     'footer.disclaimer': 'Consult a professional for personalized tax advice.',
+    'footer.builtBy': 'Built by Ihab Saloum • Open Source Project',
+    'footer.viewSource': 'View source code',
+    'footer.moreProjects': 'More projects →',
     'recommended': 'RECOMMENDED'
   },
   fr: {
@@ -163,6 +166,9 @@ const translations = {
     'footer.calc': 'Calculs 2025 côté client',
     'footer.privacy': '100% privé, aucune donnée transmise',
     'footer.disclaimer': 'Consultez un professionnel pour des conseils fiscaux personnalisés.',
+    'footer.builtBy': 'Construit par Ihab Saloum • Projet Open Source',
+    'footer.viewSource': 'Voir le code source',
+    'footer.moreProjects': 'Plus de projets →',
     'recommended': 'RECOMMANDÉ'
   }
 };
