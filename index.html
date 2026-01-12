@@ -1,226 +1,917 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TaxSyncForDrivers — Planification fiscale pour chauffeurs Uber/Lyft/Taxi</title>
-  <meta name="description" content="Outil gratuit de planification fiscale pour chauffeurs de covoiturage et taxi au Québec.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
-  <style>
-    :root{--bg:#f8fafc;--card:#fff;--accent:#0d9488;--accent-2:#14b8a6;--accent-light:rgba(13,148,136,.1);--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--radius:12px;--shadow:0 4px 20px rgba(15,23,42,.08);--shadow-lg:0 10px 40px rgba(15,23,42,.12)}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,rgba(13,148,136,.05) 0%,rgba(20,184,166,.03) 100%),var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-    .container{max-width:1200px;margin:0 auto;padding:1rem}
-    header{background:var(--card);border-bottom:1px solid var(--border);padding:1rem 0;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
-    .header-content{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-    .logo{display:flex;align-items:center;gap:.75rem;font-size:1.5rem;font-weight:800;color:var(--accent);text-decoration:none}
-    .badge{background:var(--accent-light);color:var(--accent);padding:.25rem .75rem;border-radius:999px;font-size:.75rem;font-weight:600}
-    .lang-toggle{display:flex;gap:.5rem}
-    .lang-btn{background:transparent;border:1px solid var(--border);padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-weight:600;transition:all .2s}
-    .lang-btn:hover{border-color:var(--accent);color:var(--accent)}
-    .lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .hero{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);color:#fff;padding:3rem 2rem;border-radius:var(--radius);margin:1.5rem 0;text-align:center;box-shadow:var(--shadow-lg)}
-    .hero h1{font-size:2.25rem;font-weight:800;margin-bottom:.75rem}
-    .hero p{font-size:1.125rem;opacity:.95;max-width:600px;margin:0 auto 1.5rem}
-    .hero-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-top:1.5rem}
-    .hero-stat{text-align:center}
-    .hero-stat-value{font-size:2rem;font-weight:800}
-    .hero-stat-label{font-size:.875rem;opacity:.9}
-    .tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin:1.5rem 0}
-    .tab-btn{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;text-align:center;transition:all .2s;box-shadow:var(--shadow)}
-    .tab-btn:hover{border-color:var(--accent);transform:translateY(-2px)}
-    .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .tab-icon{font-size:1.75rem;display:block;margin-bottom:.5rem}
-    .tab-label{font-weight:700;font-size:.9rem}
-    .tab-content{display:none;background:var(--card);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
-    .tab-content.active{display:block}
-    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
-    .form-group{margin-bottom:1rem}
-    label{display:block;font-weight:600;margin-bottom:.5rem}
-    .label-hint{font-weight:400;color:var(--muted);font-size:.875rem}
-    input,select,textarea{width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:8px;font-size:1rem;transition:all .2s;background:#fff}
-    input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
-    .btn{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);color:#fff;border:none;padding:.875rem 1.5rem;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,148,136,.3)}
-    .btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
-    .btn-group{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
-    .result-box{background:linear-gradient(135deg,var(--accent-light) 0%,rgba(20,184,166,.05) 100%);border:1px solid var(--accent);border-radius:var(--radius);padding:1.5rem;margin-top:1.5rem}
-    .result-title{font-size:1.125rem;font-weight:700;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-    .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
-    .result-item{background:#fff;padding:1rem;border-radius:8px;box-shadow:var(--shadow)}
-    .result-label{font-size:.875rem;color:var(--muted);margin-bottom:.25rem}
-    .result-value{font-size:1.5rem;font-weight:800;font-family:'SF Mono',Monaco,Consolas,monospace}
-    .result-value.positive{color:var(--success)}
-    .method-comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
-    .method-card{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center}
-    .method-card.recommended{border-color:var(--success);background:rgba(16,185,129,.05)}
-    .method-card .amount{font-size:1.75rem;font-weight:800;font-family:'SF Mono',Monaco,Consolas,monospace}
-    .recommended-badge{background:var(--success);color:#fff;font-size:.75rem;padding:.25rem .75rem;border-radius:999px;margin-top:.5rem;display:inline-block}
-    .payment-schedule{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1rem}
-    .payment-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
-    .payment-quarter{font-weight:700;color:var(--accent)}
-    .payment-date{font-size:.875rem;color:var(--muted);margin-bottom:.5rem}
-    .payment-amount{font-size:1.25rem;font-weight:800;font-family:'SF Mono',Monaco,Consolas,monospace}
-    .savings-summary{background:linear-gradient(135deg,var(--success) 0%,#059669 100%);color:#fff;border-radius:var(--radius);padding:1.5rem;margin-top:1.5rem;text-align:center}
-    .savings-amount{font-size:2.5rem;font-weight:800;font-family:'SF Mono',Monaco,Consolas,monospace}
-    fieldset{border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
-    legend{font-weight:700;padding:0 .5rem;color:var(--accent)}
-    .toggle-container{display:flex;align-items:center;gap:.75rem;margin:1rem 0}
-    .toggle{position:relative;width:50px;height:26px}
-    .toggle input{opacity:0;width:0;height:0}
-    .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:26px;transition:.3s}
-    .toggle-slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
-    .toggle input:checked+.toggle-slider{background:var(--accent)}
-    .toggle input:checked+.toggle-slider:before{transform:translateX(24px)}
-    footer{text-align:center;padding:2rem;color:var(--muted);font-size:.875rem;border-top:1px solid var(--border);margin-top:2rem}
-    footer a{color:var(--accent);text-decoration:none}
-    @media(max-width:768px){.hero h1{font-size:1.75rem}.payment-schedule{grid-template-columns:repeat(2,1fr)}.method-comparison{grid-template-columns:1fr}}
-    /* Footer */
-    footer{margin-top:3rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:2rem}
-    .footer-content{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
-    .footer-left{display:flex;flex-direction:column;gap:0.5rem}
-    .footer-title{font-size:1.25rem;font-weight:700;color:#0d9488}
-    .footer-subtitle{color:var(--muted);font-size:0.9rem}
-    .footer-right{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
-    .footer-link{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:rgba(13,148,136,0.05);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-weight:600;transition:all 0.2s;font-size:0.9rem}
-    .footer-link:hover{border-color:#0d9488;color:#0d9488;transform:translateY(-2px);box-shadow:0 4px 12px rgba(13,148,136,0.15)}
-    .tech-badge{display:inline-block;padding:0.25rem 0.75rem;background:rgba(13,148,136,0.08);border:1px solid rgba(13,148,136,0.2);border-radius:6px;font-size:0.75rem;color:#0d9488;font-weight:600}
-    @media(max-width:768px){.footer-content{flex-direction:column;text-align:center}.footer-right{justify-content:center}}
-  </style>
-</head>
-<body>
-  <header><div class="container"><div class="header-content">
-    <a href="#" class="logo"><span>🚗</span><span>TaxSyncForDrivers</span><span class="badge">2025</span></a>
-    <div class="lang-toggle"><button class="lang-btn active" onclick="setLang('fr')">FR</button><button class="lang-btn" onclick="setLang('en')">EN</button></div>
-  </div></div></header>
-  <main class="container">
-    <section class="hero">
-      <h1 data-i18n="hero.title">Planification fiscale pour chauffeurs</h1>
-      <p data-i18n="hero.subtitle">Maximisez vos déductions, planifiez vos acomptes trimestriels et gardez plus d'argent dans vos poches.</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-value">$0.70</div><div class="hero-stat-label" data-i18n="hero.perKm">/km déductible</div></div>
-        <div class="hero-stat"><div class="hero-stat-value">$3,000+</div><div class="hero-stat-label" data-i18n="hero.savings">économies potentielles</div></div>
-        <div class="hero-stat"><div class="hero-stat-value">100%</div><div class="hero-stat-label" data-i18n="hero.private">privé et gratuit</div></div>
-      </div>
-    </section>
-    <nav class="tabs">
-      <button class="tab-btn active" data-tab="vehicle"><span class="tab-icon">🚙</span><span class="tab-label" data-i18n="tabs.vehicle">Dépenses véhicule</span></button>
-      <button class="tab-btn" data-tab="quarterly"><span class="tab-icon">📅</span><span class="tab-label" data-i18n="tabs.quarterly">Acomptes trimestriels</span></button>
-      <button class="tab-btn" data-tab="selfemploy"><span class="tab-icon">💼</span><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span></button>
-    </nav>
-    <section id="vehicle" class="tab-content active">
-      <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
-      <p data-i18n="vehicle.description">Comparez la méthode simplifiée (par km) et détaillée pour maximiser vos déductions.</p>
-      <fieldset>
-        <legend data-i18n="vehicle.simplified">Méthode simplifiée</legend>
-        <div class="form-group">
-          <label for="totalKm" data-i18n="vehicle.totalKm">Kilomètres d'affaires total (année)</label>
-          <input type="number" id="totalKm" placeholder="ex: 25000" min="0">
-          <span class="label-hint" data-i18n="vehicle.kmHint">Utilisez un journal de bord ou l'app Uber/Lyft</span>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaxSyncForDrivers — Planification fiscale pour chauffeurs Uber/Lyft/Taxi</title>
+    <meta
+      name="description"
+      content="Outil gratuit de planification fiscale pour chauffeurs de covoiturage et taxi au Québec."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>"
+    />
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --card: #fff;
+        --accent: #0d9488;
+        --accent-2: #14b8a6;
+        --accent-light: rgba(13, 148, 136, 0.1);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --radius: 12px;
+        --shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+        --shadow-lg: 0 10px 40px rgba(15, 23, 42, 0.12);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background:
+          linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(20, 184, 166, 0.03) 100%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+      }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .badge {
+        background: var(--accent-light);
+        color: var(--accent);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .lang-toggle {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .lang-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .lang-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .lang-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .hero {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        padding: 3rem 2rem;
+        border-radius: var(--radius);
+        margin: 1.5rem 0;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+      }
+      .hero h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+      }
+      .hero p {
+        font-size: 1.125rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+      }
+      .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+      .hero-stat {
+        text-align: center;
+      }
+      .hero-stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+      }
+      .hero-stat-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+      }
+      .tab-btn {
+        background: var(--card);
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s;
+        box-shadow: var(--shadow);
+      }
+      .tab-btn:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .tab-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .tab-icon {
+        font-size: 1.75rem;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .tab-label {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .tab-content {
+        display: none;
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .label-hint {
+        font-weight: 400;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background: #fff;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-light);
+      }
+      .btn {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        border: none;
+        padding: 0.875rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: var(--shadow);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 148, 136, 0.3);
+      }
+      .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+      .result-box {
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border: 1px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .result-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .result-item {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+      .result-label {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 0.25rem;
+      }
+      .result-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .result-value.positive {
+        color: var(--success);
+      }
+      .method-comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+      .method-card {
+        background: #fff;
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        text-align: center;
+      }
+      .method-card.recommended {
+        border-color: var(--success);
+        background: rgba(16, 185, 129, 0.05);
+      }
+      .method-card .amount {
+        font-size: 1.75rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .recommended-badge {
+        background: var(--success);
+        color: #fff;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        margin-top: 0.5rem;
+        display: inline-block;
+      }
+      .payment-schedule {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .payment-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        text-align: center;
+      }
+      .payment-quarter {
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .payment-date {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+      .payment-amount {
+        font-size: 1.25rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .savings-summary {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: #fff;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+      .savings-amount {
+        font-size: 2.5rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      fieldset {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      legend {
+        font-weight: 700;
+        padding: 0 0.5rem;
+        color: var(--accent);
+      }
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 1rem 0;
+      }
+      .toggle {
+        position: relative;
+        width: 50px;
+        height: 26px;
+      }
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--border);
+        border-radius: 26px;
+        transition: 0.3s;
+      }
+      .toggle-slider:before {
+        content: '';
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+      .toggle input:checked + .toggle-slider {
+        background: var(--accent);
+      }
+      .toggle input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+      }
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 1.75rem;
+        }
+        .payment-schedule {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .method-comparison {
+          grid-template-columns: 1fr;
+        }
+      }
+      /* Footer */
+      footer {
+        margin-top: 3rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 1.5rem 2rem;
+      }
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .footer-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #0d9488;
+      }
+      .footer-subtitle {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .footer-badges {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .footer-right {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .footer-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(13, 148, 136, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+      }
+      .footer-link:hover {
+        border-color: #0d9488;
+        color: #0d9488;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15);
+      }
+      .tech-badge {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        background: rgba(13, 148, 136, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        border-radius: 6px;
+        font-size: 0.7rem;
+        color: #0d9488;
+        font-weight: 600;
+      }
+      @media (max-width: 768px) {
+        .footer-row {
+          flex-direction: column;
+          text-align: center;
+          align-items: center;
+        }
+        .footer-left {
+          flex-direction: column;
+        }
+        .footer-badges {
+          justify-content: center;
+        }
+        .footer-right {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="#" class="logo"
+            ><span>🚗</span><span>TaxSyncForDrivers</span><span class="badge">2025</span></a
+          >
+          <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLang('fr')">FR</button
+            ><button class="lang-btn" onclick="setLang('en')">EN</button>
+          </div>
         </div>
-      </fieldset>
-      <div class="toggle-container">
-        <label class="toggle"><input type="checkbox" id="showDetailed"><span class="toggle-slider"></span></label>
-        <span data-i18n="vehicle.showDetailed">Afficher méthode détaillée</span>
       </div>
-      <fieldset id="detailedSection" style="display:none">
-        <legend data-i18n="vehicle.detailed">Méthode détaillée (dépenses réelles)</legend>
+    </header>
+    <main class="container">
+      <section class="hero">
+        <h1 data-i18n="hero.title">Planification fiscale pour chauffeurs</h1>
+        <p data-i18n="hero.subtitle">
+          Maximisez vos déductions, planifiez vos acomptes trimestriels et gardez plus d'argent dans
+          vos poches.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">$0.70</div>
+            <div class="hero-stat-label" data-i18n="hero.perKm">/km déductible</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">$3,000+</div>
+            <div class="hero-stat-label" data-i18n="hero.savings">économies potentielles</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">100%</div>
+            <div class="hero-stat-label" data-i18n="hero.private">privé et gratuit</div>
+          </div>
+        </div>
+      </section>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="vehicle">
+          <span class="tab-icon">🚙</span
+          ><span class="tab-label" data-i18n="tabs.vehicle">Dépenses véhicule</span>
+        </button>
+        <button class="tab-btn" data-tab="quarterly">
+          <span class="tab-icon">📅</span
+          ><span class="tab-label" data-i18n="tabs.quarterly">Acomptes trimestriels</span>
+        </button>
+        <button class="tab-btn" data-tab="selfemploy">
+          <span class="tab-icon">💼</span
+          ><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span>
+        </button>
+      </nav>
+      <section id="vehicle" class="tab-content active">
+        <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
+        <p data-i18n="vehicle.description">
+          Comparez la méthode simplifiée (par km) et détaillée pour maximiser vos déductions.
+        </p>
+        <fieldset>
+          <legend data-i18n="vehicle.simplified">Méthode simplifiée</legend>
+          <div class="form-group">
+            <label for="totalKm" data-i18n="vehicle.totalKm"
+              >Kilomètres d'affaires total (année)</label
+            >
+            <input type="number" id="totalKm" placeholder="ex: 25000" min="0" />
+            <span class="label-hint" data-i18n="vehicle.kmHint"
+              >Utilisez un journal de bord ou l'app Uber/Lyft</span
+            >
+          </div>
+        </fieldset>
+        <div class="toggle-container">
+          <label class="toggle"
+            ><input type="checkbox" id="showDetailed" /><span class="toggle-slider"></span
+          ></label>
+          <span data-i18n="vehicle.showDetailed">Afficher méthode détaillée</span>
+        </div>
+        <fieldset id="detailedSection" style="display: none">
+          <legend data-i18n="vehicle.detailed">Méthode détaillée (dépenses réelles)</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fuel" data-i18n="vehicle.fuel">Essence / Électricité ($)</label
+              ><input type="number" id="fuel" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="insurance" data-i18n="vehicle.insurance">Assurance ($)</label
+              ><input type="number" id="insurance" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="maintenance" data-i18n="vehicle.maintenance"
+                >Entretien / Réparations ($)</label
+              ><input type="number" id="maintenance" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="businessPercent" data-i18n="vehicle.businessPercent"
+                >% utilisation affaires</label
+              ><input type="number" id="businessPercent" value="80" min="0" max="100" />
+            </div>
+          </div>
+        </fieldset>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateVehicle()" data-i18n="vehicle.calculate">
+            Calculer mes déductions
+          </button>
+          <button class="btn btn-secondary" onclick="resetVehicle()" data-i18n="common.reset">
+            Réinitialiser
+          </button>
+        </div>
+        <div id="vehicleResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="vehicle.results">Résultats de l'analyse</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card" id="simplifiedCard">
+              <h4 data-i18n="vehicle.simplifiedMethod">Méthode simplifiée</h4>
+              <div class="amount" id="simplifiedAmount">$0</div>
+              <div id="simplifiedBadge"></div>
+            </div>
+            <div class="method-card" id="detailedCard">
+              <h4 data-i18n="vehicle.detailedMethod">Méthode détaillée</h4>
+              <div class="amount" id="detailedAmount">$0</div>
+              <div id="detailedBadge"></div>
+            </div>
+          </div>
+          <div class="savings-summary">
+            <div class="savings-amount" id="vehicleSavings">$0</div>
+            <div class="savings-label" data-i18n="vehicle.totalDeduction">
+              Déduction totale recommandée
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="quarterly" class="tab-content">
+        <h2>📅 <span data-i18n="quarterly.title">Planificateur d'acomptes trimestriels</span></h2>
+        <p data-i18n="quarterly.description">
+          Planifiez vos paiements pour éviter les intérêts et pénalités.
+        </p>
         <div class="form-grid">
-          <div class="form-group"><label for="fuel" data-i18n="vehicle.fuel">Essence / Électricité ($)</label><input type="number" id="fuel" placeholder="0" min="0"></div>
-          <div class="form-group"><label for="insurance" data-i18n="vehicle.insurance">Assurance ($)</label><input type="number" id="insurance" placeholder="0" min="0"></div>
-          <div class="form-group"><label for="maintenance" data-i18n="vehicle.maintenance">Entretien / Réparations ($)</label><input type="number" id="maintenance" placeholder="0" min="0"></div>
-          <div class="form-group"><label for="businessPercent" data-i18n="vehicle.businessPercent">% utilisation affaires</label><input type="number" id="businessPercent" value="80" min="0" max="100"></div>
+          <div class="form-group">
+            <label for="estimatedIncome" data-i18n="quarterly.estimatedIncome"
+              >Revenu net estimé (après dépenses)</label
+            ><input type="number" id="estimatedIncome" placeholder="ex: 50000" min="0" />
+          </div>
         </div>
-      </fieldset>
-      <div class="btn-group">
-        <button class="btn" onclick="calculateVehicle()" data-i18n="vehicle.calculate">Calculer mes déductions</button>
-        <button class="btn btn-secondary" onclick="resetVehicle()" data-i18n="common.reset">Réinitialiser</button>
-      </div>
-      <div id="vehicleResults" class="result-box" style="display:none">
-        <div class="result-title">📊 <span data-i18n="vehicle.results">Résultats de l'analyse</span></div>
-        <div class="method-comparison">
-          <div class="method-card" id="simplifiedCard"><h4 data-i18n="vehicle.simplifiedMethod">Méthode simplifiée</h4><div class="amount" id="simplifiedAmount">$0</div><div id="simplifiedBadge"></div></div>
-          <div class="method-card" id="detailedCard"><h4 data-i18n="vehicle.detailedMethod">Méthode détaillée</h4><div class="amount" id="detailedAmount">$0</div><div id="detailedBadge"></div></div>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateQuarterly()" data-i18n="quarterly.calculate">
+            Calculer mes acomptes
+          </button>
         </div>
-        <div class="savings-summary"><div class="savings-amount" id="vehicleSavings">$0</div><div class="savings-label" data-i18n="vehicle.totalDeduction">Déduction totale recommandée</div></div>
-      </div>
-    </section>
-    <section id="quarterly" class="tab-content">
-      <h2>📅 <span data-i18n="quarterly.title">Planificateur d'acomptes trimestriels</span></h2>
-      <p data-i18n="quarterly.description">Planifiez vos paiements pour éviter les intérêts et pénalités.</p>
-      <div class="form-grid">
-        <div class="form-group"><label for="estimatedIncome" data-i18n="quarterly.estimatedIncome">Revenu net estimé (après dépenses)</label><input type="number" id="estimatedIncome" placeholder="ex: 50000" min="0"></div>
-      </div>
-      <div class="btn-group"><button class="btn" onclick="calculateQuarterly()" data-i18n="quarterly.calculate">Calculer mes acomptes</button></div>
-      <div id="quarterlyResults" class="result-box" style="display:none">
-        <div class="result-title">📊 <span data-i18n="quarterly.schedule">Calendrier de paiement</span></div>
-        <div class="payment-schedule">
-          <div class="payment-card"><div class="payment-quarter">T1</div><div class="payment-date" data-i18n="quarterly.q1">15 mars</div><div class="payment-amount" id="q1Amount">$0</div></div>
-          <div class="payment-card"><div class="payment-quarter">T2</div><div class="payment-date" data-i18n="quarterly.q2">15 juin</div><div class="payment-amount" id="q2Amount">$0</div></div>
-          <div class="payment-card"><div class="payment-quarter">T3</div><div class="payment-date" data-i18n="quarterly.q3">15 septembre</div><div class="payment-amount" id="q3Amount">$0</div></div>
-          <div class="payment-card"><div class="payment-quarter">T4</div><div class="payment-date" data-i18n="quarterly.q4">15 décembre</div><div class="payment-amount" id="q4Amount">$0</div></div>
+        <div id="quarterlyResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="quarterly.schedule">Calendrier de paiement</span>
+          </div>
+          <div class="payment-schedule">
+            <div class="payment-card">
+              <div class="payment-quarter">T1</div>
+              <div class="payment-date" data-i18n="quarterly.q1">15 mars</div>
+              <div class="payment-amount" id="q1Amount">$0</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-quarter">T2</div>
+              <div class="payment-date" data-i18n="quarterly.q2">15 juin</div>
+              <div class="payment-amount" id="q2Amount">$0</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-quarter">T3</div>
+              <div class="payment-date" data-i18n="quarterly.q3">15 septembre</div>
+              <div class="payment-amount" id="q3Amount">$0</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-quarter">T4</div>
+              <div class="payment-date" data-i18n="quarterly.q4">15 décembre</div>
+              <div class="payment-amount" id="q4Amount">$0</div>
+            </div>
+          </div>
+          <div class="result-grid" style="margin-top: 1.5rem">
+            <div class="result-item">
+              <div class="result-label" data-i18n="quarterly.weekly">Épargne hebdomadaire</div>
+              <div class="result-value positive" id="weeklyAmount">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="quarterly.annual">Total annuel</div>
+              <div class="result-value" id="annualTotal">$0</div>
+            </div>
+          </div>
         </div>
-        <div class="result-grid" style="margin-top:1.5rem">
-          <div class="result-item"><div class="result-label" data-i18n="quarterly.weekly">Épargne hebdomadaire</div><div class="result-value positive" id="weeklyAmount">$0</div></div>
-          <div class="result-item"><div class="result-label" data-i18n="quarterly.annual">Total annuel</div><div class="result-value" id="annualTotal">$0</div></div>
+      </section>
+      <section id="selfemploy" class="tab-content">
+        <h2>💼 <span data-i18n="selfemploy.title">Calculateur RRQ travailleur autonome</span></h2>
+        <p data-i18n="selfemploy.description">
+          En tant que travailleur autonome, vous payez les portions employeur ET employé du RRQ/RPC.
+        </p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="selfEmployIncome" data-i18n="selfemploy.netIncome"
+              >Revenu net de travail autonome ($)</label
+            ><input type="number" id="selfEmployIncome" placeholder="ex: 50000" min="0" /><span
+              class="label-hint"
+              data-i18n="selfemploy.hint"
+              >Après dépenses d'entreprise</span
+            >
+          </div>
         </div>
-      </div>
-    </section>
-    <section id="selfemploy" class="tab-content">
-      <h2>💼 <span data-i18n="selfemploy.title">Calculateur RRQ travailleur autonome</span></h2>
-      <p data-i18n="selfemploy.description">En tant que travailleur autonome, vous payez les portions employeur ET employé du RRQ/RPC.</p>
-      <div class="form-grid">
-        <div class="form-group"><label for="selfEmployIncome" data-i18n="selfemploy.netIncome">Revenu net de travail autonome ($)</label><input type="number" id="selfEmployIncome" placeholder="ex: 50000" min="0"><span class="label-hint" data-i18n="selfemploy.hint">Après dépenses d'entreprise</span></div>
-      </div>
-      <div class="btn-group"><button class="btn" onclick="calculateSelfEmploy()" data-i18n="selfemploy.calculate">Calculer mes cotisations</button></div>
-      <div id="selfEmployResults" class="result-box" style="display:none">
-        <div class="result-title">📊 <span data-i18n="selfemploy.results">Cotisations RRQ/RPC 2025</span></div>
-        <div class="result-grid">
-          <div class="result-item"><div class="result-label" data-i18n="selfemploy.total">Cotisation totale</div><div class="result-value" id="qppTotal">$0</div></div>
-          <div class="result-item"><div class="result-label" data-i18n="selfemploy.deductible">Portion déductible (employeur)</div><div class="result-value positive" id="qppDeductible">$0</div></div>
-          <div class="result-item"><div class="result-label" data-i18n="selfemploy.netCost">Coût net après déduction</div><div class="result-value" id="qppNetCost">$0</div></div>
-          <div class="result-item"><div class="result-label" data-i18n="selfemploy.rate">Taux effectif</div><div class="result-value" id="qppRate">12.8%</div></div>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateSelfEmploy()" data-i18n="selfemploy.calculate">
+            Calculer mes cotisations
+          </button>
         </div>
-        <div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:1rem;margin-top:1rem"><strong>💡 <span data-i18n="selfemploy.tip">Conseil:</span></strong> <span data-i18n="selfemploy.tipText">La portion employeur est déductible de votre revenu imposable!</span></div>
-      </div>
-    </section>
-  </main>
-  <footer>
-    <div class="footer-content">
-      <div class="footer-left">
-        <div class="footer-title">🚗 TaxSyncForDrivers</div>
-        <div class="footer-subtitle" data-i18n="footer.builtBy">Construit par Ihab Saloum • Projet Open Source</div>        <div class="footer-subtitle" style="font-size:0.85rem;margin-top:0.25rem">Calculs 2025 côté client • 100% privé</div>
-        <div class="footer-subtitle" style="font-size:0.85rem;margin-top:0.25rem" data-i18n="footer.calc">Calculs 2025 côté client • 100% privé</div>          <span class="tech-badge">JavaScript</span>
+        <div id="selfEmployResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="selfemploy.results">Cotisations RRQ/RPC 2025</span>
+          </div>
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.total">Cotisation totale</div>
+              <div class="result-value" id="qppTotal">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.deductible">
+                Portion déductible (employeur)
+              </div>
+              <div class="result-value positive" id="qppDeductible">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.netCost">
+                Coût net après déduction
+              </div>
+              <div class="result-value" id="qppNetCost">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.rate">Taux effectif</div>
+              <div class="result-value" id="qppRate">12.8%</div>
+            </div>
+          </div>
+          <div
+            style="
+              background: #fef3c7;
+              border: 1px solid #f59e0b;
+              border-radius: 8px;
+              padding: 1rem;
+              margin-top: 1rem;
+            "
+          >
+            <strong>💡 <span data-i18n="selfemploy.tip">Conseil:</span></strong>
+            <span data-i18n="selfemploy.tipText"
+              >La portion employeur est déductible de votre revenu imposable!</span
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-content">
+        <div class="footer-row">
+          <div class="footer-left">
+            <div class="footer-title">🚗 TaxSyncForDrivers</div>
+            <div class="footer-subtitle" data-i18n="footer.builtBy">
+              Construit par Ihab Saloum • Projet Open Source
+            </div>
+          </div>
+          <div class="footer-subtitle" data-i18n="footer.calc">
+            Calculs 2025 côté client • 100% privé
+          </div>
+        </div>
+        <div class="footer-badges">
+          <span class="tech-badge">JavaScript</span>
           <span class="tech-badge">HTML5</span>
           <span class="tech-badge">Uber/Lyft/Taxi</span>
           <span class="tech-badge">Bilingue</span>
           <span class="tech-badge">100% Client-Side</span>
         </div>
+        <div class="footer-right">
+          <a
+            href="https://github.com/Isaloum/TaxSyncForDrivers"
+            target="_blank"
+            class="footer-link"
+          >
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+            <span data-i18n="footer.viewSource">Voir le code source</span>
+          </a>
+          <a href="https://github.com/Isaloum" target="_blank" class="footer-link">
+            <span data-i18n="footer.moreProjects">Plus de projets →</span>
+          </a>
+        </div>
       </div>
-      <div class="footer-right">
-        <a href="https://github.com/Isaloum/TaxSyncForDrivers" target="_blank" class="footer-link">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          <span data-i18n="footer.viewSource">Voir le code source</span>        </a>
-        <a href="https://github.com/Isaloum" target="_blank" class="footer-link"><span data-i18n="footer.moreProjects">Plus de projets →</span></a>      </div>
-    </div>
-  </footer>
-  <script src="translations.js"></script>
-  <script src="driver-calculator.js"></script>
-  <script>
-    let currentLang='fr';
-    function setLang(l){
-      currentLang=l;
-      document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l));
-      document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(translations[l]&&translations[l][k])el.textContent=translations[l][k]});
-      document.documentElement.lang=l;
-    }
-    document.querySelectorAll('.tab-btn').forEach(btn=>{btn.addEventListener('click',()=>{const t=btn.getAttribute('data-tab');document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.getElementById(t).classList.add('active')})});
-    document.getElementById('showDetailed').addEventListener('change',function(){document.getElementById('detailedSection').style.display=this.checked?'block':'none'});
-    function calculateVehicle(){const km=parseFloat(document.getElementById('totalKm').value)||0;const s=DriverCalculator.calculateSimplifiedVehicle(km);let d={deduction:0};if(document.getElementById('showDetailed').checked){d=DriverCalculator.calculateDetailedVehicle({fuel:parseFloat(document.getElementById('fuel').value)||0,insurance:parseFloat(document.getElementById('insurance').value)||0,maintenance:parseFloat(document.getElementById('maintenance').value)||0,businessUsePercent:parseFloat(document.getElementById('businessPercent').value)||80})}document.getElementById('vehicleResults').style.display='block';document.getElementById('simplifiedAmount').textContent='$'+s.deduction.toLocaleString();document.getElementById('detailedAmount').textContent='$'+d.deduction.toLocaleString();const sc=document.getElementById('simplifiedCard'),dc=document.getElementById('detailedCard');sc.classList.remove('recommended');dc.classList.remove('recommended');document.getElementById('simplifiedBadge').innerHTML='';document.getElementById('detailedBadge').innerHTML='';if(s.deduction>=d.deduction){sc.classList.add('recommended');document.getElementById('simplifiedBadge').innerHTML='<span class="recommended-badge">'+translations[currentLang]['recommended']+'</span>';document.getElementById('vehicleSavings').textContent='$'+s.deduction.toLocaleString()}else{dc.classList.add('recommended');document.getElementById('detailedBadge').innerHTML='<span class="recommended-badge">'+translations[currentLang]['recommended']+'</span>';document.getElementById('vehicleSavings').textContent='$'+d.deduction.toLocaleString()}}
-    function resetVehicle(){document.getElementById('totalKm').value='';['fuel','insurance','maintenance'].forEach(i=>document.getElementById(i).value='');document.getElementById('businessPercent').value='80';document.getElementById('vehicleResults').style.display='none'}
-    function calculateQuarterly(){const i=parseFloat(document.getElementById('estimatedIncome').value)||0;const b=DriverCalculator.TAX_BRACKETS.find(x=>i<=x.max)||DriverCalculator.TAX_BRACKETS[5];const t=i*b.rate;const r=DriverCalculator.calculateQuarterlyInstallments(t,i);document.getElementById('quarterlyResults').style.display='block';['q1','q2','q3','q4'].forEach(q=>document.getElementById(q+'Amount').textContent='$'+r.quarterly.toLocaleString());document.getElementById('weeklyAmount').textContent='$'+r.weekly.toLocaleString();document.getElementById('annualTotal').textContent='$'+r.annualTax.toLocaleString()}
-    function calculateSelfEmploy(){const i=parseFloat(document.getElementById('selfEmployIncome').value)||0;const r=DriverCalculator.calculateSelfEmploymentTax(i);document.getElementById('selfEmployResults').style.display='block';document.getElementById('qppTotal').textContent='$'+r.totalContribution.toLocaleString();document.getElementById('qppDeductible').textContent='$'+r.deductiblePortion.toLocaleString();document.getElementById('qppNetCost').textContent='$'+r.netCost.toLocaleString()}
-    setLang('fr');
-  </script>
-</body>
+    </footer>
+    <script src="translations.js"></script>
+    <script src="driver-calculator.js"></script>
+    <script>
+      let currentLang = 'fr';
+      function setLang(l) {
+        currentLang = l;
+        document
+          .querySelectorAll('.lang-btn')
+          .forEach((b) => b.classList.toggle('active', b.textContent.trim().toLowerCase() === l));
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const k = el.getAttribute('data-i18n');
+          if (translations[l] && translations[l][k]) el.textContent = translations[l][k];
+        });
+        document.documentElement.lang = l;
+      }
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const t = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(t).classList.add('active');
+        });
+      });
+      document.getElementById('showDetailed').addEventListener('change', function () {
+        document.getElementById('detailedSection').style.display = this.checked ? 'block' : 'none';
+      });
+      function calculateVehicle() {
+        const km = parseFloat(document.getElementById('totalKm').value) || 0;
+        const s = DriverCalculator.calculateSimplifiedVehicle(km);
+        let d = { deduction: 0 };
+        if (document.getElementById('showDetailed').checked) {
+          d = DriverCalculator.calculateDetailedVehicle({
+            fuel: parseFloat(document.getElementById('fuel').value) || 0,
+            insurance: parseFloat(document.getElementById('insurance').value) || 0,
+            maintenance: parseFloat(document.getElementById('maintenance').value) || 0,
+            businessUsePercent: parseFloat(document.getElementById('businessPercent').value) || 80,
+          });
+        }
+        document.getElementById('vehicleResults').style.display = 'block';
+        document.getElementById('simplifiedAmount').textContent =
+          '$' + s.deduction.toLocaleString();
+        document.getElementById('detailedAmount').textContent = '$' + d.deduction.toLocaleString();
+        const sc = document.getElementById('simplifiedCard'),
+          dc = document.getElementById('detailedCard');
+        sc.classList.remove('recommended');
+        dc.classList.remove('recommended');
+        document.getElementById('simplifiedBadge').innerHTML = '';
+        document.getElementById('detailedBadge').innerHTML = '';
+        if (s.deduction >= d.deduction) {
+          sc.classList.add('recommended');
+          document.getElementById('simplifiedBadge').innerHTML =
+            '<span class="recommended-badge">' +
+            translations[currentLang]['recommended'] +
+            '</span>';
+          document.getElementById('vehicleSavings').textContent =
+            '$' + s.deduction.toLocaleString();
+        } else {
+          dc.classList.add('recommended');
+          document.getElementById('detailedBadge').innerHTML =
+            '<span class="recommended-badge">' +
+            translations[currentLang]['recommended'] +
+            '</span>';
+          document.getElementById('vehicleSavings').textContent =
+            '$' + d.deduction.toLocaleString();
+        }
+      }
+      function resetVehicle() {
+        document.getElementById('totalKm').value = '';
+        ['fuel', 'insurance', 'maintenance'].forEach(
+          (i) => (document.getElementById(i).value = '')
+        );
+        document.getElementById('businessPercent').value = '80';
+        document.getElementById('vehicleResults').style.display = 'none';
+      }
+      function calculateQuarterly() {
+        const i = parseFloat(document.getElementById('estimatedIncome').value) || 0;
+        const b =
+          DriverCalculator.TAX_BRACKETS.find((x) => i <= x.max) || DriverCalculator.TAX_BRACKETS[5];
+        const t = i * b.rate;
+        const r = DriverCalculator.calculateQuarterlyInstallments(t, i);
+        document.getElementById('quarterlyResults').style.display = 'block';
+        ['q1', 'q2', 'q3', 'q4'].forEach(
+          (q) =>
+            (document.getElementById(q + 'Amount').textContent = '$' + r.quarterly.toLocaleString())
+        );
+        document.getElementById('weeklyAmount').textContent = '$' + r.weekly.toLocaleString();
+        document.getElementById('annualTotal').textContent = '$' + r.annualTax.toLocaleString();
+      }
+      function calculateSelfEmploy() {
+        const i = parseFloat(document.getElementById('selfEmployIncome').value) || 0;
+        const r = DriverCalculator.calculateSelfEmploymentTax(i);
+        document.getElementById('selfEmployResults').style.display = 'block';
+        document.getElementById('qppTotal').textContent =
+          '$' + r.totalContribution.toLocaleString();
+        document.getElementById('qppDeductible').textContent =
+          '$' + r.deductiblePortion.toLocaleString();
+        document.getElementById('qppNetCost').textContent = '$' + r.netCost.toLocaleString();
+      }
+      setLang('fr');
+    </script>
+  </body>
 </html>
