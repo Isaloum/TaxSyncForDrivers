@@ -8,6 +8,17 @@ test('homepage loads and has title', async ({ page }) => {
   await expect(page).toHaveTitle(/TaxSyncForDrivers/);
 });
 
+test('header displays current year dynamically', async ({ page }) => {
+  await page.goto(SITE, { waitUntil: 'domcontentloaded' });
+
+  // Get the current year
+  const currentYear = new Date().getFullYear().toString();
+
+  // Check that the year badge displays the current year
+  const yearBadge = page.locator('#current-year');
+  await expect(yearBadge).toHaveText(currentYear);
+});
+
 test('homepage accessibility quick scan', async ({ page }) => {
   await page.goto(SITE, { waitUntil: 'domcontentloaded' });
   // run axe via AxeBuilder

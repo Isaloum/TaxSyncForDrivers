@@ -535,8 +535,9 @@
       <div class="container">
         <div class="header-content">
           <a href="#" class="logo"
-            ><span>🚗</span><span>TaxSyncForDrivers</span><span class="badge">2025</span></a
-          >
+            ><span>🚗</span><span>TaxSyncForDrivers</span
+            ><span class="badge" id="current-year"></span
+          ></a>
           <div class="lang-toggle">
             <button class="lang-btn active" onclick="setLang('fr')">FR</button
             ><button class="lang-btn" onclick="setLang('en')">EN</button>
@@ -736,7 +737,7 @@
         </div>
         <div id="selfEmployResults" class="result-box" style="display: none">
           <div class="result-title">
-            📊 <span data-i18n="selfemploy.results">Cotisations RRQ/RPC 2025</span>
+            📊 <span data-i18n="selfemploy.results">Cotisations RRQ/RPC</span>
           </div>
           <div class="result-grid">
             <div class="result-item">
@@ -787,7 +788,7 @@
             </div>
           </div>
           <div class="footer-subtitle" data-i18n="footer.calc">
-            Calculs 2025 côté client • 100% privé
+            Calculs côté client • 100% privé
           </div>
         </div>
         <div class="footer-badges">
@@ -819,6 +820,15 @@
     <script src="translations.js"></script>
     <script src="driver-calculator.js"></script>
     <script>
+      // Auto-update year in header
+      document.addEventListener('DOMContentLoaded', function () {
+        const currentYear = new Date().getFullYear();
+        const yearElement = document.getElementById('current-year');
+        if (yearElement) {
+          yearElement.textContent = currentYear;
+        }
+      });
+
       let currentLang = 'fr';
       function setLang(l) {
         currentLang = l;
