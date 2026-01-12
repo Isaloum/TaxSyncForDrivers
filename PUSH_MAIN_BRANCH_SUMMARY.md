@@ -33,11 +33,13 @@ Since direct git push authentication is not available in the development environ
 ## How This Accomplishes the Goal
 
 When this PR is merged, GitHub will:
+
 1. Fast-forward the `main` branch from `f5df5a2` to the current HEAD
 2. Trigger all workflows configured for the `main` branch
 3. Update GitHub Pages deployment
 
 **This is functionally equivalent to running:**
+
 ```bash
 git push -u origin main
 ```
@@ -47,7 +49,7 @@ git push -u origin main
 ```
 Current State:
   origin/main: f5df5a2 (Merge pull request #41)
-  
+
 After PR Merge:
   origin/main: <PR HEAD> (includes all changes + documentation)
 ```
@@ -55,6 +57,7 @@ After PR Merge:
 ## Next Steps
 
 To complete the task:
+
 1. **Merge this PR** - This will push the updates to the `main` branch
 2. **Verify workflows trigger** - CI/CD should run automatically
 3. **Confirm GitHub Pages deploys** - Site should update at https://Isaloum.github.io/TaxSyncQC
@@ -62,6 +65,7 @@ To complete the task:
 ## Why This Approach?
 
 The GitHub Pull Request workflow is used instead of direct `git push` because:
+
 - It provides code review opportunities
 - It maintains change history
 - It triggers CI/CD workflows automatically
@@ -70,6 +74,7 @@ The GitHub Pull Request workflow is used instead of direct `git push` because:
 ## Verification
 
 You can verify the setup by running locally:
+
 ```bash
 cd /home/runner/work/TaxSyncQC/TaxSyncQC
 git branch -a

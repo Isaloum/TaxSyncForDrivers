@@ -34,6 +34,7 @@ The current workflow publishes the project root as-is (static site). To add a bu
 ### Troubleshooting
 
 If deployment fails with permission errors:
+
 - Check that workflow permissions are set to "Read and write permissions" in repository settings
 - Verify that GitHub Pages is configured to use "GitHub Actions" as the source
 - Ensure the gh-pages environment is not protected with conflicting rules

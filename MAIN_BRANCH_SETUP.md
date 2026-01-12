@@ -32,6 +32,7 @@ The following workflows are configured to trigger on `main`:
 ## Contributing
 
 Contributors should:
+
 1. Fork the repository
 2. Create feature branches from `main`
 3. Submit pull requests targeting `main`
@@ -41,12 +42,14 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 ## Repository Structure
 
 This is referenced in:
+
 - `.github/workflows/ci.yml` (line 5: `branches: [main]`)
 - `CONTRIBUTING.md` (line 30: "open a Pull Request to `main`")
 
 ## Next Steps
 
 After pushing `main` to origin:
+
 1. Set `main` as the default branch in GitHub repository settings
 2. Update branch protection rules if needed
 3. Archive or delete feature branches that have been merged
