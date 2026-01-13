@@ -49,7 +49,15 @@ describe('Validation Engine Tests', () => {
 
     it('should reject dates too far in the past', () => {
       const currentYear = new Date().getFullYear();
-      assert.strictEqual(isValidDate(`01/15/${currentYear - 5}`), false);
+      // Default is 5 years back, so 6 years should be rejected
+      assert.strictEqual(isValidDate(`01/15/${currentYear - 6}`), false);
+    });
+
+    it('should accept dates within 5 years for tax documents', () => {
+      const currentYear = new Date().getFullYear();
+      // Tax documents from 5 years ago should be accepted
+      assert.strictEqual(isValidDate(`01/15/${currentYear - 5}`), true);
+      assert.strictEqual(isValidDate(`01/15/${currentYear - 3}`), true);
     });
 
     it('should handle various date formats', () => {

@@ -2,6 +2,12 @@
 
 import { DOCUMENT_TYPES } from './pattern-library.js';
 
+// Tax year constants (update annually)
+const CURRENT_TAX_YEAR = new Date().getFullYear();
+const CPP_QPP_MAX_2025 = 4000; // Approximate max for 2025
+const EI_MAX_2025 = 1200; // Approximate max for 2025
+const PPIP_MAX_2025 = 600; // Approximate max for 2025
+
 /**
  * Validation result structure
  * @typedef {Object} ValidationResult
@@ -15,9 +21,10 @@ import { DOCUMENT_TYPES } from './pattern-library.js';
  * Validate a date string
  * @param {string} dateStr - Date string to validate
  * @param {number} currentYear - Current tax year
+ * @param {number} yearRange - Number of years back to accept (default: 5 for tax documents)
  * @returns {boolean} - Whether the date is valid
  */
-export function isValidDate(dateStr, currentYear = new Date().getFullYear()) {
+export function isValidDate(dateStr, currentYear = CURRENT_TAX_YEAR, yearRange = 5) {
   if (!dateStr) return false;
 
   // Try to parse various date formats
@@ -29,8 +36,8 @@ export function isValidDate(dateStr, currentYear = new Date().getFullYear()) {
     let year = parseInt(match[3]);
     if (year < 100) year += 2000; // Handle 2-digit years
 
-    // Check if year is within reasonable range (current year ± 3 years)
-    if (year >= currentYear - 3 && year <= currentYear + 1) {
+    // Check if year is within reasonable range for tax documents
+    if (year >= currentYear - yearRange && year <= currentYear + 1) {
       return true;
     }
   }
@@ -39,8 +46,8 @@ export function isValidDate(dateStr, currentYear = new Date().getFullYear()) {
   if (match) {
     const year = parseInt(match[1]); // Year is first in YYYY-MM-DD format
 
-    // Check if year is within reasonable range (current year ± 3 years)
-    if (year >= currentYear - 3 && year <= currentYear + 1) {
+    // Check if year is within reasonable range for tax documents
+    if (year >= currentYear - yearRange && year <= currentYear + 1) {
       return true;
     }
   }
@@ -87,18 +94,18 @@ export function validateT4(data) {
     confidenceScore -= 15;
   }
 
-  // Check for reasonable CPP/QPP (max ~$3,867 for 2025)
-  if (data.cpp && data.cpp > 4000) {
+  // Check for reasonable CPP/QPP (max ~$4,000 for 2025)
+  if (data.cpp && data.cpp > CPP_QPP_MAX_2025) {
     warnings.push('CPP contribution seems high');
     confidenceScore -= 5;
   }
-  if (data.qpp && data.qpp > 4200) {
+  if (data.qpp && data.qpp > CPP_QPP_MAX_2025) {
     warnings.push('QPP contribution seems high');
     confidenceScore -= 5;
   }
 
-  // Check for reasonable EI (max ~$1,049 for 2025)
-  if (data.ei && data.ei > 1200) {
+  // Check for reasonable EI (max ~$1,200 for 2025)
+  if (data.ei && data.ei > EI_MAX_2025) {
     warnings.push('EI premium seems high');
     confidenceScore -= 5;
   }
@@ -146,13 +153,13 @@ export function validateRL1(data) {
   }
 
   // Check for reasonable QPP
-  if (data.qpp && data.qpp > 4200) {
+  if (data.qpp && data.qpp > CPP_QPP_MAX_2025) {
     warnings.push('QPP contribution seems high');
     confidenceScore -= 5;
   }
 
-  // Check for reasonable PPIP (max ~$542 for 2025)
-  if (data.ppip && data.ppip > 600) {
+  // Check for reasonable PPIP (max ~$600 for 2025)
+  if (data.ppip && data.ppip > PPIP_MAX_2025) {
     warnings.push('PPIP premium seems high');
     confidenceScore -= 5;
   }
@@ -402,7 +409,8 @@ export function isDuplicate(newData, existingEntries, docType) {
  * @returns {number} - Business use percentage (0-100)
  */
 export function calculateBusinessUsePercentage(businessKm, totalKm) {
-  if (!businessKm || !totalKm || totalKm === 0) return 100;
+  if (!businessKm || businessKm <= 0) return 0; // No business use
+  if (!totalKm || totalKm === 0) return 0; // Invalid total
   const percentage = (businessKm / totalKm) * 100;
   return Math.min(100, Math.max(0, Math.round(percentage * 100) / 100));
 }

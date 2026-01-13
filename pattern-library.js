@@ -240,7 +240,6 @@ export function extractFields(text, docType) {
       patterns = INSURANCE_PATTERNS;
       break;
     case DOCUMENT_TYPES.PARKING_RECEIPT:
-    case DOCUMENT_TYPES.TOLL_RECEIPT:
       patterns = PARKING_TOLL_PATTERNS;
       break;
     case DOCUMENT_TYPES.PHONE_BILL:
