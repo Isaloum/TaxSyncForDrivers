@@ -14,6 +14,17 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 
+// TODO: Add rate limiting middleware for production deployment
+// Recommended: express-rate-limit package
+// Example:
+// const rateLimit = require('express-rate-limit');
+// const limiter = rateLimit({
+//   windowMs: 60 * 60 * 1000, // 1 hour
+//   max: 100, // limit each IP to 100 requests per windowMs
+//   message: 'Too many requests from this IP, please try again later.'
+// });
+// app.use('/webhook/', limiter);
+
 /**
  * Verify Mailgun webhook signature
  * @param {string} timestamp - Timestamp from webhook
