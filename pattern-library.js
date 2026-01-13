@@ -264,18 +264,194 @@ export function extractFields(text, docType) {
 }
 
 /**
- * Classify a document based on its content
+ * Classify a document based on its content with confidence scoring
  * @param {string} text - The text to classify
+ * @param {string} filename - Optional filename for additional hints
  * @returns {string} - The document type
  */
-export function classifyDocument(text) {
+export function classifyDocument(text, filename = '') {
   const clean = text.replace(/\s+/g, ' ').trim();
 
-  for (const [type, pattern] of Object.entries(CLASSIFICATION_PATTERNS)) {
-    if (pattern.test(clean)) {
-      return DOCUMENT_TYPES[type];
+  // Enhanced classification with confidence scoring
+  const documentPatterns = {
+    T4: {
+      keywords: ['t4', 'statement of remuneration', 'employment income', 'box 14'],
+      patterns: [/(?:T4|Statement\s+of\s+Remuneration)/i, /Box\s+14/i, /Employment\s+Income/i],
+      confidence: 0,
+    },
+    RL1: {
+      keywords: ['rl-1', 'rl1', 'relevé 1', "revenu d'emploi", 'case a'],
+      patterns: [/(?:RL-1|Relevé\s+1)/i, /Case\s+A/i, /Revenu.*emploi/i],
+      confidence: 0,
+    },
+    UBER_SUMMARY: {
+      keywords: ['uber', 'driver partner', 'weekly summary', 'trip earnings', 'gross fare'],
+      patterns: [/uber.*partner/i, /weekly.*summary/i, /gross.*fare/i, /uber\.com/i],
+      confidence: 0,
+    },
+    LYFT_SUMMARY: {
+      keywords: ['lyft', 'weekly summary', 'driver dashboard', 'ride earnings'],
+      patterns: [/lyft.*driver/i, /weekly.*earning/i, /total.*payout/i, /lyft\.com/i],
+      confidence: 0,
+    },
+    GAS_RECEIPT: {
+      keywords: ['shell', 'esso', 'petro', 'gas', 'fuel', 'gasoline', 'liters', 'litres'],
+      patterns: [/(shell|esso|petro-canada|ultramar)/i, /fuel|gas/i, /liters?|litres?/i],
+      confidence: 0,
+    },
+    MAINTENANCE_RECEIPT: {
+      keywords: ['oil change', 'tire', 'brake', 'service', 'repair', 'maintenance'],
+      patterns: [/oil.*change/i, /tire.*service/i, /brake.*repair/i, /labor|labour/i],
+      confidence: 0,
+    },
+  };
+
+  // Calculate confidence scores for each document type
+  for (const [type, config] of Object.entries(documentPatterns)) {
+    let score = 0;
+
+    // Keyword matching (1 point each)
+    for (const keyword of config.keywords) {
+      if (clean.toLowerCase().includes(keyword.toLowerCase())) {
+        score += 1;
+      }
+    }
+
+    // Pattern matching (2 points each)
+    for (const pattern of config.patterns) {
+      if (pattern.test(clean)) {
+        score += 2;
+      }
+    }
+
+    // Filename matching (1 point)
+    if (filename.toLowerCase().includes(type.toLowerCase().replace('_', ''))) {
+      score += 1;
+    }
+
+    documentPatterns[type].confidence = score;
+  }
+
+  // Find highest confidence document type
+  let maxConfidence = 0;
+  let bestType = DOCUMENT_TYPES.UNKNOWN;
+
+  for (const [type, config] of Object.entries(documentPatterns)) {
+    if (config.confidence > maxConfidence) {
+      maxConfidence = config.confidence;
+      bestType = DOCUMENT_TYPES[type];
     }
   }
 
-  return DOCUMENT_TYPES.UNKNOWN;
+  // Require minimum confidence threshold of 2
+  if (maxConfidence < 2) {
+    // Fall back to original simple pattern matching
+    for (const [type, pattern] of Object.entries(CLASSIFICATION_PATTERNS)) {
+      if (pattern.test(clean)) {
+        return DOCUMENT_TYPES[type];
+      }
+    }
+    return DOCUMENT_TYPES.UNKNOWN;
+  }
+
+  return bestType;
+}
+
+/**
+ * Classify document with confidence score returned
+ * @param {string} text - The text to classify
+ * @param {string} filename - Optional filename
+ * @returns {object} - Classification result with confidence
+ */
+export function classifyDocumentWithConfidence(text, filename = '') {
+  const clean = text.replace(/\s+/g, ' ').trim();
+
+  const documentPatterns = {
+    T4: {
+      keywords: ['t4', 'statement of remuneration', 'employment income', 'box 14'],
+      patterns: [/(?:T4|Statement\s+of\s+Remuneration)/i, /Box\s+14/i, /Employment\s+Income/i],
+      confidence: 0,
+    },
+    RL1: {
+      keywords: ['rl-1', 'rl1', 'relevé 1', "revenu d'emploi", 'case a'],
+      patterns: [/(?:RL-1|Relevé\s+1)/i, /Case\s+A/i, /Revenu.*emploi/i],
+      confidence: 0,
+    },
+    UBER_SUMMARY: {
+      keywords: ['uber', 'driver partner', 'weekly summary', 'trip earnings', 'gross fare'],
+      patterns: [/uber.*partner/i, /weekly.*summary/i, /gross.*fare/i, /uber\.com/i],
+      confidence: 0,
+    },
+    LYFT_SUMMARY: {
+      keywords: ['lyft', 'weekly summary', 'driver dashboard', 'ride earnings'],
+      patterns: [/lyft.*driver/i, /weekly.*earning/i, /total.*payout/i, /lyft\.com/i],
+      confidence: 0,
+    },
+    GAS_RECEIPT: {
+      keywords: ['shell', 'esso', 'petro', 'gas', 'fuel', 'gasoline', 'liters', 'litres'],
+      patterns: [/(shell|esso|petro-canada|ultramar)/i, /fuel|gas/i, /liters?|litres?/i],
+      confidence: 0,
+    },
+    MAINTENANCE_RECEIPT: {
+      keywords: ['oil change', 'tire', 'brake', 'service', 'repair', 'maintenance'],
+      patterns: [/oil.*change/i, /tire.*service/i, /brake.*repair/i, /labor|labour/i],
+      confidence: 0,
+    },
+  };
+
+  // Calculate confidence scores
+  for (const [type, config] of Object.entries(documentPatterns)) {
+    let score = 0;
+
+    for (const keyword of config.keywords) {
+      if (clean.toLowerCase().includes(keyword.toLowerCase())) {
+        score += 1;
+      }
+    }
+
+    for (const pattern of config.patterns) {
+      if (pattern.test(clean)) {
+        score += 2;
+      }
+    }
+
+    if (filename.toLowerCase().includes(type.toLowerCase().replace('_', ''))) {
+      score += 1;
+    }
+
+    documentPatterns[type].confidence = score;
+  }
+
+  // Find best match
+  let maxConfidence = 0;
+  let bestType = DOCUMENT_TYPES.UNKNOWN;
+
+  for (const [type, config] of Object.entries(documentPatterns)) {
+    if (config.confidence > maxConfidence) {
+      maxConfidence = config.confidence;
+      bestType = DOCUMENT_TYPES[type];
+    }
+  }
+
+  // Fall back to simple matching if low confidence
+  if (maxConfidence < 2) {
+    for (const [type, pattern] of Object.entries(CLASSIFICATION_PATTERNS)) {
+      if (pattern.test(clean)) {
+        return {
+          documentType: DOCUMENT_TYPES[type],
+          confidence: 50,
+          scores: documentPatterns,
+        };
+      }
+    }
+  }
+
+  // Convert score to percentage (max realistic score is ~10)
+  const confidencePercent = Math.min(100, Math.round((maxConfidence / 10) * 100));
+
+  return {
+    documentType: bestType,
+    confidence: confidencePercent,
+    scores: documentPatterns,
+  };
 }
