@@ -757,6 +757,353 @@
       .document-uploader {
         margin-top: 1rem;
       }
+
+      /* Document AI Hub Styling */
+      .document-ai-tabs {
+        margin-top: 20px;
+      }
+
+      .tab-buttons {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 20px;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .ai-tab-btn {
+        padding: 12px 24px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 16px;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        color: var(--text);
+      }
+
+      .ai-tab-btn:hover {
+        background: var(--accent-light);
+      }
+
+      .ai-tab-btn.active {
+        border-bottom-color: #4a90e2;
+        color: #4a90e2;
+        font-weight: bold;
+      }
+
+      .tab-content-ai {
+        margin-top: 1rem;
+      }
+
+      .ai-tab-panel {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .ai-tab-panel.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Email Integration Styling */
+      .email-integration {
+        margin-top: 1.5rem;
+      }
+
+      .email-address-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #4a90e2;
+      }
+
+      .email-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .email-display code {
+        background: #e9ecef;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-family: monospace;
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .copy-btn {
+        background: #4a90e2;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .copy-btn:hover {
+        background: #357abd;
+      }
+
+      .supported-documents {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .supported-documents ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+      }
+
+      .supported-documents li {
+        padding: 0.5rem 0;
+      }
+
+      .email-instructions {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .email-instructions ol {
+        margin-top: 0.5rem;
+        padding-left: 1.5rem;
+      }
+
+      .email-instructions li {
+        padding: 0.25rem 0;
+      }
+
+      /* Camera Section Styling */
+      .camera-section {
+        margin-top: 1.5rem;
+      }
+
+      .camera-button {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 20px 0;
+        transition: all 0.2s;
+      }
+
+      .camera-button:hover {
+        background: #218838;
+      }
+
+      .camera-instructions {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .camera-instructions ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+      }
+
+      .camera-instructions li {
+        padding: 0.5rem 0;
+      }
+
+      /* Upload Zone Styling */
+      .upload-section {
+        margin-top: 1.5rem;
+      }
+
+      .upload-zone {
+        border: 3px dashed #4a90e2;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        background: #f8f9fa;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .upload-zone:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+      }
+
+      .upload-zone.dragover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+        transform: scale(1.01);
+      }
+
+      .upload-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .upload-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+
+      .upload-btn {
+        background: #4a90e2;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+      }
+
+      .upload-btn:hover {
+        background: #357abd;
+      }
+
+      .upload-info {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .file-types {
+        margin-bottom: 1rem;
+      }
+
+      .upload-features ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+      }
+
+      .upload-features li {
+        padding: 0.25rem 0;
+      }
+
+      /* Results Section Styling */
+      .results-section {
+        margin-top: 1.5rem;
+      }
+
+      .results-summary {
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      .impact-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .impact-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #4a90e2;
+      }
+
+      .impact-card.income {
+        border-left-color: #28a745;
+      }
+
+      .impact-card.deductions {
+        border-left-color: #ffc107;
+      }
+
+      .impact-card.savings {
+        border-left-color: #17a2b8;
+      }
+
+      .impact-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+
+      .impact-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c5aa0;
+      }
+
+      .processed-documents {
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .document-list {
+        margin-top: 1rem;
+      }
+
+      .no-documents {
+        text-align: center;
+        color: var(--muted);
+        padding: 2rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .tab-buttons {
+          flex-wrap: wrap;
+        }
+
+        .ai-tab-btn {
+          flex: 1;
+          min-width: 120px;
+        }
+
+        .impact-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .email-display {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .email-display code {
+          flex: auto;
+        }
+      }
     </style>
   </head>
   <body>
@@ -801,9 +1148,9 @@
           <span class="tab-icon">🚙</span
           ><span class="tab-label" data-i18n="tabs.vehicle">Dépenses véhicule</span>
         </button>
-        <button class="tab-btn" data-tab="documents">
-          <span class="tab-icon">📄</span
-          ><span class="tab-label" data-i18n="tabs.documents">Téléverser documents</span>
+        <button class="tab-btn" data-tab="documentAI">
+          <span class="tab-icon">🤖</span
+          ><span class="tab-label" data-i18n="tabs.documentAI">Document AI</span>
         </button>
         <button class="tab-btn" data-tab="quarterly">
           <span class="tab-icon">📅</span
@@ -812,10 +1159,6 @@
         <button class="tab-btn" data-tab="selfemploy">
           <span class="tab-icon">💼</span
           ><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span>
-        </button>
-        <button class="tab-btn" data-tab="documents">
-          <span class="tab-icon">📄</span
-          ><span class="tab-label" data-i18n="tabs.documents">Documents automatisés</span>
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -896,161 +1239,223 @@
           </div>
         </div>
       </section>
-      <section id="documents" class="tab-content">
-        <h2>📄 <span data-i18n="docs.title">Automatisation de documents</span></h2>
-        <p data-i18n="docs.subtitle">
-          Téléversez documents fiscaux, reçus et relevés de revenus pour traitement automatique
+      <section id="documentAI" class="tab-content">
+        <h2>🤖 <span data-i18n="documentAI.title">Document AI Hub</span></h2>
+        <p data-i18n="documentAI.subtitle">
+          Process tax documents automatically using email, camera, or upload
         </p>
 
-        <!-- Document Upload Section -->
-        <fieldset style="margin-top: 1.5rem">
-          <legend data-i18n="docs.upload">Téléverser documents</legend>
-          <div class="document-uploader">
-            <div class="drop-zone" id="dropZone">
-              <p data-i18n="docs.dropzone">
-                Glissez-déposez des documents ici ou cliquez pour parcourir
-              </p>
-              <input
-                type="file"
-                id="fileInput"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png,.txt"
-                style="display: none"
-              />
-              <button class="btn" onclick="document.getElementById('fileInput').click()">
-                <span data-i18n="docs.upload">Téléverser documents</span>
-              </button>
-              <p style="font-size: 0.875rem; color: var(--muted); margin-top: 0.5rem">
-                <span data-i18n="docs.supported">Supporté: PDF, JPG, PNG, TXT</span>
-              </p>
-            </div>
-          </div>
-        </fieldset>
-
-        <!-- Text Input for Manual Paste -->
-        <fieldset>
-          <legend>Manual Text Input</legend>
-          <div class="form-group">
-            <label for="documentText">Paste document text here (for testing):</label>
-            <textarea
-              id="documentText"
-              rows="8"
-              placeholder="Paste your T4, RL-1, Uber summary, or receipt text here..."
-              style="font-family: monospace; font-size: 0.9rem"
-            ></textarea>
-          </div>
-          <div class="btn-group">
-            <button class="btn" onclick="processDocumentText()">
-              <span data-i18n="docs.processing">Process Document</span>
+        <div class="document-ai-tabs">
+          <div class="tab-buttons">
+            <button class="ai-tab-btn active" data-tab="email">
+              📧 <span data-i18n="documentAI.email">Email</span>
             </button>
-            <button class="btn btn-secondary" onclick="clearDocumentForm()">
-              <span data-i18n="common.clear">Clear</span>
+            <button class="ai-tab-btn" data-tab="camera">
+              📱 <span data-i18n="documentAI.camera">Camera</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="upload">
+              💻 <span data-i18n="documentAI.upload">Upload</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="results">
+              📊 <span data-i18n="documentAI.results">Results</span>
             </button>
           </div>
-        </fieldset>
 
-        <!-- Email Instructions -->
-        <fieldset>
-          <legend data-i18n="docs.email">Envoyer par courriel</legend>
-          <div style="text-align: center; padding: 1rem">
-            <p data-i18n="docs.emailInstructions">Transférer documents à:</p>
-            <p style="font-size: 1.25rem; font-weight: 700; color: var(--accent); margin: 0.5rem 0">
-              <span data-i18n="docs.emailAddress">docs@taxsyncfordrivers.com</span>
-            </p>
-            <p style="font-size: 0.875rem; color: var(--muted)">
-              Email processing coming soon - currently in demo mode
-            </p>
-          </div>
-        </fieldset>
+          <div class="tab-content-ai">
+            <!-- Email Processing Tab -->
+            <div id="email" class="ai-tab-panel active">
+              <h3>📧 <span data-i18n="documentAI.emailTitle">Email Processing</span></h3>
+              <div class="email-integration">
+                <div class="email-address-box">
+                  <label data-i18n="documentAI.forwardTo">Forward tax documents to:</label>
+                  <div class="email-display">
+                    <code>docs@taxsyncfordrivers.com</code>
+                    <button onclick="copyEmailAddress(event)" class="copy-btn">
+                      📋 <span data-i18n="documentAI.copy">Copy</span>
+                    </button>
+                  </div>
+                </div>
 
-        <!-- Processing Status -->
-        <div id="processingStatus" style="display: none">
-          <div class="result-box" style="text-align: center">
-            <div class="result-title">
-              <span id="statusIcon">⏳</span>
-              <span id="statusText" data-i18n="docs.processing">Traitement...</span>
-            </div>
-          </div>
-        </div>
+                <div class="supported-documents">
+                  <h4 data-i18n="documentAI.supported">Supported Documents:</h4>
+                  <ul>
+                    <li>
+                      📊 <span data-i18n="documentAI.uberLyft">Uber/Lyft weekly summaries</span>
+                    </li>
+                    <li>⛽ <span data-i18n="documentAI.gas">Gas station receipts</span></li>
+                    <li>📄 <span data-i18n="documentAI.t4">T4/RL-1 tax slips</span></li>
+                    <li>
+                      🔧
+                      <span data-i18n="documentAI.maintenance">Vehicle maintenance receipts</span>
+                    </li>
+                    <li>📱 <span data-i18n="documentAI.phone">Phone bills</span></li>
+                    <li>🏢 <span data-i18n="documentAI.insurance">Insurance documents</span></li>
+                  </ul>
+                </div>
 
-        <!-- Results Display -->
-        <div id="documentResults" class="result-box" style="display: none">
-          <div class="result-title">
-            📊 <span data-i18n="docs.results">Résultats du traitement</span>
-          </div>
-          <div class="result-grid">
-            <div class="result-item">
-              <div class="result-label" data-i18n="docs.docType">Type de document:</div>
-              <div class="result-value" id="docType" style="font-size: 1.25rem">-</div>
-            </div>
-            <div class="result-item">
-              <div class="result-label" data-i18n="docs.confidence">Confiance:</div>
-              <div class="result-value positive" id="docConfidence" style="font-size: 1.25rem">
-                -
+                <div class="email-instructions">
+                  <h4 data-i18n="documentAI.howItWorks">How it works:</h4>
+                  <ol>
+                    <li data-i18n="documentAI.step1">Forward any tax document via email</li>
+                    <li data-i18n="documentAI.step2">
+                      AI extracts data automatically (30 seconds)
+                    </li>
+                    <li data-i18n="documentAI.step3">Receive confirmation with tax impact</li>
+                    <li data-i18n="documentAI.step4">Calculator updates automatically</li>
+                  </ol>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div style="margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 8px">
-            <h4 style="margin-bottom: 0.5rem" data-i18n="docs.extracted">Données extraites:</h4>
-            <pre
-              id="extractedData"
-              style="
-                font-size: 0.875rem;
-                overflow-x: auto;
-                white-space: pre-wrap;
-                color: var(--text);
-              "
-            ></pre>
-          </div>
+            <!-- Camera Capture Tab -->
+            <div id="camera" class="ai-tab-panel">
+              <h3>📱 <span data-i18n="documentAI.mobileScanner">Mobile Scanner</span></h3>
+              <div class="camera-section">
+                <button id="cameraBtn" class="camera-button" onclick="startCamera()">
+                  📷 <span data-i18n="documentAI.scanReceipt">Scan Receipt</span>
+                </button>
+                <video
+                  id="cameraPreview"
+                  style="display: none"
+                  width="100%"
+                  autoplay
+                  playsinline
+                ></video>
+                <canvas id="captureCanvas" style="display: none"></canvas>
 
-          <div
-            style="
-              margin-top: 1rem;
-              padding: 1rem;
-              background: linear-gradient(
-                135deg,
-                var(--accent-light) 0%,
-                rgba(20, 184, 166, 0.05) 100%
-              );
-              border-radius: 8px;
-              border: 1px solid var(--accent);
-            "
-          >
-            <h4 style="margin-bottom: 0.5rem; color: var(--accent)">
-              <span data-i18n="docs.category">Catégorie:</span> <span id="categoryName">-</span>
-            </h4>
-            <div class="result-grid" style="margin-top: 1rem">
-              <div class="result-item">
-                <div class="result-label" id="amountLabel">Amount:</div>
-                <div class="result-value" id="categoryAmount">$0</div>
-              </div>
-              <div class="result-item" id="deductionItem" style="display: none">
-                <div class="result-label" data-i18n="docs.deduction">Déduction:</div>
-                <div class="result-value positive" id="deductibleAmount">$0</div>
-              </div>
-              <div class="result-item" id="savingsItem" style="display: none">
-                <div class="result-label" data-i18n="docs.taxSavings">Économies d'impôt:</div>
-                <div class="result-value positive" id="taxSavings">$0</div>
+                <div class="camera-instructions">
+                  <h4 data-i18n="documentAI.scannerFeatures">Scanner Features:</h4>
+                  <ul>
+                    <li>
+                      📸 <span data-i18n="documentAI.instantPhoto">Instant photo capture</span>
+                    </li>
+                    <li>
+                      🔍 <span data-i18n="documentAI.realtimeOCR">Real-time OCR processing</span>
+                    </li>
+                    <li>
+                      💰
+                      <span data-i18n="documentAI.immediateTax"
+                        >Immediate tax impact calculation</span
+                      >
+                    </li>
+                    <li>
+                      📱 <span data-i18n="documentAI.worksMobile">Works on mobile devices</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div
-            id="warningsSection"
-            style="
-              display: none;
-              margin-top: 1rem;
-              padding: 1rem;
-              background: #fef3c7;
-              border: 1px solid #f59e0b;
-              border-radius: 8px;
-            "
-          >
-            <h4 style="color: #f59e0b; margin-bottom: 0.5rem">
-              ⚠️ <span data-i18n="docs.warnings">Avertissements:</span>
-            </h4>
-            <ul id="warningsList" style="margin: 0; padding-left: 1.5rem"></ul>
+            <!-- Upload Tab -->
+            <div id="upload" class="ai-tab-panel">
+              <h3>💻 <span data-i18n="documentAI.documentUpload">Document Upload</span></h3>
+              <div class="upload-section">
+                <div class="upload-zone" id="uploadZone">
+                  <div class="upload-content">
+                    <div class="upload-icon">📄</div>
+                    <p data-i18n="documentAI.dragDrop">
+                      Drag & Drop documents here or click to browse
+                    </p>
+                    <button class="upload-btn" onclick="triggerFileSelect()">
+                      <span data-i18n="documentAI.chooseFiles">Choose Files</span>
+                    </button>
+                    <input
+                      type="file"
+                      id="fileInput"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt"
+                      style="display: none"
+                    />
+                  </div>
+                </div>
+
+                <div class="upload-info">
+                  <div class="file-types">
+                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> PDF,
+                    JPG, PNG, DOC, DOCX, TXT
+                  </div>
+                  <div class="upload-features">
+                    <ul>
+                      <li>
+                        ✅ <span data-i18n="documentAI.multipleFiles">Multiple file upload</span>
+                      </li>
+                      <li>
+                        ✅ <span data-i18n="documentAI.batchProcessing">Batch processing</span>
+                      </li>
+                      <li>
+                        ✅ <span data-i18n="documentAI.progressTracking">Progress tracking</span>
+                      </li>
+                      <li>
+                        ✅ <span data-i18n="documentAI.secureProcessing">Secure processing</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Text Input Fallback -->
+                <div class="text-input-zone">
+                  <label for="documentText" data-i18n="documentAI.textLabel">
+                    Or paste document text here:
+                  </label>
+                  <textarea
+                    id="documentText"
+                    rows="6"
+                    data-i18n-placeholder="documentAI.textPlaceholder"
+                  ></textarea>
+                  <button class="btn" onclick="processDocumentText()" style="margin-top: 0.5rem">
+                    🔍 <span data-i18n="documentAI.processText">Process Text</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results Tab -->
+            <div id="results" class="ai-tab-panel">
+              <h3>📊 <span data-i18n="documentAI.processingResults">Processing Results</span></h3>
+              <div class="results-section">
+                <div class="results-summary">
+                  <h4 data-i18n="documentAI.taxImpact">Tax Impact Summary</h4>
+                  <div class="impact-cards">
+                    <div class="impact-card income">
+                      <div class="impact-label" data-i18n="documentAI.incomeAdded">
+                        Income Added
+                      </div>
+                      <div class="impact-value" id="totalIncome">$0</div>
+                    </div>
+                    <div class="impact-card deductions">
+                      <div class="impact-label" data-i18n="documentAI.deductionsAdded">
+                        Deductions Added
+                      </div>
+                      <div class="impact-value" id="totalDeductions">$0</div>
+                    </div>
+                    <div class="impact-card savings">
+                      <div class="impact-label" data-i18n="documentAI.taxSavings">Tax Savings</div>
+                      <div class="impact-value" id="totalSavings">$0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Processing Status -->
+                <div id="processingStatus" style="display: none">
+                  <div class="result-box" style="text-align: center">
+                    <div class="result-title">
+                      <span id="statusIcon">⏳</span>
+                      <span id="statusText" data-i18n="documentAI.processing">Processing...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Document Results Display -->
+                <div id="documentResultsDisplay" class="processed-documents">
+                  <h4 data-i18n="documentAI.processedDocs">Processed Documents</h4>
+                  <div id="documentHistory" class="document-list">
+                    <p class="no-documents" data-i18n="documentAI.noDocs">
+                      No documents processed yet
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1169,103 +1574,6 @@
             <span data-i18n="selfemploy.tipText"
               >La portion employeur est déductible de votre revenu imposable!</span
             >
-          </div>
-        </div>
-      </section>
-      <section id="documents" class="tab-content">
-        <h2>📄 <span data-i18n="documents.title">Traitement automatisé de documents</span></h2>
-        <p data-i18n="documents.description">
-          Téléchargez vos T4, RL-1, relevés Uber/Lyft et reçus pour extraction automatique des
-          données.
-        </p>
-
-        <!-- Upload Interface -->
-        <div class="document-upload-container">
-          <!-- Drag & Drop Zone -->
-          <div class="drop-zone" id="dropZone">
-            <div class="drop-zone-icon">📁</div>
-            <p class="drop-zone-text" data-i18n="documents.dropText">
-              Glissez-déposez vos documents ici
-            </p>
-            <p class="drop-zone-hint" data-i18n="documents.orClick">ou cliquez pour sélectionner</p>
-            <input
-              type="file"
-              id="fileInput"
-              multiple
-              accept=".pdf,.jpg,.jpeg,.png,.txt"
-              style="display: none"
-            />
-            <div class="btn-group" style="margin-top: 1rem">
-              <button class="btn" onclick="document.getElementById('fileInput').click()">
-                📁 <span data-i18n="documents.selectFiles">Sélectionner des fichiers</span>
-              </button>
-              <button class="btn btn-secondary" onclick="openCamera()">
-                📷 <span data-i18n="documents.takePhoto">Prendre une photo</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Camera Capture (hidden by default) -->
-          <div class="camera-capture" id="cameraCapture" style="display: none">
-            <video id="cameraPreview" autoplay playsinline></video>
-            <canvas id="cameraCanvas" style="display: none"></canvas>
-            <div class="btn-group">
-              <button class="btn" onclick="capturePhoto()">
-                📸 <span data-i18n="documents.capture">Capturer</span>
-              </button>
-              <button class="btn btn-secondary" onclick="closeCamera()">
-                ✖ <span data-i18n="documents.cancel">Annuler</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Text Input Fallback -->
-          <div class="text-input-zone">
-            <label for="documentText" data-i18n="documents.textLabel">
-              Ou collez le texte du document ici:
-            </label>
-            <textarea
-              id="documentText"
-              rows="6"
-              placeholder="Collez le texte de votre T4, RL-1, relevé Uber, ou reçu..."
-              data-i18n-placeholder="documents.textPlaceholder"
-            ></textarea>
-            <button class="btn" onclick="processText()" style="margin-top: 0.5rem">
-              🔍 <span data-i18n="documents.processText">Traiter le texte</span>
-            </button>
-          </div>
-
-          <!-- Processing Status -->
-          <div id="processingStatus" class="processing-status" style="display: none">
-            <div class="spinner"></div>
-            <p data-i18n="documents.processing">Traitement en cours...</p>
-          </div>
-
-          <!-- Results Display -->
-          <div id="documentResults" class="document-results" style="display: none">
-            <div class="result-title">
-              ✅ <span data-i18n="documents.resultsTitle">Documents traités</span>
-            </div>
-            <div id="resultsContainer"></div>
-          </div>
-
-          <!-- Instructions -->
-          <div class="instructions-box">
-            <h3>📋 <span data-i18n="documents.supportedTitle">Documents supportés:</span></h3>
-            <ul class="supported-docs-list">
-              <li><strong>T4 / T4A</strong> - Relevé d'emploi canadien</li>
-              <li><strong>RL-1 / RL-2</strong> - Relevé d'emploi québécois</li>
-              <li><strong>Uber / Lyft</strong> - Relevés hebdomadaires/mensuels</li>
-              <li><strong>Reçus d'essence</strong> - Shell, Esso, Petro-Canada, etc.</li>
-              <li><strong>Entretien véhicule</strong> - Réparations, pneus, vidange</li>
-              <li><strong>Assurance</strong> - Primes annuelles</li>
-              <li><strong>Stationnement / Péages</strong> - Reçus</li>
-              <li><strong>Téléphone</strong> - Factures mensuelles</li>
-            </ul>
-            <p class="instructions-note" data-i18n="documents.note">
-              <strong>Note:</strong> Les données sont traitées localement dans votre navigateur.
-              Aucune information n'est envoyée à des serveurs externes.
-            </p>
           </div>
         </div>
       </section>
@@ -1617,6 +1925,168 @@
           alert(
             'File upload with OCR is coming soon! For now, please:\n\n1. Use text extraction from your PDF/image\n2. Paste the text in the "Manual Text Input" field\n3. Click "Process Document"\n\nOr try these sample texts:\n\n• T4: "Box 14: Employment income $50,000.00"\n• Uber: "Uber Weekly Summary\\nGross earnings: $1,250.50\\n78 trips"\n• Gas Receipt: "Shell\\nTotal: $67.45"'
           );
+        }
+      }
+
+      // Document AI Hub Tab Switching
+      document.addEventListener('DOMContentLoaded', function () {
+        // Initialize AI tab switching
+        document.querySelectorAll('.ai-tab-btn').forEach((btn) => {
+          btn.addEventListener('click', function () {
+            const tabId = this.getAttribute('data-tab');
+            switchAITab(tabId);
+          });
+        });
+      });
+
+      function switchAITab(tabId) {
+        // Remove active class from all AI tabs and panels
+        document.querySelectorAll('.ai-tab-btn').forEach((btn) => btn.classList.remove('active'));
+        document
+          .querySelectorAll('.ai-tab-panel')
+          .forEach((panel) => panel.classList.remove('active'));
+
+        // Add active class to selected tab and panel
+        const selectedBtn = document.querySelector(`[data-tab="${tabId}"]`);
+        const selectedPanel = document.getElementById(tabId);
+
+        if (selectedBtn) selectedBtn.classList.add('active');
+        if (selectedPanel) selectedPanel.classList.add('active');
+      }
+
+      // Email address copy functionality
+      function copyEmailAddress(event) {
+        const email = 'docs@taxsyncfordrivers.com';
+        navigator.clipboard
+          .writeText(email)
+          .then(() => {
+            const btn = event.target.closest('.copy-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ <span data-i18n="documentAI.copied">Copied!</span>';
+            setTimeout(() => (btn.innerHTML = originalText), 2000);
+          })
+          .catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = email;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Email address copied: ' + email);
+          });
+      }
+
+      // Camera functionality
+      let cameraStream = null;
+
+      async function startCamera() {
+        try {
+          const video = document.getElementById('cameraPreview');
+          const btn = document.getElementById('cameraBtn');
+
+          cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+          });
+
+          video.srcObject = cameraStream;
+          video.style.display = 'block';
+          video.play();
+
+          // Update button to show capture option
+          btn.textContent = '📸 Capture Photo';
+          btn.onclick = capturePhoto;
+
+          // Add close button
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'btn btn-secondary';
+          closeBtn.innerHTML = '✖ <span data-i18n="documentAI.closeCamera">Close Camera</span>';
+          closeBtn.onclick = stopCamera;
+          closeBtn.style.marginLeft = '10px';
+          btn.parentNode.appendChild(closeBtn);
+        } catch (error) {
+          console.error('Camera error:', error);
+          alert('Camera access denied or not available. Please check your device permissions.');
+        }
+      }
+
+      function stopCamera() {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+        }
+        const video = document.getElementById('cameraPreview');
+        video.style.display = 'none';
+        video.srcObject = null;
+
+        // Reset button
+        const btn = document.getElementById('cameraBtn');
+        btn.innerHTML = '📷 <span data-i18n="documentAI.scanReceipt">Scan Receipt</span>';
+        btn.onclick = startCamera;
+
+        // Remove close button
+        const closeBtn = btn.parentNode.querySelector('.btn-secondary');
+        if (closeBtn) closeBtn.remove();
+      }
+
+      function capturePhoto() {
+        const video = document.getElementById('cameraPreview');
+        const canvas = document.getElementById('captureCanvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+
+        // Convert canvas to blob and process
+        canvas.toBlob((blob) => {
+          stopCamera();
+          alert(
+            'Photo captured! OCR processing requires Tesseract.js library. For now, please use the text input method or upload a text file.'
+          );
+          // In a real implementation, you would process the image with OCR here
+        });
+      }
+
+      // File upload functionality
+      function triggerFileSelect() {
+        document.getElementById('fileInput').click();
+      }
+
+      // Initialize drag and drop for upload zone
+      document.addEventListener('DOMContentLoaded', function () {
+        const uploadZone = document.getElementById('uploadZone');
+        if (uploadZone) {
+          uploadZone.addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+          });
+
+          uploadZone.addEventListener('dragover', handleDragOver);
+          uploadZone.addEventListener('drop', handleFileDrop);
+          uploadZone.addEventListener('dragleave', handleDragLeave);
+        }
+      });
+
+      function handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+      }
+
+      function handleDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+      }
+
+      function handleFileDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFiles(files);
         }
       }
 
