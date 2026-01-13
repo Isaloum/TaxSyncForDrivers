@@ -2,22 +2,11 @@
 // Sends automated responses with processing results
 
 import { DOCUMENT_TYPES } from './pattern-library.js';
-
-/**
- * Calculate vehicle deduction based on distance
- * @param {number} distanceKm - Distance in kilometers
- * @returns {number} - Deduction amount
- */
-function calculateVehicleDeduction(distanceKm) {
-  const RATE_FIRST_5000 = 0.7; // $0.70/km
-  const RATE_AFTER_5000 = 0.64; // $0.64/km
-
-  if (distanceKm <= 5000) {
-    return distanceKm * RATE_FIRST_5000;
-  } else {
-    return 5000 * RATE_FIRST_5000 + (distanceKm - 5000) * RATE_AFTER_5000;
-  }
-}
+import {
+  calculateVehicleDeduction,
+  formatCurrency,
+  AVERAGE_MARGINAL_TAX_RATE,
+} from './tax-utils.js';
 
 /**
  * Format document type for display
@@ -151,10 +140,10 @@ function generateEmailHTML(results, _taxUpdates = []) {
   html += `
       <div style="background-color: #e8f5e9; padding: 20px; border-radius: 5px; margin: 20px 0;">
         <h3 style="color: #28a745; margin-top: 0; font-size: 20px;">💰 Tax Impact Summary</h3>
-        <p style="margin: 10px 0; font-size: 16px;"><strong>Total Income Added:</strong> $${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-        <p style="margin: 10px 0; font-size: 16px;"><strong>Total Deductions Added:</strong> $${totalDeductions.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-        <p style="margin: 10px 0; font-size: 16px; color: #28a745;"><strong>Estimated Tax Savings:</strong> $${(totalDeductions * 0.275).toFixed(2)}</p>
-        <p style="margin: 10px 0; font-size: 12px; color: #666;">* Based on average marginal tax rate of 27.5%</p>
+        <p style="margin: 10px 0; font-size: 16px;"><strong>Total Income Added:</strong> $${formatCurrency(totalIncome)}</p>
+        <p style="margin: 10px 0; font-size: 16px;"><strong>Total Deductions Added:</strong> $${formatCurrency(totalDeductions)}</p>
+        <p style="margin: 10px 0; font-size: 16px; color: #28a745;"><strong>Estimated Tax Savings:</strong> $${(totalDeductions * AVERAGE_MARGINAL_TAX_RATE).toFixed(2)}</p>
+        <p style="margin: 10px 0; font-size: 12px; color: #666;">* Based on average marginal tax rate of ${(AVERAGE_MARGINAL_TAX_RATE * 100).toFixed(1)}%</p>
       </div>
       
       <div style="text-align: center; margin: 30px 0;">

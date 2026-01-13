@@ -2,28 +2,20 @@
 // Updates user tax profiles based on processed documents
 
 import { DOCUMENT_TYPES } from './pattern-library.js';
-
+import {
+  calculateVehicleDeduction,
+  calculateBusinessPortion,
+  BUSINESS_USE_PERCENTAGE,
+  PHONE_BUSINESS_PERCENTAGE,
+  PARKING_BUSINESS_PERCENTAGE,
+  AVERAGE_MARGINAL_TAX_RATE,
+  roundToTwoDecimals,
+} from './tax-utils.js';
 /**
  * In-memory user profile storage
  * In production, this would use a database
  */
 const userProfiles = new Map();
-
-/**
- * Calculate vehicle deduction based on distance
- * @param {number} distanceKm - Distance in kilometers
- * @returns {number} - Deduction amount
- */
-function calculateVehicleDeduction(distanceKm) {
-  const RATE_FIRST_5000 = 0.7; // $0.70/km
-  const RATE_AFTER_5000 = 0.64; // $0.64/km
-
-  if (distanceKm <= 5000) {
-    return distanceKm * RATE_FIRST_5000;
-  } else {
-    return 5000 * RATE_FIRST_5000 + (distanceKm - 5000) * RATE_AFTER_5000;
-  }
-}
 
 /**
  * Calculate estimated taxes
@@ -72,19 +64,19 @@ function calculateTaxes(profile) {
   }
 
   const totalTax = federalTax + quebecTax;
-  const taxSavings = totalDeductions * 0.275; // Average marginal rate
+  const taxSavings = totalDeductions * AVERAGE_MARGINAL_TAX_RATE;
   const effectiveTaxRate = totalIncome > 0 ? (totalTax / totalIncome) * 100 : 0;
 
   return {
     totalIncome,
     totalDeductions,
     netIncome,
-    federalTax: Math.round(federalTax * 100) / 100,
-    quebecTax: Math.round(quebecTax * 100) / 100,
-    totalTax: Math.round(totalTax * 100) / 100,
-    taxSavings: Math.round(taxSavings * 100) / 100,
-    effectiveTaxRate: Math.round(effectiveTaxRate * 100) / 100,
-    quarterlyPayment: Math.round((totalTax / 4) * 100) / 100,
+    federalTax: roundToTwoDecimals(federalTax),
+    quebecTax: roundToTwoDecimals(quebecTax),
+    totalTax: roundToTwoDecimals(totalTax),
+    taxSavings: roundToTwoDecimals(taxSavings),
+    effectiveTaxRate: roundToTwoDecimals(effectiveTaxRate),
+    quarterlyPayment: roundToTwoDecimals(totalTax / 4),
   };
 }
 
@@ -172,15 +164,21 @@ export async function updateUserTaxData(userEmail, documentResult) {
     case DOCUMENT_TYPES.GAS_RECEIPT:
       // Add fuel expense (calculate business portion)
       if (extractedData.total) {
-        const businessPortion = extractedData.total * 0.85; // 85% business use
+        const businessPortion = calculateBusinessPortion(
+          extractedData.total,
+          BUSINESS_USE_PERCENTAGE
+        );
         userProfile.fuelExpenses += businessPortion;
       }
       break;
 
     case DOCUMENT_TYPES.MAINTENANCE_RECEIPT:
-      // Add maintenance expense (85% business use)
+      // Add maintenance expense
       if (extractedData.total) {
-        const businessPortion = extractedData.total * 0.85;
+        const businessPortion = calculateBusinessPortion(
+          extractedData.total,
+          BUSINESS_USE_PERCENTAGE
+        );
         userProfile.maintenanceExpenses += businessPortion;
       }
       break;
@@ -199,17 +197,23 @@ export async function updateUserTaxData(userEmail, documentResult) {
       break;
 
     case DOCUMENT_TYPES.INSURANCE_DOC:
-      // Add insurance expense (85% business use)
+      // Add insurance expense
       if (extractedData.premium) {
-        const businessPortion = extractedData.premium * 0.85;
+        const businessPortion = calculateBusinessPortion(
+          extractedData.premium,
+          BUSINESS_USE_PERCENTAGE
+        );
         userProfile.insuranceExpenses += businessPortion;
       }
       break;
 
     case DOCUMENT_TYPES.PHONE_BILL:
-      // Add phone expense (50% business use for drivers)
+      // Add phone expense
       if (extractedData.total) {
-        const businessPortion = extractedData.total * 0.5;
+        const businessPortion = calculateBusinessPortion(
+          extractedData.total,
+          PHONE_BUSINESS_PERCENTAGE
+        );
         userProfile.phoneExpenses += businessPortion;
       }
       break;
@@ -217,7 +221,7 @@ export async function updateUserTaxData(userEmail, documentResult) {
     case DOCUMENT_TYPES.PARKING_RECEIPT:
       // Add parking expense (100% business use when working)
       if (extractedData.amount) {
-        userProfile.parkingExpenses += extractedData.amount;
+        userProfile.parkingExpenses += extractedData.amount * PARKING_BUSINESS_PERCENTAGE;
       }
       break;
   }

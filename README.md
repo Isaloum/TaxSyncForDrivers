@@ -4,8 +4,8 @@
 
 > Maximize deductions • Track expenses • Plan quarterly taxes • **NEW: Automated document processing**
 
-[![Tests](https://img.shields.io/badge/tests-168%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
-[![Coverage](https://img.shields.io/badge/coverage-86%25-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
+[![Tests](https://img.shields.io/badge/tests-229%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
+[![Coverage](https://img.shields.io/badge/coverage-83%25-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
 
 ## 💡 Why TaxSyncForDrivers?
 
@@ -46,7 +46,26 @@ Why?
 - QPP/CPP automatic calculation
 - Employer portion deductible
 
-### 5. 📄 **NEW: Automated Document Processing**
+### 5. 📧 **NEW: Email Automation System**
+
+**Forward tax documents to `docs@taxsyncfordrivers.com` for instant processing!**
+
+#### How it works:
+1. 📧 **Forward or email** your tax documents and receipts
+2. 🤖 **AI processes** - Extracts data automatically
+3. 💰 **Tax updated** - Your profile is updated with income/expenses
+4. ✉️ **Get results** - Receive detailed summary email
+
+#### Email Features:
+- **Mailgun Integration** - Enterprise-grade email processing
+- **Webhook Security** - HMAC signature verification
+- **Multi-Document Support** - Process multiple attachments at once
+- **Beautiful HTML Emails** - Professional response templates
+- **Tax Impact Summary** - Instant calculations in your inbox
+
+📚 **[Complete Email Setup Guide](EMAIL_INTEGRATION_GUIDE.md)**
+
+### 6. 📄 **Document Upload & Processing**
 
 **Upload tax documents and receipts for instant data extraction!**
 
@@ -88,15 +107,51 @@ Why?
 
 ## 🧪 Testing
 
-✅ 168 tests | ✅ 86% coverage
+✅ 229 tests | ✅ 83% coverage
+
+Run tests:
+```bash
+npm test              # Unit tests
+npm run test:e2e      # End-to-end tests
+npm run test:all      # All tests
+```
+
+## 🚀 Quick Start
+
+### Run Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Start email server (optional)
+npm run server
+```
+
+### Email Integration Setup
+
+See the **[Complete Email Integration Guide](EMAIL_INTEGRATION_GUIDE.md)** for:
+- Mailgun configuration
+- Webhook setup
+- Environment variables
+- Production deployment
+- Testing & monitoring
 
 ## 🏗️ Architecture
+
+### Email Integration System
+- **Email Server** (`email-server.js`) - Express server with Mailgun webhooks
+- **Email Handler** (`email-handler.js`) - Email processing and document extraction
+- **Email Sender** (`email-sender.js`) - Automated response generation
+- **Tax Integration** (`tax-integration.js`) - User profile and tax calculations
 
 ### Document Processing Engine
 - **Pattern Library** (`pattern-library.js`) - Document type recognition and field extraction
 - **Validation Engine** (`validation-engine.js`) - Data validation and anomaly detection
 - **Document Processor** (`document-processor.js`) - Core processing logic
-- **Email Handler** (`email-handler.js`) - Webhook integration for automated email processing
 
 ### Technology Stack
 - **Pure JavaScript** - No dependencies, runs entirely in your browser
