@@ -484,7 +484,7 @@ export function calculateConfidence(extractedData) {
 // Export document patterns for reference
 export { DOCUMENT_PATTERNS };
 
-// Export all as default for convenience
+// Default export
 export default {
   classifyDocument,
   extractDocumentData,
