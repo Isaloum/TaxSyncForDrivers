@@ -2,6 +2,29 @@
 // Handles T4, RL-1, Uber/Lyft statements, and expense receipts
 
 // Document type patterns for classification
+
+// Constants
+const CONFIDENCE_NORMALIZATION_FACTOR = 3; // Normalize confidence to 0-1 range
+const DEFAULT_TAX_RATE = 0.3; // 30% marginal tax rate estimate
+const NUMERIC_FIELDS = [
+  'amount',
+  'income',
+  'taxDeducted',
+  'taxWithheld',
+  'cpp',
+  'ei',
+  'qpp',
+  'ppip',
+  'grossEarnings',
+  'tips',
+  'fees',
+  'grossIncome',
+  'netAmount',
+  'monthlyCost',
+  'businessUse',
+];
+const TEXT_FIELDS = ['employer', 'payer', 'station', 'serviceType'];
+
 const DOCUMENT_PATTERNS = {
   T4: {
     patterns: [
@@ -183,7 +206,7 @@ export function classifyDocument(text) {
   }
 
   const type = Object.keys(scores).find((k) => scores[k] === maxScore);
-  const confidence = Math.min(maxScore / 3, 1); // Normalize to 0-1
+  const confidence = Math.min(maxScore / CONFIDENCE_NORMALIZATION_FACTOR, 1); // Normalize to 0-1
 
   return { type, confidence: Math.round(confidence * 100) / 100 };
 }
@@ -204,30 +227,12 @@ export function extractDocumentData(text, docType) {
       let value = match[1] || match[0];
 
       // Clean up numeric values
-      if (
-        [
-          'amount',
-          'income',
-          'taxDeducted',
-          'taxWithheld',
-          'cpp',
-          'ei',
-          'qpp',
-          'ppip',
-          'grossEarnings',
-          'tips',
-          'fees',
-          'grossIncome',
-          'netAmount',
-          'monthlyCost',
-          'businessUse',
-        ].includes(field)
-      ) {
+      if (NUMERIC_FIELDS.includes(field)) {
         value = parseFloat(value.replace(/,/g, '')) || 0;
       }
 
       // Clean up text values
-      if (['employer', 'payer', 'station', 'serviceType'].includes(field)) {
+      if (TEXT_FIELDS.includes(field)) {
         value = value.trim();
       }
 
@@ -257,7 +262,7 @@ export function categorizeExpense(documentData) {
         deductibleAmount: (data.amount || 0) * 0.8,
         description: `Fuel - ${data.station || 'Gas Station'} - ${data.date || 'N/A'}`,
         amount: data.amount || 0,
-        taxSavings: ((data.amount || 0) * 0.8 * 0.3).toFixed(2), // Approximate 30% tax rate
+        taxSavings: ((data.amount || 0) * 0.8 * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'MAINTENANCE':
@@ -268,7 +273,7 @@ export function categorizeExpense(documentData) {
         deductibleAmount: data.amount || 0,
         description: `${data.serviceType || 'Maintenance'} - ${data.date || 'N/A'}`,
         amount: data.amount || 0,
-        taxSavings: ((data.amount || 0) * 0.3).toFixed(2),
+        taxSavings: ((data.amount || 0) * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'INSURANCE':
@@ -279,7 +284,11 @@ export function categorizeExpense(documentData) {
         deductibleAmount: (data.amount || 0) * ((data.businessUse || 80) / 100),
         description: `Insurance - ${data.coveragePeriod || 'Annual'}`,
         amount: data.amount || 0,
-        taxSavings: ((data.amount || 0) * ((data.businessUse || 80) / 100) * 0.3).toFixed(2),
+        taxSavings: (
+          (data.amount || 0) *
+          ((data.businessUse || 80) / 100) *
+          DEFAULT_TAX_RATE
+        ).toFixed(2),
       };
 
     case 'PARKING_TOLL':
@@ -290,7 +299,7 @@ export function categorizeExpense(documentData) {
         deductibleAmount: data.amount || 0,
         description: `Parking/Toll - ${data.location || ''} - ${data.date || 'N/A'}`,
         amount: data.amount || 0,
-        taxSavings: ((data.amount || 0) * 0.3).toFixed(2),
+        taxSavings: ((data.amount || 0) * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'PHONE_BILL':
@@ -301,7 +310,7 @@ export function categorizeExpense(documentData) {
         deductibleAmount: (data.monthlyCost || 0) * 0.3,
         description: `Phone/Data - Business portion`,
         amount: data.monthlyCost || 0,
-        taxSavings: ((data.monthlyCost || 0) * 0.3 * 0.3).toFixed(2),
+        taxSavings: ((data.monthlyCost || 0) * 0.3 * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'REGISTRATION':
@@ -312,7 +321,7 @@ export function categorizeExpense(documentData) {
         deductibleAmount: (data.fees || 0) * 0.8,
         description: `Vehicle Registration - ${data.date || 'N/A'}`,
         amount: data.fees || 0,
-        taxSavings: ((data.fees || 0) * 0.8 * 0.3).toFixed(2),
+        taxSavings: ((data.fees || 0) * 0.8 * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'UBER_SUMMARY':
@@ -332,7 +341,7 @@ export function categorizeExpense(documentData) {
         trips: data.trips || 0,
         distance: data.distance || 0,
         description: `${type === 'UBER_SUMMARY' ? 'Uber' : type === 'LYFT_SUMMARY' ? 'Lyft' : 'Taxi'} income`,
-        additionalTax: (income * 0.3).toFixed(2), // Approximate tax impact
+        additionalTax: (income * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'T4':
@@ -361,7 +370,7 @@ export function categorizeExpense(documentData) {
         amount: data.amount || 0,
         taxWithheld: data.taxWithheld || 0,
         description: `T4A - ${data.payer || 'Other income'}`,
-        additionalTax: ((data.amount || 0) * 0.3).toFixed(2),
+        additionalTax: ((data.amount || 0) * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     case 'RL2':
@@ -372,7 +381,7 @@ export function categorizeExpense(documentData) {
         benefitType: data.benefitType || 'Benefits',
         amount: data.amount || 0,
         description: `RL-2 - ${data.benefitType || 'Benefits'}`,
-        additionalTax: ((data.amount || 0) * 0.3).toFixed(2),
+        additionalTax: ((data.amount || 0) * DEFAULT_TAX_RATE).toFixed(2),
       };
 
     default:
