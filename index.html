@@ -430,6 +430,214 @@
           grid-template-columns: 1fr;
         }
       }
+      /* Document Upload Interface Styles */
+      .document-upload-container {
+        margin-top: 2rem;
+      }
+      .drop-zone {
+        border: 3px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.03) 100%);
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .drop-zone:hover,
+      .drop-zone.drag-over {
+        border-color: var(--accent);
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.08) 100%);
+        transform: scale(1.01);
+      }
+      .drop-zone-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+      .drop-zone-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+      }
+      .drop-zone-hint {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .camera-capture {
+        margin-top: 2rem;
+        padding: 2rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-align: center;
+      }
+      .camera-capture video {
+        width: 100%;
+        max-width: 640px;
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+      }
+      .text-input-zone {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .text-input-zone label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+      }
+      .processing-status {
+        margin-top: 2rem;
+        padding: 2rem;
+        background: var(--accent-light);
+        border: 1px solid var(--accent);
+        border-radius: var(--radius);
+        text-align: center;
+      }
+      .spinner {
+        border: 4px solid var(--border);
+        border-top: 4px solid var(--accent);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .document-results {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.05) 0%,
+          rgba(16, 185, 129, 0.02) 100%
+        );
+        border: 1px solid var(--success);
+        border-radius: var(--radius);
+      }
+      .document-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        box-shadow: var(--shadow);
+      }
+      .document-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .document-type {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .confidence-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      .confidence-high {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+      .confidence-medium {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+      .confidence-low {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+      .extracted-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .field-item {
+        padding: 0.75rem;
+        background: var(--bg);
+        border-radius: 6px;
+      }
+      .field-label {
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+      }
+      .field-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .validation-warnings {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(245, 158, 11, 0.05);
+        border: 1px solid var(--warning);
+        border-radius: 6px;
+      }
+      .warning-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        color: var(--warning);
+        font-size: 0.9rem;
+      }
+      .instructions-box {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .instructions-box h3 {
+        margin-bottom: 1rem;
+        color: var(--accent);
+      }
+      .supported-docs-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+      }
+      .supported-docs-list li {
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+      .supported-docs-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--success);
+        font-weight: 700;
+      }
+      .instructions-note {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(13, 148, 136, 0.05);
+        border-left: 4px solid var(--accent);
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
       /* Footer */
       footer {
         margin-top: 3rem;
@@ -579,6 +787,10 @@
         <button class="tab-btn" data-tab="selfemploy">
           <span class="tab-icon">💼</span
           ><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span>
+        </button>
+        <button class="tab-btn" data-tab="documents">
+          <span class="tab-icon">📄</span
+          ><span class="tab-label" data-i18n="tabs.documents">Documents automatisés</span>
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -777,6 +989,103 @@
           </div>
         </div>
       </section>
+      <section id="documents" class="tab-content">
+        <h2>📄 <span data-i18n="documents.title">Traitement automatisé de documents</span></h2>
+        <p data-i18n="documents.description">
+          Téléchargez vos T4, RL-1, relevés Uber/Lyft et reçus pour extraction automatique des
+          données.
+        </p>
+
+        <!-- Upload Interface -->
+        <div class="document-upload-container">
+          <!-- Drag & Drop Zone -->
+          <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-icon">📁</div>
+            <p class="drop-zone-text" data-i18n="documents.dropText">
+              Glissez-déposez vos documents ici
+            </p>
+            <p class="drop-zone-hint" data-i18n="documents.orClick">ou cliquez pour sélectionner</p>
+            <input
+              type="file"
+              id="fileInput"
+              multiple
+              accept=".pdf,.jpg,.jpeg,.png,.txt"
+              style="display: none"
+            />
+            <div class="btn-group" style="margin-top: 1rem">
+              <button class="btn" onclick="document.getElementById('fileInput').click()">
+                📁 <span data-i18n="documents.selectFiles">Sélectionner des fichiers</span>
+              </button>
+              <button class="btn btn-secondary" onclick="openCamera()">
+                📷 <span data-i18n="documents.takePhoto">Prendre une photo</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Camera Capture (hidden by default) -->
+          <div class="camera-capture" id="cameraCapture" style="display: none">
+            <video id="cameraPreview" autoplay playsinline></video>
+            <canvas id="cameraCanvas" style="display: none"></canvas>
+            <div class="btn-group">
+              <button class="btn" onclick="capturePhoto()">
+                📸 <span data-i18n="documents.capture">Capturer</span>
+              </button>
+              <button class="btn btn-secondary" onclick="closeCamera()">
+                ✖ <span data-i18n="documents.cancel">Annuler</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Text Input Fallback -->
+          <div class="text-input-zone">
+            <label for="documentText" data-i18n="documents.textLabel">
+              Ou collez le texte du document ici:
+            </label>
+            <textarea
+              id="documentText"
+              rows="6"
+              placeholder="Collez le texte de votre T4, RL-1, relevé Uber, ou reçu..."
+              data-i18n-placeholder="documents.textPlaceholder"
+            ></textarea>
+            <button class="btn" onclick="processText()" style="margin-top: 0.5rem">
+              🔍 <span data-i18n="documents.processText">Traiter le texte</span>
+            </button>
+          </div>
+
+          <!-- Processing Status -->
+          <div id="processingStatus" class="processing-status" style="display: none">
+            <div class="spinner"></div>
+            <p data-i18n="documents.processing">Traitement en cours...</p>
+          </div>
+
+          <!-- Results Display -->
+          <div id="documentResults" class="document-results" style="display: none">
+            <div class="result-title">
+              ✅ <span data-i18n="documents.resultsTitle">Documents traités</span>
+            </div>
+            <div id="resultsContainer"></div>
+          </div>
+
+          <!-- Instructions -->
+          <div class="instructions-box">
+            <h3>📋 <span data-i18n="documents.supportedTitle">Documents supportés:</span></h3>
+            <ul class="supported-docs-list">
+              <li><strong>T4 / T4A</strong> - Relevé d'emploi canadien</li>
+              <li><strong>RL-1 / RL-2</strong> - Relevé d'emploi québécois</li>
+              <li><strong>Uber / Lyft</strong> - Relevés hebdomadaires/mensuels</li>
+              <li><strong>Reçus d'essence</strong> - Shell, Esso, Petro-Canada, etc.</li>
+              <li><strong>Entretien véhicule</strong> - Réparations, pneus, vidange</li>
+              <li><strong>Assurance</strong> - Primes annuelles</li>
+              <li><strong>Stationnement / Péages</strong> - Reçus</li>
+              <li><strong>Téléphone</strong> - Factures mensuelles</li>
+            </ul>
+            <p class="instructions-note" data-i18n="documents.note">
+              <strong>Note:</strong> Les données sont traitées localement dans votre navigateur.
+              Aucune information n'est envoyée à des serveurs externes.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
     <footer>
       <div class="footer-content">
@@ -926,6 +1235,303 @@
         document.getElementById('qppNetCost').textContent = '$' + r.netCost.toLocaleString();
       }
       setLang('fr');
+    </script>
+    <script type="module">
+      // Import document processing modules
+      import { quickProcess } from './document-processor.js';
+
+      // Global state for document processing
+      let processedDocuments = [];
+
+      // Drag and drop functionality
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+
+      if (dropZone) {
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+          dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('drag-over');
+          const files = Array.from(e.dataTransfer.files);
+          await processFiles(files);
+        });
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+          const files = Array.from(e.target.files);
+          await processFiles(files);
+        });
+      }
+
+      // Process uploaded files
+      async function processFiles(files) {
+        if (files.length === 0) return;
+
+        showProcessingStatus(true);
+        const results = [];
+
+        for (const file of files) {
+          try {
+            // For now, read file as text (PDF processing would need additional library)
+            const text = await readFileAsText(file);
+            const result = quickProcess(text);
+            result.fileName = file.name;
+            results.push(result);
+          } catch (error) {
+            console.error('Error processing file:', file.name, error);
+            results.push({
+              success: false,
+              fileName: file.name,
+              error: error.message,
+              documentType: 'UNKNOWN',
+            });
+          }
+        }
+
+        processedDocuments = processedDocuments.concat(results);
+        showProcessingStatus(false);
+        displayResults(results);
+      }
+
+      // Read file as text
+      function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsText(file);
+        });
+      }
+
+      // Process text input
+      window.processText = function () {
+        const text = document.getElementById('documentText').value;
+        if (!text.trim()) {
+          alert('Veuillez entrer du texte à traiter');
+          return;
+        }
+
+        showProcessingStatus(true);
+        setTimeout(() => {
+          const result = quickProcess(text);
+          result.fileName = 'Texte saisi manuellement';
+          processedDocuments.push(result);
+          showProcessingStatus(false);
+          displayResults([result]);
+          document.getElementById('documentText').value = '';
+        }, 500);
+      };
+
+      // Camera functions
+      let cameraStream = null;
+
+      window.openCamera = async function () {
+        try {
+          const cameraCapture = document.getElementById('cameraCapture');
+          const video = document.getElementById('cameraPreview');
+
+          cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+          });
+          video.srcObject = cameraStream;
+          cameraCapture.style.display = 'block';
+          dropZone.style.display = 'none';
+        } catch (error) {
+          console.error('Camera error:', error);
+          alert("Impossible d'accéder à la caméra. Veuillez vérifier les permissions.");
+        }
+      };
+
+      window.closeCamera = function () {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+        }
+        document.getElementById('cameraCapture').style.display = 'none';
+        dropZone.style.display = 'block';
+      };
+
+      window.capturePhoto = function () {
+        const video = document.getElementById('cameraPreview');
+        const canvas = document.getElementById('cameraCanvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+
+        // Convert canvas to blob and process
+        canvas.toBlob(async (blob) => {
+          closeCamera();
+          alert(
+            'Photo capturée! Le traitement OCR nécessite une bibliothèque supplémentaire (Tesseract.js) non encore intégrée. Veuillez utiliser le texte manuel pour le moment.'
+          );
+        });
+      };
+
+      // Show/hide processing status
+      function showProcessingStatus(show) {
+        const status = document.getElementById('processingStatus');
+        if (status) {
+          status.style.display = show ? 'block' : 'none';
+        }
+      }
+
+      // Display processing results
+      function displayResults(results) {
+        const container = document.getElementById('resultsContainer');
+        const resultsDiv = document.getElementById('documentResults');
+
+        if (!container || !resultsDiv) return;
+
+        resultsDiv.style.display = 'block';
+
+        results.forEach((result) => {
+          const card = createDocumentCard(result);
+          container.appendChild(card);
+        });
+
+        // Scroll to results
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Create a document card for display
+      function createDocumentCard(result) {
+        const card = document.createElement('div');
+        card.className = 'document-card';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'document-card-header';
+
+        const typeDiv = document.createElement('div');
+        typeDiv.className = 'document-type';
+        typeDiv.textContent =
+          result.documentType + (result.fileName ? ` - ${result.fileName}` : '');
+
+        const badge = document.createElement('span');
+        badge.className = 'confidence-badge';
+        if (result.validation && result.validation.confidenceScore) {
+          const score = result.validation.confidenceScore;
+          badge.textContent = `${score}% confiance`;
+          badge.classList.add(
+            score >= 80 ? 'confidence-high' : score >= 50 ? 'confidence-medium' : 'confidence-low'
+          );
+        } else {
+          badge.textContent = result.success ? '✓ Traité' : '✗ Échec';
+          badge.classList.add(result.success ? 'confidence-high' : 'confidence-low');
+        }
+
+        header.appendChild(typeDiv);
+        header.appendChild(badge);
+        card.appendChild(header);
+
+        // Error message if failed
+        if (!result.success && result.error) {
+          const errorDiv = document.createElement('div');
+          errorDiv.style.padding = '1rem';
+          errorDiv.style.background = 'rgba(239, 68, 68, 0.05)';
+          errorDiv.style.border = '1px solid var(--danger)';
+          errorDiv.style.borderRadius = '6px';
+          errorDiv.style.color = 'var(--danger)';
+          errorDiv.textContent = '⚠️ ' + result.error;
+          card.appendChild(errorDiv);
+          return card;
+        }
+
+        // Extracted fields
+        if (result.extractedData && Object.keys(result.extractedData).length > 0) {
+          const fieldsDiv = document.createElement('div');
+          fieldsDiv.className = 'extracted-fields';
+
+          Object.entries(result.extractedData).forEach(([key, value]) => {
+            const fieldItem = document.createElement('div');
+            fieldItem.className = 'field-item';
+
+            const label = document.createElement('div');
+            label.className = 'field-label';
+            label.textContent = formatFieldName(key);
+
+            const valueDiv = document.createElement('div');
+            valueDiv.className = 'field-value';
+            valueDiv.textContent = formatFieldValue(value);
+
+            fieldItem.appendChild(label);
+            fieldItem.appendChild(valueDiv);
+            fieldsDiv.appendChild(fieldItem);
+          });
+
+          card.appendChild(fieldsDiv);
+        }
+
+        // Warnings
+        if (
+          result.validation &&
+          result.validation.warnings &&
+          result.validation.warnings.length > 0
+        ) {
+          const warningsDiv = document.createElement('div');
+          warningsDiv.className = 'validation-warnings';
+
+          const title = document.createElement('strong');
+          title.textContent = '⚠️ Avertissements:';
+          warningsDiv.appendChild(title);
+
+          result.validation.warnings.forEach((warning) => {
+            const item = document.createElement('div');
+            item.className = 'warning-item';
+            item.textContent = '• ' + warning;
+            warningsDiv.appendChild(item);
+          });
+
+          card.appendChild(warningsDiv);
+        }
+
+        return card;
+      }
+
+      // Format field names for display
+      function formatFieldName(name) {
+        const nameMap = {
+          employmentIncome: "Revenu d'emploi",
+          cpp: 'CPP',
+          qpp: 'RRQ',
+          ei: 'AE',
+          ppip: 'RPAP',
+          incomeTax: 'Impôt retenu',
+          grossFares: 'Revenus bruts',
+          tips: 'Pourboires',
+          distance: 'Distance (km)',
+          total: 'Total',
+          date: 'Date',
+          vendor: 'Fournisseur',
+          station: 'Station',
+          liters: 'Litres',
+        };
+        return nameMap[name] || name;
+      }
+
+      // Format field values for display
+      function formatFieldValue(value) {
+        if (typeof value === 'number') {
+          return (
+            '$' +
+            value.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          );
+        }
+        return value;
+      }
     </script>
   </body>
 </html>

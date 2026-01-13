@@ -6,10 +6,6 @@ import {
   extractFields,
   extractValue,
   DOCUMENT_TYPES,
-  T4_PATTERNS,
-  RL1_PATTERNS,
-  UBER_PATTERNS,
-  GAS_RECEIPT_PATTERNS,
 } from '../pattern-library.js';
 
 describe('Pattern Library Tests', () => {
