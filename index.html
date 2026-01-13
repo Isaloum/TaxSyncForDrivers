@@ -736,6 +736,27 @@
           justify-content: center;
         }
       }
+      /* Document Upload Styles */
+      .drop-zone {
+        border: 2px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 2rem;
+        text-align: center;
+        background: #fff;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .drop-zone:hover {
+        border-color: var(--accent);
+        background: var(--accent-light);
+      }
+      .drop-zone p {
+        margin: 0.5rem 0;
+        color: var(--muted);
+      }
+      .document-uploader {
+        margin-top: 1rem;
+      }
     </style>
   </head>
   <body>
@@ -779,6 +800,10 @@
         <button class="tab-btn active" data-tab="vehicle">
           <span class="tab-icon">🚙</span
           ><span class="tab-label" data-i18n="tabs.vehicle">Dépenses véhicule</span>
+        </button>
+        <button class="tab-btn" data-tab="documents">
+          <span class="tab-icon">📄</span
+          ><span class="tab-label" data-i18n="tabs.documents">Téléverser documents</span>
         </button>
         <button class="tab-btn" data-tab="quarterly">
           <span class="tab-icon">📅</span
@@ -868,6 +893,164 @@
             <div class="savings-label" data-i18n="vehicle.totalDeduction">
               Déduction totale recommandée
             </div>
+          </div>
+        </div>
+      </section>
+      <section id="documents" class="tab-content">
+        <h2>📄 <span data-i18n="docs.title">Automatisation de documents</span></h2>
+        <p data-i18n="docs.subtitle">
+          Téléversez documents fiscaux, reçus et relevés de revenus pour traitement automatique
+        </p>
+
+        <!-- Document Upload Section -->
+        <fieldset style="margin-top: 1.5rem">
+          <legend data-i18n="docs.upload">Téléverser documents</legend>
+          <div class="document-uploader">
+            <div class="drop-zone" id="dropZone">
+              <p data-i18n="docs.dropzone">
+                Glissez-déposez des documents ici ou cliquez pour parcourir
+              </p>
+              <input
+                type="file"
+                id="fileInput"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,.txt"
+                style="display: none"
+              />
+              <button class="btn" onclick="document.getElementById('fileInput').click()">
+                <span data-i18n="docs.upload">Téléverser documents</span>
+              </button>
+              <p style="font-size: 0.875rem; color: var(--muted); margin-top: 0.5rem">
+                <span data-i18n="docs.supported">Supporté: PDF, JPG, PNG, TXT</span>
+              </p>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Text Input for Manual Paste -->
+        <fieldset>
+          <legend>Manual Text Input</legend>
+          <div class="form-group">
+            <label for="documentText">Paste document text here (for testing):</label>
+            <textarea
+              id="documentText"
+              rows="8"
+              placeholder="Paste your T4, RL-1, Uber summary, or receipt text here..."
+              style="font-family: monospace; font-size: 0.9rem"
+            ></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="processDocumentText()">
+              <span data-i18n="docs.processing">Process Document</span>
+            </button>
+            <button class="btn btn-secondary" onclick="clearDocumentForm()">
+              <span data-i18n="common.clear">Clear</span>
+            </button>
+          </div>
+        </fieldset>
+
+        <!-- Email Instructions -->
+        <fieldset>
+          <legend data-i18n="docs.email">Envoyer par courriel</legend>
+          <div style="text-align: center; padding: 1rem">
+            <p data-i18n="docs.emailInstructions">Transférer documents à:</p>
+            <p style="font-size: 1.25rem; font-weight: 700; color: var(--accent); margin: 0.5rem 0">
+              <span data-i18n="docs.emailAddress">docs@taxsyncfordrivers.com</span>
+            </p>
+            <p style="font-size: 0.875rem; color: var(--muted)">
+              Email processing coming soon - currently in demo mode
+            </p>
+          </div>
+        </fieldset>
+
+        <!-- Processing Status -->
+        <div id="processingStatus" style="display: none">
+          <div class="result-box" style="text-align: center">
+            <div class="result-title">
+              <span id="statusIcon">⏳</span>
+              <span id="statusText" data-i18n="docs.processing">Traitement...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Display -->
+        <div id="documentResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="docs.results">Résultats du traitement</span>
+          </div>
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label" data-i18n="docs.docType">Type de document:</div>
+              <div class="result-value" id="docType" style="font-size: 1.25rem">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="docs.confidence">Confiance:</div>
+              <div class="result-value positive" id="docConfidence" style="font-size: 1.25rem">
+                -
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 8px">
+            <h4 style="margin-bottom: 0.5rem" data-i18n="docs.extracted">Données extraites:</h4>
+            <pre
+              id="extractedData"
+              style="
+                font-size: 0.875rem;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                color: var(--text);
+              "
+            ></pre>
+          </div>
+
+          <div
+            style="
+              margin-top: 1rem;
+              padding: 1rem;
+              background: linear-gradient(
+                135deg,
+                var(--accent-light) 0%,
+                rgba(20, 184, 166, 0.05) 100%
+              );
+              border-radius: 8px;
+              border: 1px solid var(--accent);
+            "
+          >
+            <h4 style="margin-bottom: 0.5rem; color: var(--accent)">
+              <span data-i18n="docs.category">Catégorie:</span> <span id="categoryName">-</span>
+            </h4>
+            <div class="result-grid" style="margin-top: 1rem">
+              <div class="result-item">
+                <div class="result-label" id="amountLabel">Amount:</div>
+                <div class="result-value" id="categoryAmount">$0</div>
+              </div>
+              <div class="result-item" id="deductionItem" style="display: none">
+                <div class="result-label" data-i18n="docs.deduction">Déduction:</div>
+                <div class="result-value positive" id="deductibleAmount">$0</div>
+              </div>
+              <div class="result-item" id="savingsItem" style="display: none">
+                <div class="result-label" data-i18n="docs.taxSavings">Économies d'impôt:</div>
+                <div class="result-value positive" id="taxSavings">$0</div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="warningsSection"
+            style="
+              display: none;
+              margin-top: 1rem;
+              padding: 1rem;
+              background: #fef3c7;
+              border: 1px solid #f59e0b;
+              border-radius: 8px;
+            "
+          >
+            <h4 style="color: #f59e0b; margin-bottom: 0.5rem">
+              ⚠️ <span data-i18n="docs.warnings">Avertissements:</span>
+            </h4>
+            <ul id="warningsList" style="margin: 0; padding-left: 1.5rem"></ul>
           </div>
         </div>
       </section>
@@ -1128,6 +1311,10 @@
     </footer>
     <script src="translations.js"></script>
     <script src="driver-calculator.js"></script>
+    <script type="module">
+      import DocumentAutomation from './document-automation.js';
+      window.DocumentAutomation = DocumentAutomation;
+    </script>
     <script>
       // Auto-update year in header
       document.addEventListener('DOMContentLoaded', function () {
@@ -1234,6 +1421,205 @@
           '$' + r.deductiblePortion.toLocaleString();
         document.getElementById('qppNetCost').textContent = '$' + r.netCost.toLocaleString();
       }
+
+      // Document Processing Functions
+      function processDocumentText() {
+        const text = document.getElementById('documentText').value.trim();
+
+        if (!text) {
+          alert('Please enter document text');
+          return;
+        }
+
+        // Show processing status
+        showProcessingStatus('📄 Reading document...');
+
+        setTimeout(() => {
+          showProcessingStatus('🔍 Extracting data...');
+
+          setTimeout(() => {
+            showProcessingStatus('🧮 Calculating tax impact...');
+
+            setTimeout(() => {
+              // Process the document
+              const result = DocumentAutomation.processDocument(text);
+
+              // Hide processing status
+              document.getElementById('processingStatus').style.display = 'none';
+
+              if (result.success) {
+                displayDocumentResults(result);
+                showProcessingStatus('✅ Complete! Document processed successfully');
+                setTimeout(() => {
+                  document.getElementById('processingStatus').style.display = 'none';
+                }, 2000);
+              } else {
+                alert('Error: ' + (result.error || 'Unable to process document'));
+                console.error('Processing failed:', result);
+              }
+            }, 500);
+          }, 500);
+        }, 500);
+      }
+
+      function showProcessingStatus(message) {
+        const statusEl = document.getElementById('processingStatus');
+        const textEl = document.getElementById('statusText');
+        const iconEl = document.getElementById('statusIcon');
+
+        statusEl.style.display = 'block';
+        textEl.textContent = message;
+
+        if (message.includes('✅')) {
+          iconEl.textContent = '✅';
+        } else if (message.includes('📄')) {
+          iconEl.textContent = '📄';
+        } else if (message.includes('🔍')) {
+          iconEl.textContent = '🔍';
+        } else if (message.includes('🧮')) {
+          iconEl.textContent = '🧮';
+        } else {
+          iconEl.textContent = '⏳';
+        }
+      }
+
+      function displayDocumentResults(result) {
+        // Show results section
+        document.getElementById('documentResults').style.display = 'block';
+
+        // Display document type and confidence
+        document.getElementById('docType').textContent = result.type.replace(/_/g, ' ');
+        document.getElementById('docConfidence').textContent =
+          (result.confidence * 100).toFixed(0) + '%';
+
+        // Display extracted data
+        document.getElementById('extractedData').textContent = JSON.stringify(result.data, null, 2);
+
+        // Display category information
+        const category = result.category;
+        document.getElementById('categoryName').textContent =
+          category.category?.replace(/_/g, ' ') || 'N/A';
+
+        // Set amount label based on type
+        const amountLabel = document.getElementById('amountLabel');
+        if (category.type === 'income') {
+          amountLabel.textContent = 'Income Amount:';
+        } else {
+          amountLabel.textContent = 'Expense Amount:';
+        }
+
+        document.getElementById('categoryAmount').textContent =
+          '$' + (category.amount || 0).toLocaleString();
+
+        // Show/hide deduction and savings for expenses
+        const deductionItem = document.getElementById('deductionItem');
+        const savingsItem = document.getElementById('savingsItem');
+
+        if (category.type === 'expense') {
+          deductionItem.style.display = 'block';
+          savingsItem.style.display = 'block';
+          document.getElementById('deductibleAmount').textContent =
+            '$' + (category.deductibleAmount || 0).toLocaleString();
+          document.getElementById('taxSavings').textContent = '$' + (category.taxSavings || 0);
+        } else {
+          deductionItem.style.display = 'none';
+          savingsItem.style.display = 'none';
+        }
+
+        // Display warnings if any
+        if (result.warnings && result.warnings.length > 0) {
+          const warningsSection = document.getElementById('warningsSection');
+          const warningsList = document.getElementById('warningsList');
+
+          warningsSection.style.display = 'block';
+          warningsList.innerHTML = '';
+
+          result.warnings.forEach((warning) => {
+            const li = document.createElement('li');
+            li.textContent = warning;
+            warningsList.appendChild(li);
+          });
+        } else {
+          document.getElementById('warningsSection').style.display = 'none';
+        }
+
+        // Scroll to results
+        document
+          .getElementById('documentResults')
+          .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function clearDocumentForm() {
+        document.getElementById('documentText').value = '';
+        document.getElementById('documentResults').style.display = 'none';
+        document.getElementById('processingStatus').style.display = 'none';
+      }
+
+      // File upload handling
+      const fileInput = document.getElementById('fileInput');
+      const dropZone = document.getElementById('dropZone');
+
+      if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
+      }
+
+      if (dropZone) {
+        dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.style.borderColor = 'var(--accent)';
+          dropZone.style.background = 'var(--accent-light)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          dropZone.style.borderColor = 'var(--border)';
+          dropZone.style.background = '#fff';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.style.borderColor = 'var(--border)';
+          dropZone.style.background = '#fff';
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleFiles(files);
+          }
+        });
+      }
+
+      function handleFileSelect(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+          handleFiles(files);
+        }
+      }
+
+      function handleFiles(files) {
+        // For now, just show an alert that file upload is in demo mode
+        // In a real implementation, you would use FileReader to read text from images/PDFs
+        // and pass it to an OCR library like Tesseract.js
+
+        const file = files[0];
+        const fileName = file.name;
+        const fileExt = fileName.split('.').pop().toLowerCase();
+
+        if (fileExt === 'txt') {
+          // Read text file
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const text = e.target.result;
+            document.getElementById('documentText').value = text;
+            processDocumentText();
+          };
+          reader.readAsText(file);
+        } else {
+          alert(
+            'File upload with OCR is coming soon! For now, please:\n\n1. Use text extraction from your PDF/image\n2. Paste the text in the "Manual Text Input" field\n3. Click "Process Document"\n\nOr try these sample texts:\n\n• T4: "Box 14: Employment income $50,000.00"\n• Uber: "Uber Weekly Summary\\nGross earnings: $1,250.50\\n78 trips"\n• Gas Receipt: "Shell\\nTotal: $67.45"'
+          );
+        }
+      }
+
       setLang('fr');
     </script>
     <script type="module">
