@@ -4,6 +4,31 @@
 
 set -e  # Exit on error
 
+# Check for required commands
+check_dependencies() {
+    local missing_deps=0
+    
+    if ! command -v curl &> /dev/null; then
+        echo "Error: curl is required but not installed."
+        missing_deps=1
+    fi
+    
+    # bc is optional - we'll use bash arithmetic if not available
+    if ! command -v bc &> /dev/null; then
+        echo "Warning: bc not found, using bash arithmetic for calculations"
+        USE_BC=0
+    else
+        USE_BC=1
+    fi
+    
+    if [ $missing_deps -eq 1 ]; then
+        exit 1
+    fi
+}
+
+USE_BC=1
+check_dependencies
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -69,7 +94,13 @@ if [ "$HTTP_CODE" = "200" ]; then
     
     echo ""
     echo "Response body:"
-    echo "$RESPONSE_BODY" | python3 -m json.tool 2>/dev/null || echo "$RESPONSE_BODY"
+    if command -v python3 &> /dev/null; then
+        echo "$RESPONSE_BODY" | python3 -m json.tool 2>/dev/null || echo "$RESPONSE_BODY"
+    elif command -v jq &> /dev/null; then
+        echo "$RESPONSE_BODY" | jq 2>/dev/null || echo "$RESPONSE_BODY"
+    else
+        echo "$RESPONSE_BODY"
+    fi
 else
     echo -e "${RED}❌ Health check failed with HTTP code: ${HTTP_CODE}${NC}"
     echo "Response: $RESPONSE_BODY"
@@ -148,14 +179,24 @@ echo -e "${BLUE}Test 5: Response Time${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 RESPONSE_TIME=$(curl -s -w "%{time_total}" -o /dev/null "${HEALTH_URL}")
-RESPONSE_TIME_MS=$(echo "$RESPONSE_TIME * 1000" | bc)
+
+# Convert to milliseconds - use integer arithmetic
+if [ "$USE_BC" -eq 1 ]; then
+    RESPONSE_TIME_MS=$(echo "$RESPONSE_TIME * 1000" | bc)
+else
+    # Bash arithmetic - multiply by 1000 and handle decimal
+    RESPONSE_TIME_MS=$(awk "BEGIN {printf \"%.0f\", $RESPONSE_TIME * 1000}")
+fi
 
 echo "Response time: ${RESPONSE_TIME_MS} ms"
 
-if (( $(echo "$RESPONSE_TIME < 2.0" | bc -l) )); then
+# Check response time thresholds using integer comparison
+RESPONSE_TIME_INT=${RESPONSE_TIME_MS%.*}  # Remove decimal part if any
+
+if [ "$RESPONSE_TIME_INT" -lt 2000 ]; then
     echo -e "${GREEN}✅ Response time is good (< 2 seconds)${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
-elif (( $(echo "$RESPONSE_TIME < 5.0" | bc -l) )); then
+elif [ "$RESPONSE_TIME_INT" -lt 5000 ]; then
     echo -e "${YELLOW}⚠️  Response time is acceptable (< 5 seconds)${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
 else
