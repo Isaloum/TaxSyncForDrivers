@@ -52,7 +52,7 @@ Why?
 
 #### How it works:
 1. 📧 **Forward or email** your tax documents and receipts
-2. 🤖 **AI processes** - Extracts data automatically
+2. 🤖 **AI processes** - Extracts data automatically (< 30 seconds)
 3. 💰 **Tax updated** - Your profile is updated with income/expenses
 4. ✉️ **Get results** - Receive detailed summary email
 
@@ -62,8 +62,19 @@ Why?
 - **Multi-Document Support** - Process multiple attachments at once
 - **Beautiful HTML Emails** - Professional response templates
 - **Tax Impact Summary** - Instant calculations in your inbox
+- **Production Ready** - Deployed and operational for demos
 
-📚 **[Complete Email Setup Guide](EMAIL_INTEGRATION_GUIDE.md)**
+#### 🚀 Deployment Options:
+- **Vercel** (Serverless) - Recommended for easy deployment
+- **Railway** - Persistent server with always-on capability
+- **Render** - Alternative hosting with Docker support
+- **Docker** - Self-hosted deployment for full control
+
+📚 **Documentation:**
+- **[Deployment Guide](DEPLOYMENT.md)** - Complete deployment instructions
+- **[Mailgun Setup](MAILGUN_SETUP.md)** - Email service configuration
+- **[Demo Guide](DEMO_GUIDE.md)** - Client demonstration preparation
+- **[Email Integration Guide](EMAIL_INTEGRATION_GUIDE.md)** - Technical details
 
 ### 6. 📄 **Document Upload & Processing**
 

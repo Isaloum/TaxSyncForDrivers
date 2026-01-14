@@ -12,7 +12,10 @@
     "test:all": "npm test && npm run test:e2e",
     "prepare": "husky install",
     "server": "node email-server.js",
-    "server:dev": "NODE_ENV=development node email-server.js"
+    "server:dev": "NODE_ENV=development node email-server.js",
+    "deploy:test": "bash test-deployment.sh",
+    "deploy:vercel": "vercel --prod",
+    "deploy:docker": "docker build -t taxsync-email-automation . && docker run -p 3000:3000 --env-file .env taxsync-email-automation"
   },
   "dependencies": {
     "express": "^4.18.2"
