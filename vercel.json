@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "email-server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/webhook/(.*)",
+      "dest": "/email-server.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/email-server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

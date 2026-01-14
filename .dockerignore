@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Test files and coverage
+tests/
+test-results/
+playwright-report/
+coverage/
+*.lcov
+*.test.js
+
+# Documentation (not needed in container)
+*.md
+!README.md
+
+# Git
+.git/
+.github/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Deployment configs (only need one)
+vercel.json
+railway.json
+Procfile
+
+# Development scripts
+test-deployment.sh
+
+# Temporary files
+tmp/
+temp/
+*.tmp

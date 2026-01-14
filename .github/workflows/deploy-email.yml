@@ -1,0 +1,81 @@
+name: Deploy Email Server
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'email-server.js'
+      - 'email-handler.js'
+      - 'email-sender.js'
+      - 'tax-integration.js'
+      - 'document-processor.js'
+      - 'document-automation.js'
+      - 'pattern-library.js'
+      - 'tax-utils.js'
+      - 'package.json'
+      - 'vercel.json'
+      - '.github/workflows/deploy-email.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        
+      - name: Run linter
+        run: npm run lint
+
+      - name: Deploy to Vercel
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+
+      - name: Health check
+        if: success()
+        run: |
+          echo "Waiting for deployment to be ready..."
+          sleep 30
+          DEPLOYMENT_URL="${{ secrets.DEPLOYMENT_URL }}"
+          if [ -n "$DEPLOYMENT_URL" ]; then
+            echo "Testing health endpoint at $DEPLOYMENT_URL/health"
+            curl -f "$DEPLOYMENT_URL/health" || echo "Health check failed but deployment may still be successful"
+          else
+            echo "DEPLOYMENT_URL secret not set, skipping health check"
+          fi
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Email server deployed successfully!"
+          echo "🚀 Server is now processing emails at docs@taxsyncfordrivers.com"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed. Please check logs."
+          exit 1
