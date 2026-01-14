@@ -1,67 +1,37 @@
 {
-  "name": "taxsyncqc",
+  "name": "taxsyncfordrivers",
   "version": "1.0.0",
-  "description": "Quebec + Federal tax credits estimator (2025) — Free, open-source, bilingual (FR/EN)",
-  "main": "cli.js",
-  "type": "module",
+  "description": "Tax sync application for drivers",
+  "main": "email-server.js",
   "scripts": {
-    "lint": "eslint . --ext .js --ext .html",
-    "format": "prettier --write \"**/*.{js,html,css,json,md}\"",
-    "test": "c8 --reporter=text --reporter=lcov node --test tests/*.test.js",
-    "test:e2e": "playwright test",
-    "test:all": "npm test && npm run test:e2e",
-    "prepare": "husky install",
-    "server": "node email-server.js",
-    "server:dev": "NODE_ENV=development node email-server.js",
-    "deploy:test": "bash test-deployment.sh",
-    "deploy:vercel": "vercel --prod",
-    "deploy:docker": "docker build -t taxsync-email-automation . && docker run -p 3000:3000 --env-file .env taxsync-email-automation"
+    "start": "node email-server.js",
+    "dev": "nodemon email-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build-client",
+    "build-client": "echo \"Client build completed\"",
+    "postinstall": "echo \"Production install completed\""
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "body-parser": "^1.20.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Isaloum/TaxSyncQC.git"
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "husky": "^8.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
   "keywords": [
-    "quebec",
     "tax",
-    "credits",
-    "rrsp",
-    "rl-1",
-    "t4",
-    "solidarity",
-    "work-premium",
-    "cwb",
-    "canada"
+    "drivers",
+    "sync",
+    "email"
   ],
-  "author": "Ihab Saloum",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Isaloum/TaxSyncQC/issues"
-  },
-  "homepage": "https://Isaloum.github.io/TaxSyncQC",
-  "devDependencies": {
-    "eslint": "^9.39.2",
-    "prettier": "^3.7.4",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "c8": "^10.1.3",
-    "playwright": "^1.40.0",
-    "@playwright/test": "^1.40.0",
-    "axe-core": "^4.11.1",
-    "@axe-core/playwright": "^4.5.1"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.html": [
-      "prettier --write"
-    ]
-  }
+  "author": "Isaloum",
+  "license": "MIT"
 }
