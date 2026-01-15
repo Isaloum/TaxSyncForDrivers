@@ -80,7 +80,7 @@
       }
       .badge {
         background: var(--accent-light);
-        color: var(--accent);
+        color: #0f766e;
         padding: 0.25rem 0.75rem;
         border-radius: 999px;
         font-size: 0.75rem;
@@ -1180,9 +1180,9 @@
         </fieldset>
         <div class="toggle-container">
           <label class="toggle"
-            ><input type="checkbox" id="showDetailed" /><span class="toggle-slider"></span
+            ><input type="checkbox" id="showDetailed" aria-labelledby="vehicleShowDetailedLabel" /><span class="toggle-slider"></span
           ></label>
-          <span data-i18n="vehicle.showDetailed">Afficher méthode détaillée</span>
+          <span id="vehicleShowDetailedLabel" data-i18n="vehicle.showDetailed">Afficher méthode détaillée</span>
         </div>
         <fieldset id="detailedSection" style="display: none">
           <legend data-i18n="vehicle.detailed">Méthode détaillée (dépenses réelles)</legend>
