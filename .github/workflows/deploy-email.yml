@@ -1,4 +1,4 @@
-name: Deploy Email Server
+name: Email Server CI
 
 on:
   push:
@@ -19,8 +19,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Deploy to Production
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     
     permissions:
@@ -45,37 +45,13 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Deploy to Vercel
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-          working-directory: ./
-
-      - name: Health check
-        if: success()
-        run: |
-          echo "Waiting for deployment to be ready..."
-          sleep 30
-          DEPLOYMENT_URL="${{ secrets.DEPLOYMENT_URL }}"
-          if [ -n "$DEPLOYMENT_URL" ]; then
-            echo "Testing health endpoint at $DEPLOYMENT_URL/health"
-            curl -f "$DEPLOYMENT_URL/health" || echo "Health check failed but deployment may still be successful"
-          else
-            echo "DEPLOYMENT_URL secret not set, skipping health check"
-          fi
-
       - name: Notify on success
         if: success()
         run: |
-          echo "✅ Email server deployed successfully!"
-          echo "🚀 Server is now processing emails at docs@taxsyncfordrivers.com"
+          echo "✅ Email server CI checks passed successfully!"
 
       - name: Notify on failure
         if: failure()
         run: |
-          echo "❌ Deployment failed. Please check logs."
+          echo "❌ CI checks failed. Please check logs."
           exit 1
