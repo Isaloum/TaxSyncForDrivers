@@ -34,7 +34,7 @@ Use this checklist to ensure a successful deployment of the email automation sys
   - Render OR
   - Docker hosting provider
 - [ ] Domain access
-  - Access to DNS settings for taxsyncfordrivers.com
+  - Access to DNS settings for isaloumapps.com
   - Ability to add MX, TXT, CNAME records
 
 ---
@@ -44,7 +44,7 @@ Use this checklist to ensure a successful deployment of the email automation sys
 ### Step 1: AWS SES Configuration
 
 - [ ] **Domain Added**
-  - Domain: taxsyncfordrivers.com
+  - Domain: isaloumapps.com
   - Region selected (US or EU)
   - Status: Waiting for verification
 
@@ -85,7 +85,7 @@ Choose ONE deployment method:
   - Directory: ./
 - [ ] Environment variables added:
   - [ ] MAILGUN_API_KEY
-  - [ ] MAILGUN_DOMAIN (taxsyncfordrivers.com)
+  - [ ] AWS_REGION (isaloumapps.com)
   - [ ] MAILGUN_WEBHOOK_KEY
   - [ ] NODE_ENV (production)
 - [ ] Production deployment (`vercel --prod`)

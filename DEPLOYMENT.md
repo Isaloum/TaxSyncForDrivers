@@ -355,60 +355,70 @@ Send a test email using AWS CLI or the SES console to verify configuration.
 
 ## DNS Setup
 
-### Required DNS Records for Mailgun
+### Required DNS Records for AWS SES
 
-Add these DNS records to your domain registrar (e.g., Namecheap, GoDaddy, Cloudflare):
+Add these DNS records to your domain registrar (e.g., Namecheap, GoDaddy, Cloudflare).
+AWS SES will provide the exact values when you verify your domain.
 
-#### MX Records (for receiving emails):
-```
-Type: MX
-Host: taxsyncfordrivers.com
-Priority: 10
-Value: mxa.mailgun.org
-
-Type: MX  
-Host: taxsyncfordrivers.com
-Priority: 10
-Value: mxb.mailgun.org
-```
-
-#### TXT Records (for verification and SPF):
-```
-Type: TXT
-Host: taxsyncfordrivers.com
-Value: v=spf1 include:mailgun.org ~all
-
-Type: TXT
-Host: mailo._domainkey.taxsyncfordrivers.com
-Value: [Get this from Mailgun Domain Settings]
-```
-
-#### CNAME Record (for tracking):
+#### DKIM Records (3 CNAME records for email authentication):
 ```
 Type: CNAME
-Host: email.taxsyncfordrivers.com
-Value: mailgun.org
+Host: [random-string]._domainkey.isaloumapps.com
+Value: [random-string].dkim.amazonses.com
+
+Type: CNAME
+Host: [random-string-2]._domainkey.isaloumapps.com
+Value: [random-string-2].dkim.amazonses.com
+
+Type: CNAME
+Host: [random-string-3]._domainkey.isaloumapps.com
+Value: [random-string-3].dkim.amazonses.com
+```
+
+#### SPF Record (TXT for sender verification):
+```
+Type: TXT
+Host: isaloumapps.com
+Value: v=spf1 include:amazonses.com ~all
+```
+
+#### DMARC Record (TXT for email policy - optional but recommended):
+```
+Type: TXT
+Host: _dmarc.isaloumapps.com
+Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@isaloumapps.com
+```
+
+#### MX Records (for receiving emails - optional):
+```
+Type: MX
+Host: isaloumapps.com
+Priority: 10
+Value: inbound-smtp.us-east-2.amazonaws.com
 ```
 
 ### Verification
 
-1. Add all DNS records
-2. Wait 5-10 minutes for propagation
-3. Go to Mailgun → Domains → taxsyncfordrivers.com
-4. Click "Verify DNS Settings"
-5. All checks should be ✅ green
+1. Add all DNS records provided by AWS SES
+2. Wait 10-60 minutes for DNS propagation
+3. Go to AWS SES Console → Verified identities
+4. Check the status of your domain
+5. All checks should be ✅ green (Verified)
 
 ### Test DNS Configuration
 
 ```bash
-# Check MX records
-dig MX taxsyncfordrivers.com
+# Check DKIM records
+dig CNAME [your-key]._domainkey.isaloumapps.com
 
 # Check SPF record
-dig TXT taxsyncfordrivers.com
+dig TXT isaloumapps.com
 
-# Check DKIM record
-dig TXT mailo._domainkey.taxsyncfordrivers.com
+# Check DMARC record
+dig TXT _dmarc.isaloumapps.com
+
+# Check MX records (if configured)
+dig MX isaloumapps.com
 ```
 
 ---
@@ -422,14 +432,15 @@ dig TXT mailo._domainkey.taxsyncfordrivers.com
 PORT=3000
 NODE_ENV=production
 
-# Mailgun Configuration (REQUIRED)
-MAILGUN_API_KEY=<your_private_api_key>
-MAILGUN_DOMAIN=taxsyncfordrivers.com
-MAILGUN_WEBHOOK_KEY=<your_webhook_signing_key>
+# AWS SES Configuration (REQUIRED)
+AWS_ACCESS_KEY_ID=<your_access_key_id>
+AWS_SECRET_ACCESS_KEY=<your_secret_access_key>
+AWS_REGION=us-east-2
+SES_FROM_DOMAIN=isaloumapps.com
 
 # Email Settings
-FROM_EMAIL=noreply@taxsyncfordrivers.com
-SUPPORT_EMAIL=support@taxsyncfordrivers.com
+TAXSYNC_FROM_EMAIL=notifications@isaloumapps.com
+TAXSYNCAI_FROM_EMAIL=ai-alerts@isaloumapps.com
 
 # Application Settings
 APP_URL=https://isaloum.github.io/TaxSyncForDrivers/
