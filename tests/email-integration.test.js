@@ -274,7 +274,7 @@ describe('Email Integration System Tests', () => {
       assert.ok(email);
       assert.strictEqual(email.to, 'newuser@example.com');
       assert.ok(email.subject.includes('Welcome'));
-      assert.ok(email.html.includes('docs@taxsyncfordrivers.com'));
+      assert.ok(email.html.includes('notifications@isaloumapps.com'));
     });
 
     it('should include tax savings in results email', async () => {

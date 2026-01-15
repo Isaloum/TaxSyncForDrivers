@@ -110,7 +110,7 @@ Email Integration System
 ## 🚀 User Experience Flow
 
 ```
-1. Driver emails documents → docs@taxsyncfordrivers.com
+1. Driver emails documents → notifications@isaloumapps.com
                 ↓
 2. Mailgun receives → Triggers webhook
                 ↓

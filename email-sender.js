@@ -158,7 +158,7 @@ function generateEmailHTML(results, _taxUpdates = []) {
         <h4 style="color: #333; font-size: 16px; margin-bottom: 10px;">💡 Pro Tips:</h4>
         <ul style="color: #666; font-size: 14px; line-height: 1.6;">
           <li>Keep forwarding receipts weekly to track expenses automatically</li>
-          <li>Take photos of paper receipts and email them to docs@taxsyncfordrivers.com</li>
+          <li>Take photos of paper receipts and email them to notifications@isaloumapps.com</li>
           <li>Forward Uber/Lyft weekly summaries directly from your inbox</li>
           <li>All documents are processed securely and not stored permanently</li>
         </ul>
@@ -320,7 +320,7 @@ export async function sendWelcomeInstructions(userEmail) {
       
       <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
         <p style="margin: 0; font-size: 18px; font-weight: bold; color: #1976d2;">
-          📮 Save this email: <span style="color: #d32f2f;">docs@taxsyncfordrivers.com</span>
+          📮 Save this email: <span style="color: #d32f2f;">notifications@isaloumapps.com</span>
         </p>
       </div>
       

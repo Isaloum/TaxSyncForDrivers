@@ -10,7 +10,7 @@
 
 The complete email automation system for TaxSyncForDrivers is now **ready for production deployment**. All infrastructure, documentation, and testing materials have been implemented and validated.
 
-**Key Achievement:** Users can now forward tax documents to `docs@taxsyncfordrivers.com` for automated processing in under 30 seconds.
+**Key Achievement:** Users can now forward tax documents to `notifications@isaloumapps.com` for automated processing in under 30 seconds.
 
 ---
 
@@ -138,7 +138,7 @@ Comprehensive deployment testing script:
 ### Email Automation Features
 
 **Processing Pipeline:**
-1. Email received at `docs@taxsyncfordrivers.com`
+1. Email received at `notifications@isaloumapps.com`
 2. Mailgun forwards to webhook endpoint
 3. AI extracts document data (< 5 seconds)
 4. Tax calculations updated automatically

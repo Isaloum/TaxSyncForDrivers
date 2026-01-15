@@ -176,7 +176,7 @@ async function runDemo() {
   console.log('\n💡 Try it yourself:');
   console.log('   1. Start the server: npm run server');
   console.log('   2. Configure Mailgun webhook');
-  console.log('   3. Forward documents to docs@taxsyncfordrivers.com');
+  console.log('   3. Forward documents to notifications@isaloumapps.com');
   console.log('   4. Get instant tax calculations!\n');
 }
 

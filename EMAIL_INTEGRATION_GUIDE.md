@@ -2,17 +2,17 @@
 
 ## Overview
 
-The TaxSyncForDrivers email integration system allows users to forward tax documents to `docs@taxsyncfordrivers.com` and receive automated processing with OCR, AI extraction, and real-time tax calculations.
+The TaxSyncForDrivers email integration system allows users to forward tax documents to `notifications@isaloumapps.com` and receive automated processing with OCR, AI extraction, and real-time tax calculations.
 
 ## Features
 
-✅ **Email Webhook Processing** - Receives emails via Mailgun webhooks  
+✅ **Email Webhook Processing** - Receives emails via AWS SES webhooks  
 ✅ **Multi-Format Support** - PDF, JPG, PNG, TXT attachments  
 ✅ **AI Document Classification** - Automatically identifies document types  
 ✅ **Smart Data Extraction** - Extracts tax-relevant data using pattern matching  
 ✅ **Tax Calculator Integration** - Updates user tax profiles automatically  
-✅ **Automated Email Responses** - Sends beautiful HTML emails with processing results  
-✅ **Security Features** - Webhook signature verification  
+✅ **Automated Email Responses** - Sends beautiful HTML emails with processing results via AWS SES  
+✅ **Security Features** - Secure webhook handling  
 ✅ **Multi-Document Support** - Process multiple attachments per email  
 
 ## Supported Document Types
@@ -41,12 +41,13 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-Edit `.env` and add your Mailgun credentials:
+Edit `.env` and add your AWS SES credentials:
 
 ```env
-MAILGUN_API_KEY=your_mailgun_api_key_here
-MAILGUN_DOMAIN=taxsyncfordrivers.com
-MAILGUN_WEBHOOK_KEY=your_webhook_signing_key_here
+AWS_ACCESS_KEY_ID=your_aws_access_key_id_here
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key_here
+AWS_REGION=us-east-2
+SES_FROM_DOMAIN=isaloumapps.com
 PORT=3000
 ```
 
@@ -64,24 +65,14 @@ npm run server:dev
 
 The server will start on `http://localhost:3000`
 
-### 4. Configure Mailgun Webhooks
+### 4. Configure AWS SES Webhooks (Optional)
 
-1. Go to [Mailgun Dashboard](https://app.mailgun.com/)
-2. Navigate to **Sending** → **Webhooks**
-3. Add a new webhook for "Incoming Messages"
-4. Set the URL to: `https://your-domain.com/webhook/mailgun`
-5. Save the webhook
+For receiving emails via AWS SES:
 
-### 5. Set Up Email Route
-
-In Mailgun, create a route to forward incoming emails:
-
-1. Go to **Receiving** → **Routes**
-2. Create a new route:
-   - **Expression Type**: Match Recipient
-   - **Recipient**: `docs@taxsyncfordrivers.com`
-   - **Actions**: Forward to webhook URL
-   - **Webhook URL**: `https://your-domain.com/webhook/mailgun`
+1. Set up SES receiving rules (see [AWS_SES_SETUP.md](./AWS_SES_SETUP.md))
+2. Configure SNS topic for incoming email notifications
+3. Point SNS webhook to: `https://your-domain.com/webhook/ses`
+4. Or use the generic webhook endpoint for manual testing
 
 ## API Endpoints
 
@@ -108,7 +99,13 @@ Returns server status.
 POST /webhook/mailgun
 ```
 
-Receives incoming emails from Mailgun. Automatically verifies signature and processes documents.
+### AWS SES Webhook
+
+```http
+POST /webhook/ses
+```
+
+Receives incoming emails from AWS SES. Processes documents and sends automated responses.
 
 ### Generic Email Webhook
 
@@ -116,7 +113,7 @@ Receives incoming emails from Mailgun. Automatically verifies signature and proc
 POST /webhook/email
 ```
 
-Generic webhook for other email services (SendGrid, custom integrations, etc.)
+Generic webhook for testing and custom integrations.
 
 **Request Body:**
 ```json
@@ -133,17 +130,17 @@ Generic webhook for other email services (SendGrid, custom integrations, etc.)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  1. User forwards email to docs@taxsyncfordrivers.com      │
+│  1. User forwards email to notifications@isaloumapps.com      │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  2. Mailgun receives email and triggers webhook             │
+│  2. AWS SES receives email and triggers webhook             │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  3. Server verifies webhook signature (security)            │
+│  3. Server processes email securely                         │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
@@ -252,19 +249,14 @@ npm test -- --grep "Email Integration"
 
 ## Security Features
 
-### Webhook Signature Verification
+### Secure Email Handling
 
-All Mailgun webhooks are verified using HMAC-SHA256 signatures to prevent unauthorized access.
+AWS SES provides enterprise-grade security for email processing:
 
-```javascript
-function verifyMailgunSignature(timestamp, token, signature) {
-  const encodedToken = crypto
-    .createHmac('sha256', process.env.MAILGUN_WEBHOOK_KEY)
-    .update(timestamp + token)
-    .digest('hex');
-  return encodedToken === signature;
-}
-```
+- TLS encryption for email transmission
+- DKIM signing for email authentication
+- SPF and DMARC support for domain verification
+- Secure credential management via AWS IAM
 
 ### Data Privacy
 

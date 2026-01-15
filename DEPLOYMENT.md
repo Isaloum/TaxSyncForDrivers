@@ -10,7 +10,7 @@ Complete guide for deploying the email automation system to production for clien
 - [Railway Deployment](#railway-deployment)
 - [Render Deployment](#render-deployment)
 - [Docker Deployment](#docker-deployment)
-- [Mailgun Configuration](#mailgun-configuration)
+- [AWS SES Configuration](#aws-ses-configuration)
 - [DNS Setup](#dns-setup)
 - [Environment Variables](#environment-variables)
 - [Testing & Validation](#testing--validation)
@@ -22,8 +22,8 @@ Complete guide for deploying the email automation system to production for clien
 ## Prerequisites
 
 ✅ **Required Accounts:**
-- [Mailgun](https://mailgun.com) account (free tier available)
-- Domain access for `taxsyncfordrivers.com`
+- [AWS](https://aws.amazon.com) account with SES access
+- Domain access for `isaloumapps.com`
 - Deployment platform account (Vercel/Railway/Render)
 
 ✅ **Required Tools:**
@@ -81,14 +81,17 @@ vercel
 
 ```bash
 # Add environment variables
-vercel env add MAILGUN_API_KEY
-# Paste your Mailgun API key when prompted
+vercel env add AWS_ACCESS_KEY_ID
+# Paste your AWS access key ID when prompted
 
-vercel env add MAILGUN_DOMAIN
-# Enter: taxsyncfordrivers.com
+vercel env add AWS_SECRET_ACCESS_KEY
+# Paste your AWS secret access key when prompted
 
-vercel env add MAILGUN_WEBHOOK_KEY
-# Paste your Mailgun webhook signing key
+vercel env add AWS_REGION
+# Enter: us-east-2
+
+vercel env add SES_FROM_DOMAIN
+# Enter: isaloumapps.com
 
 vercel env add NODE_ENV
 # Enter: production
@@ -147,9 +150,10 @@ railway init
 ### 4. Add Environment Variables
 
 ```bash
-railway variables set MAILGUN_API_KEY="your_api_key_here"
-railway variables set MAILGUN_DOMAIN="taxsyncfordrivers.com"
-railway variables set MAILGUN_WEBHOOK_KEY="your_webhook_key_here"
+railway variables set AWS_ACCESS_KEY_ID="your_access_key_id_here"
+railway variables set AWS_SECRET_ACCESS_KEY="your_secret_access_key_here"
+railway variables set AWS_REGION="us-east-2"
+railway variables set SES_FROM_DOMAIN="isaloumapps.com"
 railway variables set NODE_ENV="production"
 railway variables set PORT="3000"
 ```
@@ -194,9 +198,10 @@ railway logs
 In the Render Dashboard, add these environment variables:
 
 ```
-MAILGUN_API_KEY = your_mailgun_api_key_here
-MAILGUN_DOMAIN = taxsyncfordrivers.com
-MAILGUN_WEBHOOK_KEY = your_webhook_signing_key_here
+AWS_ACCESS_KEY_ID = your_aws_access_key_id_here
+AWS_SECRET_ACCESS_KEY = your_aws_secret_access_key_here
+AWS_REGION = us-east-2
+SES_FROM_DOMAIN = isaloumapps.com
 NODE_ENV = production
 PORT = 3000
 ```
@@ -288,115 +293,132 @@ gcloud run deploy taxsync-email-automation \
 
 ---
 
-## Mailgun Configuration
+## AWS SES Configuration
 
-### 1. Create Mailgun Account
+### 1. Create AWS Account and Enable SES
 
-1. Go to [Mailgun.com](https://mailgun.com)
-2. Sign up for free account (includes 5,000 emails/month)
-3. Verify your email address
+1. Go to [AWS Console](https://console.aws.amazon.com)
+2. Navigate to **Amazon SES** service
+3. Select region: **us-east-2** (or your preferred region)
 
-### 2. Add Domain
+### 2. Verify Domain
 
-1. Navigate to **Sending** → **Domains**
-2. Click "Add New Domain"
-3. Enter: `taxsyncfordrivers.com`
-4. Follow verification steps (see DNS Setup below)
+1. Navigate to **Configuration** → **Verified identities**
+2. Click "Create identity"
+3. Select "Domain" and enter: `isaloumapps.com`
+4. Follow DNS verification steps (see DNS Setup below)
+5. Enable DKIM signing (recommended)
 
-### 3. Get API Credentials
+### 3. Verify Email Addresses
 
-**API Key:**
-1. Go to **Settings** → **API Keys**
-2. Copy "Private API key"
-3. Save as `MAILGUN_API_KEY`
+1. Navigate to **Configuration** → **Verified identities**
+2. Click "Create identity"
+3. Select "Email address"
+4. Enter: `notifications@isaloumapps.com`
+5. Check your inbox and click verification link
 
-**Webhook Signing Key:**
-1. Go to **Settings** → **Webhooks**
-2. Find "HTTP webhook signing key"
-3. Click "Show" and copy
-4. Save as `MAILGUN_WEBHOOK_KEY`
+### 4. Get API Credentials
 
-### 4. Configure Receiving Routes
+**Create IAM User for SES:**
+1. Navigate to **IAM** → **Users**
+2. Click "Create user"
+3. User name: `taxsync-ses-user`
+4. Attach policy: `AmazonSESFullAccess`
+5. Create access key (Application running outside AWS)
+6. Save:
+   - Access Key ID as `AWS_ACCESS_KEY_ID`
+   - Secret Access Key as `AWS_SECRET_ACCESS_KEY`
 
-1. Navigate to **Receiving** → **Routes**
-2. Click "Create Route"
-3. Configure:
-   - **Expression Type**: Match Recipient
-   - **Recipient**: `docs@taxsyncfordrivers.com`
-   - **Actions**: 
-     - ✅ Forward to webhook
-     - **Webhook URL**: `https://your-deployment-url.com/webhook/mailgun`
-   - **Priority**: 10
-   - **Description**: TaxSync Document Processing
-4. Save Route
+### 5. Request Production Access (Optional)
 
-### 5. Test Email Receiving
+By default, SES is in sandbox mode (can only send to verified emails).
 
-Send a test email to: `docs@taxsyncfordrivers.com`
+To send to any email:
+1. Navigate to **Account dashboard**
+2. Click "Request production access"
+3. Fill out the form describing your use case
+4. Wait for AWS approval (usually 24 hours)
 
-Check Mailgun Logs:
-1. Go to **Sending** → **Logs**
-2. Filter by recipient: `docs@taxsyncfordrivers.com`
-3. Verify webhook was triggered
+### 6. Configure Receiving (Optional)
+
+If you need to receive emails via SES:
+1. Navigate to **Email receiving** → **Rule sets**
+2. Create a receipt rule for `notifications@isaloumapps.com`
+3. Add action to invoke webhook endpoint
+4. Configure SNS topic or S3 bucket as needed
+
+### 7. Test Email Sending
+
+Send a test email using AWS CLI or the SES console to verify configuration.
 
 ---
 
 ## DNS Setup
 
-### Required DNS Records for Mailgun
+### Required DNS Records for AWS SES
 
-Add these DNS records to your domain registrar (e.g., Namecheap, GoDaddy, Cloudflare):
+Add these DNS records to your domain registrar (e.g., Namecheap, GoDaddy, Cloudflare).
+AWS SES will provide the exact values when you verify your domain.
 
-#### MX Records (for receiving emails):
-```
-Type: MX
-Host: taxsyncfordrivers.com
-Priority: 10
-Value: mxa.mailgun.org
-
-Type: MX  
-Host: taxsyncfordrivers.com
-Priority: 10
-Value: mxb.mailgun.org
-```
-
-#### TXT Records (for verification and SPF):
-```
-Type: TXT
-Host: taxsyncfordrivers.com
-Value: v=spf1 include:mailgun.org ~all
-
-Type: TXT
-Host: mailo._domainkey.taxsyncfordrivers.com
-Value: [Get this from Mailgun Domain Settings]
-```
-
-#### CNAME Record (for tracking):
+#### DKIM Records (3 CNAME records for email authentication):
 ```
 Type: CNAME
-Host: email.taxsyncfordrivers.com
-Value: mailgun.org
+Host: [random-string]._domainkey.isaloumapps.com
+Value: [random-string].dkim.amazonses.com
+
+Type: CNAME
+Host: [random-string-2]._domainkey.isaloumapps.com
+Value: [random-string-2].dkim.amazonses.com
+
+Type: CNAME
+Host: [random-string-3]._domainkey.isaloumapps.com
+Value: [random-string-3].dkim.amazonses.com
+```
+
+#### SPF Record (TXT for sender verification):
+```
+Type: TXT
+Host: isaloumapps.com
+Value: v=spf1 include:amazonses.com ~all
+```
+
+#### DMARC Record (TXT for email policy - optional but recommended):
+```
+Type: TXT
+Host: _dmarc.isaloumapps.com
+Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@isaloumapps.com
+```
+
+#### MX Records (for receiving emails - optional):
+```
+Type: MX
+Host: isaloumapps.com
+Priority: 10
+Value: inbound-smtp.us-east-2.amazonaws.com
 ```
 
 ### Verification
 
-1. Add all DNS records
-2. Wait 5-10 minutes for propagation
-3. Go to Mailgun → Domains → taxsyncfordrivers.com
-4. Click "Verify DNS Settings"
-5. All checks should be ✅ green
+1. Add all DNS records provided by AWS SES
+2. Wait 10-60 minutes for DNS propagation
+3. Go to AWS SES Console → Verified identities
+4. Check the status of your domain
+5. All checks should be ✅ green (Verified)
 
 ### Test DNS Configuration
 
 ```bash
-# Check MX records
-dig MX taxsyncfordrivers.com
+# Check DKIM records
+dig CNAME [your-key]._domainkey.isaloumapps.com
 
 # Check SPF record
-dig TXT taxsyncfordrivers.com
+dig TXT isaloumapps.com
 
-# Check DKIM record
-dig TXT mailo._domainkey.taxsyncfordrivers.com
+# Check DMARC record
+dig TXT _dmarc.isaloumapps.com
+
+# Check MX records (if configured)
+dig MX isaloumapps.com
 ```
 
 ---
@@ -410,14 +432,15 @@ dig TXT mailo._domainkey.taxsyncfordrivers.com
 PORT=3000
 NODE_ENV=production
 
-# Mailgun Configuration (REQUIRED)
-MAILGUN_API_KEY=<your_private_api_key>
-MAILGUN_DOMAIN=taxsyncfordrivers.com
-MAILGUN_WEBHOOK_KEY=<your_webhook_signing_key>
+# AWS SES Configuration (REQUIRED)
+AWS_ACCESS_KEY_ID=<your_access_key_id>
+AWS_SECRET_ACCESS_KEY=<your_secret_access_key>
+AWS_REGION=us-east-2
+SES_FROM_DOMAIN=isaloumapps.com
 
 # Email Settings
-FROM_EMAIL=noreply@taxsyncfordrivers.com
-SUPPORT_EMAIL=support@taxsyncfordrivers.com
+TAXSYNC_FROM_EMAIL=notifications@isaloumapps.com
+TAXSYNCAI_FROM_EMAIL=ai-alerts@isaloumapps.com
 
 # Application Settings
 APP_URL=https://isaloum.github.io/TaxSyncForDrivers/
@@ -488,7 +511,7 @@ curl -X POST https://your-deployment-url.com/webhook/mailgun
 
 Send email with sample document to:
 ```
-To: docs@taxsyncfordrivers.com
+To: notifications@isaloumapps.com
 Subject: Test - Uber Summary
 Attachment: [Sample Uber receipt/summary]
 ```
@@ -554,7 +577,7 @@ fi
 
 echo "================================================"
 echo "✅ Deployment tests completed"
-echo "📧 Send test email to: docs@taxsyncfordrivers.com"
+echo "📧 Send test email to: notifications@isaloumapps.com"
 ```
 
 Run with: `bash test-deployment.sh`
@@ -655,7 +678,7 @@ railway variables set MAILGUN_WEBHOOK_KEY="correct_key"
 
 **Solution:**
 1. Check Mailgun Routes: Receiving → Routes
-2. Verify route matches `docs@taxsyncfordrivers.com`
+2. Verify route matches `notifications@isaloumapps.com`
 3. Check webhook URL is correct
 4. Verify DNS records are propagated:
    ```bash
@@ -754,7 +777,7 @@ After successful deployment:
 
 - **Health Check:** `https://your-deployment-url.com/health`
 - **Webhook Endpoint:** `https://your-deployment-url.com/webhook/mailgun`
-- **Send Email To:** `docs@taxsyncfordrivers.com`
+- **Send Email To:** `notifications@isaloumapps.com`
 - **Mailgun Dashboard:** https://app.mailgun.com
 - **Deployment Dashboard:** [Vercel/Railway/Render]
 

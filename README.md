@@ -48,7 +48,7 @@ Why?
 
 ### 5. 📧 **NEW: Email Automation System**
 
-**Forward tax documents to `docs@taxsyncfordrivers.com` for instant processing!**
+**Forward tax documents to `notifications@isaloumapps.com` for instant processing!**
 
 #### How it works:
 1. 📧 **Forward or email** your tax documents and receipts
@@ -57,8 +57,8 @@ Why?
 4. ✉️ **Get results** - Receive detailed summary email
 
 #### Email Features:
-- **Mailgun Integration** - Enterprise-grade email processing
-- **Webhook Security** - HMAC signature verification
+- **AWS SES Integration** - Enterprise-grade email processing
+- **Webhook Security** - Secure email handling
 - **Multi-Document Support** - Process multiple attachments at once
 - **Beautiful HTML Emails** - Professional response templates
 - **Tax Impact Summary** - Instant calculations in your inbox
@@ -72,7 +72,7 @@ Why?
 
 📚 **Documentation:**
 - **[Deployment Guide](DEPLOYMENT.md)** - Complete deployment instructions
-- **[Mailgun Setup](MAILGUN_SETUP.md)** - Email service configuration
+- **[AWS SES Setup](MAILGUN_SETUP.md)** - Email service configuration
 - **[Demo Guide](DEMO_GUIDE.md)** - Client demonstration preparation
 - **[Email Integration Guide](EMAIL_INTEGRATION_GUIDE.md)** - Technical details
 
