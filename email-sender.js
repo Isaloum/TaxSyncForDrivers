@@ -1,4 +1,4 @@
-// email-sender.js — Email sending functionality using Mailgun
+// email-sender.js — Email sending functionality using AWS SES
 // Sends automated responses with processing results
 
 import { DOCUMENT_TYPES } from './pattern-library.js';
@@ -7,6 +7,7 @@ import {
   formatCurrency,
   AVERAGE_MARGINAL_TAX_RATE,
 } from './tax-utils.js';
+import { sendFromTaxSync } from './aws-ses-service.js';
 
 /**
  * Format document type for display
@@ -180,7 +181,7 @@ function generateEmailHTML(results, _taxUpdates = []) {
 }
 
 /**
- * Send processing results email using Mailgun
+ * Send processing results email using AWS SES
  * @param {string} userEmail - Recipient email
  * @param {Array} results - Processing results
  * @param {string} originalSubject - Original email subject
@@ -194,34 +195,31 @@ export async function sendProcessingResults(userEmail, results, originalSubject,
   const htmlContent = generateEmailHTML(results, taxUpdates);
   const textContent = stripHtml(htmlContent);
 
-  // In production, this would use actual Mailgun API
-  // For now, we'll log the email that would be sent
   const emailData = {
-    from: 'TaxSync AI <noreply@taxsyncfordrivers.com>',
     to: userEmail,
     subject: `✅ Documents Processed - ${results.length} item(s)`,
     html: htmlContent,
     text: textContent,
   };
 
-  console.log('📤 Would send email:', {
-    to: emailData.to,
-    subject: emailData.subject,
-    documentCount: results.length,
-  });
-
-  // Production code would be:
-  // const mailgun = require('mailgun-js')({
-  //   apiKey: process.env.MAILGUN_API_KEY,
-  //   domain: process.env.MAILGUN_DOMAIN
-  // });
-  // await mailgun.messages().send(emailData);
-
-  return emailData;
+  try {
+    // Send email using AWS SES
+    const result = await sendFromTaxSync(emailData);
+    console.log('📤 Email sent successfully:', {
+      to: emailData.to,
+      subject: emailData.subject,
+      documentCount: results.length,
+      messageId: result.messageId,
+    });
+    return { ...emailData, messageId: result.messageId, success: true };
+  } catch (error) {
+    console.error('❌ Failed to send processing results email:', error);
+    throw error;
+  }
 }
 
 /**
- * Send error notification email
+ * Send error notification email using AWS SES
  * @param {string} userEmail - Recipient email
  * @param {string} errorMessage - Error message
  * @param {string} originalSubject - Original email subject
@@ -276,24 +274,30 @@ export async function sendErrorNotification(userEmail, errorMessage, originalSub
 `;
 
   const emailData = {
-    from: 'TaxSync AI <noreply@taxsyncfordrivers.com>',
     to: userEmail,
     subject: `❌ Document Processing Failed - ${originalSubject}`,
     html: html,
     text: stripHtml(html),
   };
 
-  console.log('📤 Would send error email:', {
-    to: emailData.to,
-    subject: emailData.subject,
-    error: errorMessage,
-  });
-
-  return emailData;
+  try {
+    // Send email using AWS SES
+    const result = await sendFromTaxSync(emailData);
+    console.log('📤 Error notification sent:', {
+      to: emailData.to,
+      subject: emailData.subject,
+      error: errorMessage,
+      messageId: result.messageId,
+    });
+    return { ...emailData, messageId: result.messageId, success: true };
+  } catch (error) {
+    console.error('❌ Failed to send error notification email:', error);
+    throw error;
+  }
 }
 
 /**
- * Send welcome instructions email to new users
+ * Send welcome instructions email to new users using AWS SES
  * @param {string} userEmail - Recipient email
  */
 export async function sendWelcomeInstructions(userEmail) {
@@ -365,17 +369,23 @@ export async function sendWelcomeInstructions(userEmail) {
 `;
 
   const emailData = {
-    from: 'TaxSync AI <noreply@taxsyncfordrivers.com>',
     to: userEmail,
     subject: '🚗 Welcome to TaxSync Email Automation!',
     html: html,
     text: stripHtml(html),
   };
 
-  console.log('📤 Would send welcome email:', {
-    to: emailData.to,
-    subject: emailData.subject,
-  });
-
-  return emailData;
+  try {
+    // Send email using AWS SES
+    const result = await sendFromTaxSync(emailData);
+    console.log('📤 Welcome email sent:', {
+      to: emailData.to,
+      subject: emailData.subject,
+      messageId: result.messageId,
+    });
+    return { ...emailData, messageId: result.messageId, success: true };
+  } catch (error) {
+    console.error('❌ Failed to send welcome email:', error);
+    throw error;
+  }
 }
