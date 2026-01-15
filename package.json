@@ -12,15 +12,16 @@
     "postinstall": "echo \"Production install completed\""
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "nodemailer": "^6.9.8",
+    "@aws-sdk/client-ses": "^3.970.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "body-parser": "^1.20.2"
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.8"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+    "nodemon": "^3.0.2"
   },
   "engines": {
     "node": ">=18.0.0",
