@@ -25,7 +25,7 @@ Transform hours of manual tax document entry into 30 seconds of automated proces
 **Introduce the automation:**
 
 > "TaxSync's email automation eliminates manual data entry:
-> - Forward any tax document to `docs@taxsyncfordrivers.com`
+> - Forward any tax document to `notifications@isaloumapps.com`
 > - AI processes the document in under 30 seconds
 > - Automatic tax calculations update
 > - Instant email confirmation with tax impact
@@ -43,7 +43,7 @@ Transform hours of manual tax document entry into 30 seconds of automated proces
 ### Before the Demo (1 day ahead)
 
 - [ ] **Deploy the application** (see [DEPLOYMENT.md](./DEPLOYMENT.md))
-- [ ] **Configure Mailgun** for `docs@taxsyncfordrivers.com` (see [MAILGUN_SETUP.md](./MAILGUN_SETUP.md))
+- [ ] **Configure Mailgun** for `notifications@isaloumapps.com` (see [MAILGUN_SETUP.md](./MAILGUN_SETUP.md))
 - [ ] **Test health endpoint** - Verify server is running
 - [ ] **Prepare sample documents** (listed below)
 - [ ] **Send test email** - Verify complete flow works
@@ -209,11 +209,11 @@ Jan 10, 2025
 [**SCREEN:** Switch to email client]
 
 **Step 4: Send email**
-> "I simply forward this to docs@taxsyncfordrivers.com"
+> "I simply forward this to notifications@isaloumapps.com"
 
 [**ACTION:** 
 - Create new email
-- To: docs@taxsyncfordrivers.com
+- To: notifications@isaloumapps.com
 - Subject: "Uber Weekly Summary - Jan 1-7"
 - Attach: uber-weekly-summary.pdf
 - Click Send
@@ -269,7 +269,7 @@ Jan 10, 2025
 
 [**ACTION:**
 - Create new email
-- To: docs@taxsyncfordrivers.com
+- To: notifications@isaloumapps.com
 - Subject: "Gas Receipt"
 - Attach: gas-receipt.jpg
 - Send
@@ -324,7 +324,7 @@ Jan 10, 2025
 > "TaxSync is free and open-source. The email automation is included at no additional cost. Users just need to forward their documents."
 
 **Q: "How do I get started?"**
-> "Just start forwarding documents to docs@taxsyncfordrivers.com. That's it. First time users get a welcome email with instructions."
+> "Just start forwarding documents to notifications@isaloumapps.com. That's it. First time users get a welcome email with instructions."
 
 ---
 
@@ -383,7 +383,7 @@ Current State:
 **Slide 3: The Solution**
 ```
 TaxSync Email Automation:
-✅ Forward documents → docs@taxsyncfordrivers.com
+✅ Forward documents → notifications@isaloumapps.com
 ✅ AI processes in 30 seconds
 ✅ Automatic tax calculations
 ✅ Email confirmation
@@ -424,7 +424,7 @@ Enterprise-Grade Security:
 **Slide 7: Getting Started**
 ```
 Start in 3 Steps:
-1. Forward documents to docs@taxsyncfordrivers.com
+1. Forward documents to notifications@isaloumapps.com
 2. Review confirmation email
 3. Check updated tax calculations
 
@@ -531,7 +531,7 @@ As promised, here are the resources:
 🎥 Demo Recording: [link if available]
 
 🚀 Getting Started:
-Simply forward tax documents to: docs@taxsyncfordrivers.com
+Simply forward tax documents to: notifications@isaloumapps.com
 
 💬 Questions?
 Reply to this email or schedule a call: [calendar link]

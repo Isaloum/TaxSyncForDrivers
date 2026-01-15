@@ -24,7 +24,7 @@ Use this checklist to ensure a successful deployment of the email automation sys
 - [ ] Read [EMAIL_INTEGRATION_GUIDE.md](./EMAIL_INTEGRATION_GUIDE.md)
 
 ### Account Setup
-- [ ] Mailgun account created
+- [ ] AWS SES account created
   - Free tier: 5,000 emails/month
   - Email verified
   - Payment method added
@@ -41,7 +41,7 @@ Use this checklist to ensure a successful deployment of the email automation sys
 
 ## Deployment Steps
 
-### Step 1: Mailgun Configuration
+### Step 1: AWS SES Configuration
 
 - [ ] **Domain Added**
   - Domain: taxsyncfordrivers.com
@@ -55,13 +55,13 @@ Use this checklist to ensure a successful deployment of the email automation sys
   - [ ] TXT record (SPF):
     - v=spf1 include:mailgun.org ~all
   - [ ] TXT record (DKIM):
-    - [Long key from Mailgun]
+    - [Long key from AWS SES]
   - [ ] CNAME record (Tracking):
     - email → mailgun.org
 
 - [ ] **DNS Verification**
   - Waited 10-30 minutes for propagation
-  - Verified in Mailgun dashboard
+  - Verified in AWS SES dashboard
   - All checks ✅ green
 
 - [ ] **API Keys Collected**
@@ -120,11 +120,11 @@ Choose ONE deployment method:
 - [ ] Environment variables configured
 - [ ] Deployment URL saved
 
-### Step 3: Mailgun Webhook Configuration
+### Step 3: AWS SES Webhook Configuration
 
 - [ ] **Receiving Route Created**
   - Expression Type: Match Recipient
-  - Recipient: docs@taxsyncfordrivers.com
+  - Recipient: notifications@isaloumapps.com
   - Action: Forward to webhook
   - Webhook URL: https://[your-deployment-url]/webhook/mailgun
   - Priority: 10
@@ -151,8 +151,8 @@ Choose ONE deployment method:
   - No critical errors
 
 - [ ] **Manual Email Test**
-  - Send test email to docs@taxsyncfordrivers.com
-  - Email received by Mailgun (check logs)
+  - Send test email to notifications@isaloumapps.com
+  - Email received by AWS SES (check logs)
   - Webhook triggered (check deployment logs)
   - Processing completed successfully
   - Confirmation email received (< 30 seconds)
@@ -176,7 +176,7 @@ Choose ONE deployment method:
   - Log aggregation configured (optional)
   - Error alerts configured (optional)
 
-- [ ] **Mailgun Monitoring**
+- [ ] **AWS SES Monitoring**
   - Email sending logs accessible
   - Webhook logs accessible
   - Usage quota monitored
@@ -190,7 +190,7 @@ Choose ONE deployment method:
 - [ ] **Deployment URL Documented**
   - Added to team documentation
   - Shared with stakeholders
-  - Added to Mailgun webhook configuration
+  - Added to AWS SES webhook configuration
 
 - [ ] **Environment Variables Backed Up**
   - Saved securely (password manager)
@@ -242,7 +242,7 @@ Choose ONE deployment method:
   - Monitoring links shared
 
 - [ ] **Business Team Notified**
-  - Email address operational: docs@taxsyncfordrivers.com
+  - Email address operational: notifications@isaloumapps.com
   - Demo guide shared
   - Support contact provided
 
@@ -310,7 +310,7 @@ Choose ONE deployment method:
   - Investigate failures
 
 - [ ] **Check Email Quota**
-  - Monitor Mailgun usage
+  - Monitor AWS SES usage
   - Ensure within limits
   - Plan upgrade if needed
 
@@ -335,30 +335,30 @@ Choose ONE deployment method:
 
 ### Issue: Emails Not Received
 
-**Symptoms:** Emails sent to docs@taxsyncfordrivers.com don't trigger webhook
+**Symptoms:** Emails sent to notifications@isaloumapps.com don't trigger webhook
 
 **Actions:**
-1. Check Mailgun receiving logs
+1. Check AWS SES receiving logs
 2. Verify DNS MX records
-3. Check Mailgun route configuration
+3. Check AWS SES route configuration
 4. Verify webhook URL is correct and accessible
 
 ### Issue: Webhook Returns 403
 
-**Symptoms:** Mailgun shows webhook failed with 403 error
+**Symptoms:** AWS SES shows webhook failed with 403 error
 
 **Actions:**
 1. Verify MAILGUN_WEBHOOK_KEY is set correctly
-2. Check webhook signing key in Mailgun matches
+2. Check webhook signing key in AWS SES matches
 3. Review email-server.js signature verification code
-4. Test with Mailgun webhook test tool
+4. Test with AWS SES webhook test tool
 
 ### Issue: No Confirmation Email
 
 **Symptoms:** Processing works but no email sent back
 
 **Actions:**
-1. Check Mailgun sending logs
+1. Check AWS SES sending logs
 2. Verify MAILGUN_API_KEY is set
 3. Review deployment logs for email sending errors
 4. Check FROM_EMAIL uses verified domain
@@ -376,7 +376,7 @@ Choose ONE deployment method:
 - Response time: < 30 seconds
 
 ✅ **Email flow working:**
-- Emails sent to docs@taxsyncfordrivers.com received
+- Emails sent to notifications@isaloumapps.com received
 - Documents processed successfully
 - Tax calculations updated
 - Confirmation emails sent

@@ -226,7 +226,7 @@ if [ $TESTS_FAILED -eq 0 ]; then
     echo ""
     echo -e "Next steps:"
     echo -e "1. Configure Mailgun to forward to: ${WEBHOOK_URL}"
-    echo -e "2. Test by sending email to: docs@taxsyncfordrivers.com"
+    echo -e "2. Test by sending email to: notifications@isaloumapps.com"
     echo -e "3. Monitor logs for processing confirmation"
     echo ""
     exit 0
