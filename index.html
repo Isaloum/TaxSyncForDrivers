@@ -1,20 +1,2394 @@
-<!-- Reverted content from commit 3f4efe5c3e251a8865037368c001709c6021d37e -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tax Sync For Drivers</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Welcome to Tax Sync For Drivers</h1>
-    <form>
-        <label for="input1">Input 1:</label>
-        <input id="input1" type="text" name="input1">
-        <label for="select1">Select:</label>
-        <select id="select1" name="select1">
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-        </select>
-    </form>
-</body>
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaxSyncForDrivers — Planification fiscale pour chauffeurs Uber/Lyft/Taxi</title>
+    <meta
+      name="description"
+      content="Outil gratuit de planification fiscale pour chauffeurs de covoiturage et taxi au Québec."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>"
+    />
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --card: #fff;
+        --accent: #0d9488;
+        --accent-2: #14b8a6;
+        --accent-dark: #0f766e;
+        --accent-light: rgba(13, 148, 136, 0.1);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --radius: 12px;
+        --shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+        --shadow-lg: 0 10px 40px rgba(15, 23, 42, 0.12);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background:
+          linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(20, 184, 166, 0.03) 100%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+      }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .badge {
+        background: var(--accent-light);
+        color: var(--accent-dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .lang-toggle {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .lang-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .lang-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .lang-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .hero {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        padding: 3rem 2rem;
+        border-radius: var(--radius);
+        margin: 1.5rem 0;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+      }
+      .hero h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+      }
+      .hero p {
+        font-size: 1.125rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+      }
+      .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+      .hero-stat {
+        text-align: center;
+      }
+      .hero-stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+      }
+      .hero-stat-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+      }
+      .tab-btn {
+        background: var(--card);
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s;
+        box-shadow: var(--shadow);
+      }
+      .tab-btn:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .tab-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .tab-icon {
+        font-size: 1.75rem;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .tab-label {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .tab-content {
+        display: none;
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .label-hint {
+        font-weight: 400;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background: #fff;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-light);
+      }
+      .btn {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        border: none;
+        padding: 0.875rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: var(--shadow);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 148, 136, 0.3);
+      }
+      .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+      .result-box {
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border: 1px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .result-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .result-item {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+      .result-label {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 0.25rem;
+      }
+      .result-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .result-value.positive {
+        color: var(--success);
+      }
+      .method-comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+      .method-card {
+        background: #fff;
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        text-align: center;
+      }
+      .method-card.recommended {
+        border-color: var(--success);
+        background: rgba(16, 185, 129, 0.05);
+      }
+      .method-card .amount {
+        font-size: 1.75rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .recommended-badge {
+        background: var(--success);
+        color: #fff;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        margin-top: 0.5rem;
+        display: inline-block;
+      }
+      .payment-schedule {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .payment-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        text-align: center;
+      }
+      .payment-quarter {
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .payment-date {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+      .payment-amount {
+        font-size: 1.25rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .savings-summary {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: #fff;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+      .savings-amount {
+        font-size: 2.5rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      fieldset {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      legend {
+        font-weight: 700;
+        padding: 0 0.5rem;
+        color: var(--accent);
+      }
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 1rem 0;
+      }
+      .toggle {
+        position: relative;
+        width: 50px;
+        height: 26px;
+      }
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--border);
+        border-radius: 26px;
+        transition: 0.3s;
+      }
+      .toggle-slider:before {
+        content: '';
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+      .toggle input:checked + .toggle-slider {
+        background: var(--accent);
+      }
+      .toggle input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+      }
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 1.75rem;
+        }
+        .payment-schedule {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .method-comparison {
+          grid-template-columns: 1fr;
+        }
+      }
+      /* Document Upload Interface Styles */
+      .document-upload-container {
+        margin-top: 2rem;
+      }
+      .drop-zone {
+        border: 3px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.03) 100%);
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .drop-zone:hover,
+      .drop-zone.drag-over {
+        border-color: var(--accent);
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.08) 100%);
+        transform: scale(1.01);
+      }
+      .drop-zone-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+      .drop-zone-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+      }
+      .drop-zone-hint {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .camera-capture {
+        margin-top: 2rem;
+        padding: 2rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-align: center;
+      }
+      .camera-capture video {
+        width: 100%;
+        max-width: 640px;
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+      }
+      .text-input-zone {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .text-input-zone label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+      }
+      .processing-status {
+        margin-top: 2rem;
+        padding: 2rem;
+        background: var(--accent-light);
+        border: 1px solid var(--accent);
+        border-radius: var(--radius);
+        text-align: center;
+      }
+      .spinner {
+        border: 4px solid var(--border);
+        border-top: 4px solid var(--accent);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .document-results {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.05) 0%,
+          rgba(16, 185, 129, 0.02) 100%
+        );
+        border: 1px solid var(--success);
+        border-radius: var(--radius);
+      }
+      .document-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        box-shadow: var(--shadow);
+      }
+      .document-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .document-type {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .confidence-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      .confidence-high {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+      .confidence-medium {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+      .confidence-low {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+      .extracted-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .field-item {
+        padding: 0.75rem;
+        background: var(--bg);
+        border-radius: 6px;
+      }
+      .field-label {
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+      }
+      .field-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .validation-warnings {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(245, 158, 11, 0.05);
+        border: 1px solid var(--warning);
+        border-radius: 6px;
+      }
+      .warning-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        color: var(--warning);
+        font-size: 0.9rem;
+      }
+      .instructions-box {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .instructions-box h3 {
+        margin-bottom: 1rem;
+        color: var(--accent);
+      }
+      .supported-docs-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+      }
+      .supported-docs-list li {
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+      .supported-docs-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--success);
+        font-weight: 700;
+      }
+      .instructions-note {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(13, 148, 136, 0.05);
+        border-left: 4px solid var(--accent);
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+      /* Footer */
+      footer {
+        margin-top: 3rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 1.5rem 2rem;
+        text-align: center;
+      }
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      .footer-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .footer-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #0d9488;
+      }
+      .footer-subtitle {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .footer-badges {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .footer-right {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .footer-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(13, 148, 136, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+      }
+      .footer-link:hover {
+        border-color: #0d9488;
+        color: #0d9488;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15);
+      }
+      .tech-badge {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        background: rgba(13, 148, 136, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        border-radius: 6px;
+        font-size: 0.7rem;
+        color: #0d9488;
+        font-weight: 600;
+      }
+      @media (max-width: 768px) {
+        .footer-row {
+          flex-direction: column;
+          text-align: center;
+          align-items: center;
+        }
+        .footer-left {
+          flex-direction: column;
+        }
+        .footer-badges {
+          justify-content: center;
+        }
+        .footer-right {
+          justify-content: center;
+        }
+      }
+      /* Document Upload Styles */
+      .drop-zone {
+        border: 2px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 2rem;
+        text-align: center;
+        background: #fff;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .drop-zone:hover {
+        border-color: var(--accent);
+        background: var(--accent-light);
+      }
+      .drop-zone p {
+        margin: 0.5rem 0;
+        color: var(--muted);
+      }
+      .document-uploader {
+        margin-top: 1rem;
+      }
+
+      /* Document AI Hub Styling */
+      .document-ai-tabs {
+        margin-top: 20px;
+      }
+
+      .tab-buttons {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 20px;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .ai-tab-btn {
+        padding: 12px 24px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 16px;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        color: var(--text);
+      }
+
+      .ai-tab-btn:hover {
+        background: var(--accent-light);
+      }
+
+      .ai-tab-btn.active {
+        border-bottom-color: #4a90e2;
+        color: #4a90e2;
+        font-weight: bold;
+      }
+
+      .tab-content-ai {
+        margin-top: 1rem;
+      }
+
+      .ai-tab-panel {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .ai-tab-panel.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Email Integration Styling */
+      .email-integration {
+        margin-top: 1.5rem;
+      }
+
+      .email-address-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #4a90e2;
+      }
+
+      .email-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .email-display code {
+        background: #e9ecef;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-family: monospace;
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .copy-btn {
+        background: #4a90e2;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .copy-btn:hover {
+        background: #357abd;
+      }
+
+      .supported-documents {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .supported-documents ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+      }
+
+      .supported-documents li {
+        padding: 0.5rem 0;
+      }
+
+      .email-instructions {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .email-instructions ol {
+        margin-top: 0.5rem;
+        padding-left: 1.5rem;
+      }
+
+      .email-instructions li {
+        padding: 0.25rem 0;
+      }
+
+      /* Camera Section Styling */
+      .camera-section {
+        margin-top: 1.5rem;
+      }
+
+      .camera-button {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 20px 0;
+        transition: all 0.2s;
+      }
+
+      .camera-button:hover {
+        background: #218838;
+      }
+
+      .camera-instructions {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .camera-instructions ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+      }
+
+      .camera-instructions li {
+        padding: 0.5rem 0;
+      }
+
+      /* Upload Zone Styling */
+      .upload-section {
+        margin-top: 1.5rem;
+      }
+
+      .upload-zone {
+        border: 3px dashed #4a90e2;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        background: #f8f9fa;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .upload-zone:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+      }
+
+      .upload-zone.dragover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+        transform: scale(1.01);
+      }
+
+      .upload-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .upload-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+
+      .upload-btn {
+        background: #4a90e2;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+      }
+
+      .upload-btn:hover {
+        background: #357abd;
+      }
+
+      .upload-info {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .file-types {
+        margin-bottom: 1rem;
+      }
+
+      .upload-features ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+      }
+
+      .upload-features li {
+        padding: 0.25rem 0;
+      }
+
+      /* Results Section Styling */
+      .results-section {
+        margin-top: 1.5rem;
+      }
+
+      .results-summary {
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      .impact-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .impact-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #4a90e2;
+      }
+
+      .impact-card.income {
+        border-left-color: #28a745;
+      }
+
+      .impact-card.deductions {
+        border-left-color: #ffc107;
+      }
+
+      .impact-card.savings {
+        border-left-color: #17a2b8;
+      }
+
+      .impact-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+
+      .impact-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c5aa0;
+      }
+
+      .processed-documents {
+        padding: 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .document-list {
+        margin-top: 1rem;
+      }
+
+      .no-documents {
+        text-align: center;
+        color: var(--muted);
+        padding: 2rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .tab-buttons {
+          flex-wrap: wrap;
+        }
+
+        .ai-tab-btn {
+          flex: 1;
+          min-width: 120px;
+        }
+
+        .impact-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .email-display {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .email-display code {
+          flex: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="#" class="logo"
+            ><span>🚗</span><span>TaxSyncForDrivers</span
+            ><span class="badge" id="current-year"></span
+          ></a>
+          <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLang('fr')">FR</button
+            ><button class="lang-btn" onclick="setLang('en')">EN</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="container">
+      <section class="hero">
+        <h1 data-i18n="hero.title">Planification fiscale pour chauffeurs</h1>
+        <p data-i18n="hero.subtitle">
+          Maximisez vos déductions, planifiez vos acomptes trimestriels et gardez plus d'argent dans
+          vos poches.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">$0.70</div>
+            <div class="hero-stat-label" data-i18n="hero.perKm">/km déductible</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">$3,000+</div>
+            <div class="hero-stat-label" data-i18n="hero.savings">économies potentielles</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">100%</div>
+            <div class="hero-stat-label" data-i18n="hero.private">privé et gratuit</div>
+          </div>
+        </div>
+      </section>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="vehicle">
+          <span class="tab-icon">🚙</span
+          ><span class="tab-label" data-i18n="tabs.vehicle">Dépenses véhicule</span>
+        </button>
+        <button class="tab-btn" data-tab="documentAI">
+          <span class="tab-icon">🤖</span
+          ><span class="tab-label" data-i18n="tabs.documentAI">Document AI</span>
+        </button>
+        <button class="tab-btn" data-tab="quarterly">
+          <span class="tab-icon">📅</span
+          ><span class="tab-label" data-i18n="tabs.quarterly">Acomptes trimestriels</span>
+        </button>
+        <button class="tab-btn" data-tab="selfemploy">
+          <span class="tab-icon">💼</span
+          ><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span>
+        </button>
+      </nav>
+      <section id="vehicle" class="tab-content active">
+        <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
+        <p data-i18n="vehicle.description">
+          Comparez la méthode simplifiée (par km) et détaillée pour maximiser vos déductions.
+        </p>
+        <fieldset>
+          <legend data-i18n="vehicle.simplified">Méthode simplifiée</legend>
+          <div class="form-group">
+            <label for="totalKm" data-i18n="vehicle.totalKm"
+              >Kilomètres d'affaires total (année)</label
+            >
+            <input type="number" id="totalKm" placeholder="ex: 25000" min="0" />
+            <span class="label-hint" data-i18n="vehicle.kmHint"
+              >Utilisez un journal de bord ou l'app Uber/Lyft</span
+            >
+          </div>
+        </fieldset>
+        <div class="toggle-container">
+          <label class="toggle"
+            ><input type="checkbox" id="showDetailed" aria-labelledby="vehicleShowDetailedLabel" /><span class="toggle-slider"></span
+          ></label>
+          <span id="vehicleShowDetailedLabel" data-i18n="vehicle.showDetailed">Afficher méthode détaillée</span>
+        </div>
+        <fieldset id="detailedSection" style="display: none">
+          <legend data-i18n="vehicle.detailed">Méthode détaillée (dépenses réelles)</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fuel" data-i18n="vehicle.fuel">Essence / Électricité ($)</label
+              ><input type="number" id="fuel" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="insurance" data-i18n="vehicle.insurance">Assurance ($)</label
+              ><input type="number" id="insurance" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="maintenance" data-i18n="vehicle.maintenance"
+                >Entretien / Réparations ($)</label
+              ><input type="number" id="maintenance" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="businessPercent" data-i18n="vehicle.businessPercent"
+                >% utilisation affaires</label
+              ><input type="number" id="businessPercent" value="80" min="0" max="100" />
+            </div>
+          </div>
+        </fieldset>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateVehicle()" data-i18n="vehicle.calculate">
+            Calculer mes déductions
+          </button>
+          <button class="btn btn-secondary" onclick="resetVehicle()" data-i18n="common.reset">
+            Réinitialiser
+          </button>
+        </div>
+        <div id="vehicleResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="vehicle.results">Résultats de l'analyse</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card" id="simplifiedCard">
+              <h4 data-i18n="vehicle.simplifiedMethod">Méthode simplifiée</h4>
+              <div class="amount" id="simplifiedAmount">$0</div>
+              <div id="simplifiedBadge"></div>
+            </div>
+            <div class="method-card" id="detailedCard">
+              <h4 data-i18n="vehicle.detailedMethod">Méthode détaillée</h4>
+              <div class="amount" id="detailedAmount">$0</div>
+              <div id="detailedBadge"></div>
+            </div>
+          </div>
+          <div class="savings-summary">
+            <div class="savings-amount" id="vehicleSavings">$0</div>
+            <div class="savings-label" data-i18n="vehicle.totalDeduction">
+              Déduction totale recommandée
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="documentAI" class="tab-content">
+        <h2>🤖 <span data-i18n="documentAI.title">Document AI Hub</span></h2>
+        <p data-i18n="documentAI.subtitle">
+          Process tax documents automatically using email, camera, or upload
+        </p>
+
+        <div class="document-ai-tabs">
+          <div class="tab-buttons">
+            <button class="ai-tab-btn active" data-tab="email">
+              📧 <span data-i18n="documentAI.email">Email</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="camera">
+              📱 <span data-i18n="documentAI.camera">Camera</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="upload">
+              💻 <span data-i18n="documentAI.upload">Upload</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="results">
+              📊 <span data-i18n="documentAI.results">Results</span>
+            </button>
+          </div>
+
+          <div class="tab-content-ai">
+            <!-- Email Processing Tab -->
+            <div id="email" class="ai-tab-panel active">
+              <h3>📧 <span data-i18n="documentAI.emailTitle">Email Processing</span></h3>
+              <div class="email-integration">
+                <div class="email-address-box">
+                  <label data-i18n="documentAI.forwardTo">Forward tax documents to:</label>
+                  <div class="email-display">
+                    <code>notifications@isaloumapps.com</code>
+                    <button onclick="copyEmailAddress(event)" class="copy-btn">
+                      📋 <span data-i18n="documentAI.copy">Copy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="supported-documents">
+                  <h4 data-i18n="documentAI.supported">Supported Documents:</h4>
+                  <ul>
+                    <li>
+                      📊 <span data-i18n="documentAI.uberLyft">Uber/Lyft weekly summaries</span>
+                    </li>
+                    <li>⛽ <span data-i18n="documentAI.gas">Gas station receipts</span></li>
+                    <li>📄 <span data-i18n="documentAI.t4">T4/RL-1 tax slips</span></li>
+                    <li>
+                      🔧
+                      <span data-i18n="documentAI.maintenance">Vehicle maintenance receipts</span>
+                    </li>
+                    <li>📱 <span data-i18n="documentAI.phone">Phone bills</span></li>
+                    <li>🏢 <span data-i18n="documentAI.insurance">Insurance documents</span></li>
+                  </ul>
+                </div>
+
+                <div class="email-instructions">
+                  <h4 data-i18n="documentAI.howItWorks">How it works:</h4>
+                  <ol>
+                    <li data-i18n="documentAI.step1">Forward any tax document via email</li>
+                    <li data-i18n="documentAI.step2">
+                      AI extracts data automatically (30 seconds)
+                    </li>
+                    <li data-i18n="documentAI.step3">Receive confirmation with tax impact</li>
+                    <li data-i18n="documentAI.step4">Calculator updates automatically</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <!-- Camera Capture Tab -->
+            <div id="camera" class="ai-tab-panel">
+              <h3>📱 <span data-i18n="documentAI.mobileScanner">Mobile Scanner</span></h3>
+              <div class="camera-section">
+                <button id="cameraBtn" class="camera-button" onclick="startCamera()">
+                  📷 <span data-i18n="documentAI.scanReceipt">Scan Receipt</span>
+                </button>
+                <video
+                  id="cameraPreview"
+                  style="display: none"
+                  width="100%"
+                  autoplay
+                  playsinline
+                ></video>
+                <canvas id="captureCanvas" style="display: none"></canvas>
+
+                <div class="camera-instructions">
+                  <h4 data-i18n="documentAI.scannerFeatures">Scanner Features:</h4>
+                  <ul>
+                    <li>
+                      📸 <span data-i18n="documentAI.instantPhoto">Instant photo capture</span>
+                    </li>
+                    <li>
+                      🔍 <span data-i18n="documentAI.realtimeOCR">Real-time OCR processing</span>
+                    </li>
+                    <li>
+                      💰
+                      <span data-i18n="documentAI.immediateTax"
+                        >Immediate tax impact calculation</span
+                      >
+                    </li>
+                    <li>
+                      📱 <span data-i18n="documentAI.worksMobile">Works on mobile devices</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload" class="ai-tab-panel">
+              <h3>💻 <span data-i18n="documentAI.documentUpload">Document Upload</span></h3>
+              <div class="upload-section">
+                <div class="upload-zone" id="uploadZone">
+                  <div class="upload-content">
+                    <div class="upload-icon">📄</div>
+                    <p data-i18n="documentAI.dragDrop">
+                      Drag & Drop documents here or click to browse
+                    </p>
+                    <button class="upload-btn" onclick="triggerFileSelect()">
+                      <span data-i18n="documentAI.chooseFiles">Choose Files</span>
+                    </button>
+                    <input
+                      type="file"
+                      id="fileInput"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt"
+                      style="display: none"
+                    />
+                  </div>
+                </div>
+
+                <div class="upload-info">
+                  <div class="file-types">
+                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> PDF,
+                    JPG, PNG, DOC, DOCX, TXT
+                  </div>
+                  <div class="upload-features">
+                    <ul>
+                      <li>
+                        ✅ <span data-i18n="documentAI.multipleFiles">Multiple file upload</span>
+                      </li>
+                      <li>
+                        ✅ <span data-i18n="documentAI.batchProcessing">Batch processing</span>
+                      </li>
+                      <li>
+                        ✅ <span data-i18n="documentAI.progressTracking">Progress tracking</span>
+                      </li>
+                      <li>
+                        ✅ <span data-i18n="documentAI.secureProcessing">Secure processing</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Text Input Fallback -->
+                <div class="text-input-zone">
+                  <label for="documentText" data-i18n="documentAI.textLabel">
+                    Or paste document text here:
+                  </label>
+                  <textarea
+                    id="documentText"
+                    rows="6"
+                    data-i18n-placeholder="documentAI.textPlaceholder"
+                  ></textarea>
+                  <button class="btn" onclick="processDocumentText()" style="margin-top: 0.5rem">
+                    🔍 <span data-i18n="documentAI.processText">Process Text</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results Tab -->
+            <div id="results" class="ai-tab-panel">
+              <h3>📊 <span data-i18n="documentAI.processingResults">Processing Results</span></h3>
+              <div class="results-section">
+                <div class="results-summary">
+                  <h4 data-i18n="documentAI.taxImpact">Tax Impact Summary</h4>
+                  <div class="impact-cards">
+                    <div class="impact-card income">
+                      <div class="impact-label" data-i18n="documentAI.incomeAdded">
+                        Income Added
+                      </div>
+                      <div class="impact-value" id="totalIncome">$0</div>
+                    </div>
+                    <div class="impact-card deductions">
+                      <div class="impact-label" data-i18n="documentAI.deductionsAdded">
+                        Deductions Added
+                      </div>
+                      <div class="impact-value" id="totalDeductions">$0</div>
+                    </div>
+                    <div class="impact-card savings">
+                      <div class="impact-label" data-i18n="documentAI.taxSavings">Tax Savings</div>
+                      <div class="impact-value" id="totalSavings">$0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Processing Status -->
+                <div id="processingStatus" style="display: none">
+                  <div class="result-box" style="text-align: center">
+                    <div class="result-title">
+                      <span id="statusIcon">⏳</span>
+                      <span id="statusText" data-i18n="documentAI.processing">Processing...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Document Results Display -->
+                <div id="documentResultsDisplay" class="processed-documents">
+                  <h4 data-i18n="documentAI.processedDocs">Processed Documents</h4>
+                  <div id="documentHistory" class="document-list">
+                    <p class="no-documents" data-i18n="documentAI.noDocs">
+                      No documents processed yet
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="quarterly" class="tab-content">
+        <h2>📅 <span data-i18n="quarterly.title">Planificateur d'acomptes trimestriels</span></h2>
+        <p data-i18n="quarterly.description">
+          Planifiez vos paiements pour éviter les intérêts et pénalités.
+        </p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="estimatedIncome" data-i18n="quarterly.estimatedIncome"
+              >Revenu net estimé (après dépenses)</label
+            ><input type="number" id="estimatedIncome" placeholder="ex: 50000" min="0" />
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateQuarterly()" data-i18n="quarterly.calculate">
+            Calculer mes acomptes
+          </button>
+        </div>
+        <div id="quarterlyResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="quarterly.schedule">Calendrier de paiement</span>
+          </div>
+          <div class="payment-schedule">
+            <div class="payment-card">
+              <div class="payment-quarter">T1</div>
+              <div class="payment-date" data-i18n="quarterly.q1">15 mars</div>
+              <div class="payment-amount" id="q1Amount">$0</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-quarter">T2</div>
+              <div class="payment-date" data-i18n="quarterly.q2">15 juin</div>
+              <div class="payment-amount" id="q2Amount">$0</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-quarter">T3</div>
+              <div class="payment-date" data-i18n="quarterly.q3">15 septembre</div>
+              <div class="payment-amount" id="q3Amount">$0</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-quarter">T4</div>
+              <div class="payment-date" data-i18n="quarterly.q4">15 décembre</div>
+              <div class="payment-amount" id="q4Amount">$0</div>
+            </div>
+          </div>
+          <div class="result-grid" style="margin-top: 1.5rem">
+            <div class="result-item">
+              <div class="result-label" data-i18n="quarterly.weekly">Épargne hebdomadaire</div>
+              <div class="result-value positive" id="weeklyAmount">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="quarterly.annual">Total annuel</div>
+              <div class="result-value" id="annualTotal">$0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="selfemploy" class="tab-content">
+        <h2>💼 <span data-i18n="selfemploy.title">Calculateur RRQ travailleur autonome</span></h2>
+        <p data-i18n="selfemploy.description">
+          En tant que travailleur autonome, vous payez les portions employeur ET employé du RRQ/RPC.
+        </p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="selfEmployIncome" data-i18n="selfemploy.netIncome"
+              >Revenu net de travail autonome ($)</label
+            ><input type="number" id="selfEmployIncome" placeholder="ex: 50000" min="0" /><span
+              class="label-hint"
+              data-i18n="selfemploy.hint"
+              >Après dépenses d'entreprise</span
+            >
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateSelfEmploy()" data-i18n="selfemploy.calculate">
+            Calculer mes cotisations
+          </button>
+        </div>
+        <div id="selfEmployResults" class="result-box" style="display: none">
+          <div class="result-title">
+            📊 <span data-i18n="selfemploy.results">Cotisations RRQ/RPC</span>
+          </div>
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.total">Cotisation totale</div>
+              <div class="result-value" id="qppTotal">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.deductible">
+                Portion déductible (employeur)
+              </div>
+              <div class="result-value positive" id="qppDeductible">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.netCost">
+                Coût net après déduction
+              </div>
+              <div class="result-value" id="qppNetCost">$0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="selfemploy.rate">Taux effectif</div>
+              <div class="result-value" id="qppRate">12.8%</div>
+            </div>
+          </div>
+          <div
+            style="
+              background: #fef3c7;
+              border: 1px solid #f59e0b;
+              border-radius: 8px;
+              padding: 1rem;
+              margin-top: 1rem;
+            "
+          >
+            <strong>💡 <span data-i18n="selfemploy.tip">Conseil:</span></strong>
+            <span data-i18n="selfemploy.tipText"
+              >La portion employeur est déductible de votre revenu imposable!</span
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-content">
+        <div class="footer-row">
+          <div class="footer-left">
+            <div class="footer-title">🚗 TaxSyncForDrivers</div>
+            <div class="footer-subtitle" data-i18n="footer.builtBy">
+              Construit par Ihab Saloum • Projet Open Source
+            </div>
+          </div>
+          <div class="footer-subtitle" data-i18n="footer.calc">
+            Calculs côté client • 100% privé
+          </div>
+        </div>
+        <div class="footer-badges">
+          <span class="tech-badge">JavaScript</span>
+          <span class="tech-badge">HTML5</span>
+          <span class="tech-badge">Uber/Lyft/Taxi</span>
+          <span class="tech-badge">Bilingue</span>
+          <span class="tech-badge">100% Client-Side</span>
+        </div>
+        <div class="footer-right">
+          <a
+            href="https://github.com/Isaloum/TaxSyncForDrivers"
+            target="_blank"
+            class="footer-link"
+          >
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+            <span data-i18n="footer.viewSource">Voir le code source</span>
+          </a>
+          <a href="https://github.com/Isaloum" target="_blank" class="footer-link">
+            <span data-i18n="footer.moreProjects">Plus de projets →</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <script src="translations.js"></script>
+    <script src="driver-calculator.js"></script>
+    <script type="module">
+      import DocumentAutomation from './document-automation.js';
+      window.DocumentAutomation = DocumentAutomation;
+    </script>
+    <script>
+      // Auto-update year in header
+      document.addEventListener('DOMContentLoaded', function () {
+        const currentYear = new Date().getFullYear();
+        const yearElement = document.getElementById('current-year');
+        if (yearElement) {
+          yearElement.textContent = currentYear;
+        }
+      });
+
+      let currentLang = 'fr';
+      function setLang(l) {
+        currentLang = l;
+        document
+          .querySelectorAll('.lang-btn')
+          .forEach((b) => b.classList.toggle('active', b.textContent.trim().toLowerCase() === l));
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const k = el.getAttribute('data-i18n');
+          if (translations[l] && translations[l][k]) el.textContent = translations[l][k];
+        });
+        document.documentElement.lang = l;
+      }
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const t = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(t).classList.add('active');
+        });
+      });
+      document.getElementById('showDetailed').addEventListener('change', function () {
+        document.getElementById('detailedSection').style.display = this.checked ? 'block' : 'none';
+      });
+      function calculateVehicle() {
+        const km = parseFloat(document.getElementById('totalKm').value) || 0;
+        const s = DriverCalculator.calculateSimplifiedVehicle(km);
+        let d = { deduction: 0 };
+        if (document.getElementById('showDetailed').checked) {
+          d = DriverCalculator.calculateDetailedVehicle({
+            fuel: parseFloat(document.getElementById('fuel').value) || 0,
+            insurance: parseFloat(document.getElementById('insurance').value) || 0,
+            maintenance: parseFloat(document.getElementById('maintenance').value) || 0,
+            businessUsePercent: parseFloat(document.getElementById('businessPercent').value) || 80,
+          });
+        }
+        document.getElementById('vehicleResults').style.display = 'block';
+        document.getElementById('simplifiedAmount').textContent =
+          '$' + s.deduction.toLocaleString();
+        document.getElementById('detailedAmount').textContent = '$' + d.deduction.toLocaleString();
+        const sc = document.getElementById('simplifiedCard'),
+          dc = document.getElementById('detailedCard');
+        sc.classList.remove('recommended');
+        dc.classList.remove('recommended');
+        document.getElementById('simplifiedBadge').innerHTML = '';
+        document.getElementById('detailedBadge').innerHTML = '';
+        if (s.deduction >= d.deduction) {
+          sc.classList.add('recommended');
+          document.getElementById('simplifiedBadge').innerHTML =
+            '<span class="recommended-badge">' +
+            translations[currentLang]['recommended'] +
+            '</span>';
+          document.getElementById('vehicleSavings').textContent =
+            '$' + s.deduction.toLocaleString();
+        } else {
+          dc.classList.add('recommended');
+          document.getElementById('detailedBadge').innerHTML =
+            '<span class="recommended-badge">' +
+            translations[currentLang]['recommended'] +
+            '</span>';
+          document.getElementById('vehicleSavings').textContent =
+            '$' + d.deduction.toLocaleString();
+        }
+      }
+      function resetVehicle() {
+        document.getElementById('totalKm').value = '';
+        ['fuel', 'insurance', 'maintenance'].forEach(
+          (i) => (document.getElementById(i).value = '')
+        );
+        document.getElementById('businessPercent').value = '80';
+        document.getElementById('vehicleResults').style.display = 'none';
+      }
+      function calculateQuarterly() {
+        const i = parseFloat(document.getElementById('estimatedIncome').value) || 0;
+        const b =
+          DriverCalculator.TAX_BRACKETS.find((x) => i <= x.max) || DriverCalculator.TAX_BRACKETS[5];
+        const t = i * b.rate;
+        const r = DriverCalculator.calculateQuarterlyInstallments(t, i);
+        document.getElementById('quarterlyResults').style.display = 'block';
+        ['q1', 'q2', 'q3', 'q4'].forEach(
+          (q) =>
+            (document.getElementById(q + 'Amount').textContent = '$' + r.quarterly.toLocaleString())
+        );
+        document.getElementById('weeklyAmount').textContent = '$' + r.weekly.toLocaleString();
+        document.getElementById('annualTotal').textContent = '$' + r.annualTax.toLocaleString();
+      }
+      function calculateSelfEmploy() {
+        const i = parseFloat(document.getElementById('selfEmployIncome').value) || 0;
+        const r = DriverCalculator.calculateSelfEmploymentTax(i);
+        document.getElementById('selfEmployResults').style.display = 'block';
+        document.getElementById('qppTotal').textContent =
+          '$' + r.totalContribution.toLocaleString();
+        document.getElementById('qppDeductible').textContent =
+          '$' + r.deductiblePortion.toLocaleString();
+        document.getElementById('qppNetCost').textContent = '$' + r.netCost.toLocaleString();
+      }
+
+      // Document Processing Functions
+      function processDocumentText() {
+        const text = document.getElementById('documentText').value.trim();
+
+        if (!text) {
+          alert('Please enter document text');
+          return;
+        }
+
+        // Show processing status
+        showProcessingStatus('📄 Reading document...');
+
+        setTimeout(() => {
+          showProcessingStatus('🔍 Extracting data...');
+
+          setTimeout(() => {
+            showProcessingStatus('🧮 Calculating tax impact...');
+
+            setTimeout(() => {
+              // Process the document
+              const result = DocumentAutomation.processDocument(text);
+
+              // Hide processing status
+              document.getElementById('processingStatus').style.display = 'none';
+
+              if (result.success) {
+                displayDocumentResults(result);
+                showProcessingStatus('✅ Complete! Document processed successfully');
+                setTimeout(() => {
+                  document.getElementById('processingStatus').style.display = 'none';
+                }, 2000);
+              } else {
+                alert('Error: ' + (result.error || 'Unable to process document'));
+                console.error('Processing failed:', result);
+              }
+            }, 500);
+          }, 500);
+        }, 500);
+      }
+
+      function showProcessingStatus(message) {
+        const statusEl = document.getElementById('processingStatus');
+        const textEl = document.getElementById('statusText');
+        const iconEl = document.getElementById('statusIcon');
+
+        statusEl.style.display = 'block';
+        textEl.textContent = message;
+
+        if (message.includes('✅')) {
+          iconEl.textContent = '✅';
+        } else if (message.includes('📄')) {
+          iconEl.textContent = '📄';
+        } else if (message.includes('🔍')) {
+          iconEl.textContent = '🔍';
+        } else if (message.includes('🧮')) {
+          iconEl.textContent = '🧮';
+        } else {
+          iconEl.textContent = '⏳';
+        }
+      }
+
+      function displayDocumentResults(result) {
+        // Show results section
+        document.getElementById('documentResults').style.display = 'block';
+
+        // Display document type and confidence
+        document.getElementById('docType').textContent = result.type.replace(/_/g, ' ');
+        document.getElementById('docConfidence').textContent =
+          (result.confidence * 100).toFixed(0) + '%';
+
+        // Display extracted data
+        document.getElementById('extractedData').textContent = JSON.stringify(result.data, null, 2);
+
+        // Display category information
+        const category = result.category;
+        document.getElementById('categoryName').textContent =
+          category.category?.replace(/_/g, ' ') || 'N/A';
+
+        // Set amount label based on type
+        const amountLabel = document.getElementById('amountLabel');
+        if (category.type === 'income') {
+          amountLabel.textContent = 'Income Amount:';
+        } else {
+          amountLabel.textContent = 'Expense Amount:';
+        }
+
+        document.getElementById('categoryAmount').textContent =
+          '$' + (category.amount || 0).toLocaleString();
+
+        // Show/hide deduction and savings for expenses
+        const deductionItem = document.getElementById('deductionItem');
+        const savingsItem = document.getElementById('savingsItem');
+
+        if (category.type === 'expense') {
+          deductionItem.style.display = 'block';
+          savingsItem.style.display = 'block';
+          document.getElementById('deductibleAmount').textContent =
+            '$' + (category.deductibleAmount || 0).toLocaleString();
+          document.getElementById('taxSavings').textContent = '$' + (category.taxSavings || 0);
+        } else {
+          deductionItem.style.display = 'none';
+          savingsItem.style.display = 'none';
+        }
+
+        // Display warnings if any
+        if (result.warnings && result.warnings.length > 0) {
+          const warningsSection = document.getElementById('warningsSection');
+          const warningsList = document.getElementById('warningsList');
+
+          warningsSection.style.display = 'block';
+          warningsList.innerHTML = '';
+
+          result.warnings.forEach((warning) => {
+            const li = document.createElement('li');
+            li.textContent = warning;
+            warningsList.appendChild(li);
+          });
+        } else {
+          document.getElementById('warningsSection').style.display = 'none';
+        }
+
+        // Scroll to results
+        document
+          .getElementById('documentResults')
+          .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function clearDocumentForm() {
+        document.getElementById('documentText').value = '';
+        document.getElementById('documentResults').style.display = 'none';
+        document.getElementById('processingStatus').style.display = 'none';
+      }
+
+      // File upload handling
+      const fileInput = document.getElementById('fileInput');
+      const dropZone = document.getElementById('dropZone');
+
+      if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
+      }
+
+      if (dropZone) {
+        dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.style.borderColor = 'var(--accent)';
+          dropZone.style.background = 'var(--accent-light)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          dropZone.style.borderColor = 'var(--border)';
+          dropZone.style.background = '#fff';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.style.borderColor = 'var(--border)';
+          dropZone.style.background = '#fff';
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleFiles(files);
+          }
+        });
+      }
+
+      function handleFileSelect(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+          handleFiles(files);
+        }
+      }
+
+      function handleFiles(files) {
+        // For now, just show an alert that file upload is in demo mode
+        // In a real implementation, you would use FileReader to read text from images/PDFs
+        // and pass it to an OCR library like Tesseract.js
+
+        const file = files[0];
+        const fileName = file.name;
+        const fileExt = fileName.split('.').pop().toLowerCase();
+
+        if (fileExt === 'txt') {
+          // Read text file
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const text = e.target.result;
+            document.getElementById('documentText').value = text;
+            processDocumentText();
+          };
+          reader.readAsText(file);
+        } else {
+          alert(
+            'File upload with OCR is coming soon! For now, please:\n\n1. Use text extraction from your PDF/image\n2. Paste the text in the "Manual Text Input" field\n3. Click "Process Document"\n\nOr try these sample texts:\n\n• T4: "Box 14: Employment income $50,000.00"\n• Uber: "Uber Weekly Summary\\nGross earnings: $1,250.50\\n78 trips"\n• Gas Receipt: "Shell\\nTotal: $67.45"'
+          );
+        }
+      }
+
+      // Document AI Hub Tab Switching
+      document.addEventListener('DOMContentLoaded', function () {
+        // Initialize AI tab switching
+        document.querySelectorAll('.ai-tab-btn').forEach((btn) => {
+          btn.addEventListener('click', function () {
+            const tabId = this.getAttribute('data-tab');
+            switchAITab(tabId);
+          });
+        });
+      });
+
+      function switchAITab(tabId) {
+        // Remove active class from all AI tabs and panels
+        document.querySelectorAll('.ai-tab-btn').forEach((btn) => btn.classList.remove('active'));
+        document
+          .querySelectorAll('.ai-tab-panel')
+          .forEach((panel) => panel.classList.remove('active'));
+
+        // Add active class to selected tab and panel
+        const selectedBtn = document.querySelector(`[data-tab="${tabId}"]`);
+        const selectedPanel = document.getElementById(tabId);
+
+        if (selectedBtn) selectedBtn.classList.add('active');
+        if (selectedPanel) selectedPanel.classList.add('active');
+      }
+
+      // Email address copy functionality
+      function copyEmailAddress(event) {
+        const email = 'notifications@isaloumapps.com';
+        navigator.clipboard
+          .writeText(email)
+          .then(() => {
+            const btn = event.target.closest('.copy-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ <span data-i18n="documentAI.copied">Copied!</span>';
+            setTimeout(() => (btn.innerHTML = originalText), 2000);
+          })
+          .catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = email;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Email address copied: ' + email);
+          });
+      }
+
+      // Camera functionality
+      let cameraStream = null;
+
+      async function startCamera() {
+        try {
+          const video = document.getElementById('cameraPreview');
+          const btn = document.getElementById('cameraBtn');
+
+          cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+          });
+
+          video.srcObject = cameraStream;
+          video.style.display = 'block';
+          video.play();
+
+          // Update button to show capture option
+          btn.textContent = '📸 Capture Photo';
+          btn.onclick = capturePhoto;
+
+          // Add close button
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'btn btn-secondary';
+          closeBtn.innerHTML = '✖ <span data-i18n="documentAI.closeCamera">Close Camera</span>';
+          closeBtn.onclick = stopCamera;
+          closeBtn.style.marginLeft = '10px';
+          btn.parentNode.appendChild(closeBtn);
+        } catch (error) {
+          console.error('Camera error:', error);
+          alert('Camera access denied or not available. Please check your device permissions.');
+        }
+      }
+
+      function stopCamera() {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+        }
+        const video = document.getElementById('cameraPreview');
+        video.style.display = 'none';
+        video.srcObject = null;
+
+        // Reset button
+        const btn = document.getElementById('cameraBtn');
+        btn.innerHTML = '📷 <span data-i18n="documentAI.scanReceipt">Scan Receipt</span>';
+        btn.onclick = startCamera;
+
+        // Remove close button
+        const closeBtn = btn.parentNode.querySelector('.btn-secondary');
+        if (closeBtn) closeBtn.remove();
+      }
+
+      function capturePhoto() {
+        const video = document.getElementById('cameraPreview');
+        const canvas = document.getElementById('captureCanvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+
+        // Convert canvas to blob and process
+        canvas.toBlob((blob) => {
+          stopCamera();
+          alert(
+            'Photo captured! OCR processing requires Tesseract.js library. For now, please use the text input method or upload a text file.'
+          );
+          // In a real implementation, you would process the image with OCR here
+        });
+      }
+
+      // File upload functionality
+      function triggerFileSelect() {
+        document.getElementById('fileInput').click();
+      }
+
+      // Initialize drag and drop for upload zone
+      document.addEventListener('DOMContentLoaded', function () {
+        const uploadZone = document.getElementById('uploadZone');
+        if (uploadZone) {
+          uploadZone.addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+          });
+
+          uploadZone.addEventListener('dragover', handleDragOver);
+          uploadZone.addEventListener('drop', handleFileDrop);
+          uploadZone.addEventListener('dragleave', handleDragLeave);
+        }
+      });
+
+      function handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+      }
+
+      function handleDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+      }
+
+      function handleFileDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFiles(files);
+        }
+      }
+
+      setLang('fr');
+    </script>
+    <script type="module">
+      // Import document processing modules
+      import { quickProcess } from './document-processor.js';
+
+      // Global state for document processing
+      let processedDocuments = [];
+
+      // Drag and drop functionality
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+
+      if (dropZone) {
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+          dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('drag-over');
+          const files = Array.from(e.dataTransfer.files);
+          await processFiles(files);
+        });
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+          const files = Array.from(e.target.files);
+          await processFiles(files);
+        });
+      }
+
+      // Process uploaded files
+      async function processFiles(files) {
+        if (files.length === 0) return;
+
+        showProcessingStatus(true);
+        const results = [];
+
+        for (const file of files) {
+          try {
+            // For now, read file as text (PDF processing would need additional library)
+            const text = await readFileAsText(file);
+            const result = quickProcess(text);
+            result.fileName = file.name;
+            results.push(result);
+          } catch (error) {
+            console.error('Error processing file:', file.name, error);
+            results.push({
+              success: false,
+              fileName: file.name,
+              error: error.message,
+              documentType: 'UNKNOWN',
+            });
+          }
+        }
+
+        processedDocuments = processedDocuments.concat(results);
+        showProcessingStatus(false);
+        displayResults(results);
+      }
+
+      // Read file as text
+      function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsText(file);
+        });
+      }
+
+      // Process text input
+      window.processText = function () {
+        const text = document.getElementById('documentText').value;
+        if (!text.trim()) {
+          alert('Veuillez entrer du texte à traiter');
+          return;
+        }
+
+        showProcessingStatus(true);
+        setTimeout(() => {
+          const result = quickProcess(text);
+          result.fileName = 'Texte saisi manuellement';
+          processedDocuments.push(result);
+          showProcessingStatus(false);
+          displayResults([result]);
+          document.getElementById('documentText').value = '';
+        }, 500);
+      };
+
+      // Camera functions
+      let cameraStream = null;
+
+      window.openCamera = async function () {
+        try {
+          const cameraCapture = document.getElementById('cameraCapture');
+          const video = document.getElementById('cameraPreview');
+
+          cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+          });
+          video.srcObject = cameraStream;
+          cameraCapture.style.display = 'block';
+          dropZone.style.display = 'none';
+        } catch (error) {
+          console.error('Camera error:', error);
+          alert("Impossible d'accéder à la caméra. Veuillez vérifier les permissions.");
+        }
+      };
+
+      window.closeCamera = function () {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+        }
+        document.getElementById('cameraCapture').style.display = 'none';
+        dropZone.style.display = 'block';
+      };
+
+      window.capturePhoto = function () {
+        const video = document.getElementById('cameraPreview');
+        const canvas = document.getElementById('cameraCanvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+
+        // Convert canvas to blob and process
+        canvas.toBlob(async (blob) => {
+          closeCamera();
+          alert(
+            'Photo capturée! Le traitement OCR nécessite une bibliothèque supplémentaire (Tesseract.js) non encore intégrée. Veuillez utiliser le texte manuel pour le moment.'
+          );
+        });
+      };
+
+      // Show/hide processing status
+      function showProcessingStatus(show) {
+        const status = document.getElementById('processingStatus');
+        if (status) {
+          status.style.display = show ? 'block' : 'none';
+        }
+      }
+
+      // Display processing results
+      function displayResults(results) {
+        const container = document.getElementById('resultsContainer');
+        const resultsDiv = document.getElementById('documentResults');
+
+        if (!container || !resultsDiv) return;
+
+        resultsDiv.style.display = 'block';
+
+        results.forEach((result) => {
+          const card = createDocumentCard(result);
+          container.appendChild(card);
+        });
+
+        // Scroll to results
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Create a document card for display
+      function createDocumentCard(result) {
+        const card = document.createElement('div');
+        card.className = 'document-card';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'document-card-header';
+
+        const typeDiv = document.createElement('div');
+        typeDiv.className = 'document-type';
+        typeDiv.textContent =
+          result.documentType + (result.fileName ? ` - ${result.fileName}` : '');
+
+        const badge = document.createElement('span');
+        badge.className = 'confidence-badge';
+        if (result.validation && result.validation.confidenceScore) {
+          const score = result.validation.confidenceScore;
+          badge.textContent = `${score}% confiance`;
+          badge.classList.add(
+            score >= 80 ? 'confidence-high' : score >= 50 ? 'confidence-medium' : 'confidence-low'
+          );
+        } else {
+          badge.textContent = result.success ? '✓ Traité' : '✗ Échec';
+          badge.classList.add(result.success ? 'confidence-high' : 'confidence-low');
+        }
+
+        header.appendChild(typeDiv);
+        header.appendChild(badge);
+        card.appendChild(header);
+
+        // Error message if failed
+        if (!result.success && result.error) {
+          const errorDiv = document.createElement('div');
+          errorDiv.style.padding = '1rem';
+          errorDiv.style.background = 'rgba(239, 68, 68, 0.05)';
+          errorDiv.style.border = '1px solid var(--danger)';
+          errorDiv.style.borderRadius = '6px';
+          errorDiv.style.color = 'var(--danger)';
+          errorDiv.textContent = '⚠️ ' + result.error;
+          card.appendChild(errorDiv);
+          return card;
+        }
+
+        // Extracted fields
+        if (result.extractedData && Object.keys(result.extractedData).length > 0) {
+          const fieldsDiv = document.createElement('div');
+          fieldsDiv.className = 'extracted-fields';
+
+          Object.entries(result.extractedData).forEach(([key, value]) => {
+            const fieldItem = document.createElement('div');
+            fieldItem.className = 'field-item';
+
+            const label = document.createElement('div');
+            label.className = 'field-label';
+            label.textContent = formatFieldName(key);
+
+            const valueDiv = document.createElement('div');
+            valueDiv.className = 'field-value';
+            valueDiv.textContent = formatFieldValue(value);
+
+            fieldItem.appendChild(label);
+            fieldItem.appendChild(valueDiv);
+            fieldsDiv.appendChild(fieldItem);
+          });
+
+          card.appendChild(fieldsDiv);
+        }
+
+        // Warnings
+        if (
+          result.validation &&
+          result.validation.warnings &&
+          result.validation.warnings.length > 0
+        ) {
+          const warningsDiv = document.createElement('div');
+          warningsDiv.className = 'validation-warnings';
+
+          const title = document.createElement('strong');
+          title.textContent = '⚠️ Avertissements:';
+          warningsDiv.appendChild(title);
+
+          result.validation.warnings.forEach((warning) => {
+            const item = document.createElement('div');
+            item.className = 'warning-item';
+            item.textContent = '• ' + warning;
+            warningsDiv.appendChild(item);
+          });
+
+          card.appendChild(warningsDiv);
+        }
+
+        return card;
+      }
+
+      // Format field names for display
+      function formatFieldName(name) {
+        const nameMap = {
+          employmentIncome: "Revenu d'emploi",
+          cpp: 'CPP',
+          qpp: 'RRQ',
+          ei: 'AE',
+          ppip: 'RPAP',
+          incomeTax: 'Impôt retenu',
+          grossFares: 'Revenus bruts',
+          tips: 'Pourboires',
+          distance: 'Distance (km)',
+          total: 'Total',
+          date: 'Date',
+          vendor: 'Fournisseur',
+          station: 'Station',
+          liters: 'Litres',
+        };
+        return nameMap[name] || name;
+      }
+
+      // Format field values for display
+      function formatFieldValue(value) {
+        if (typeof value === 'number') {
+          return (
+            '$' +
+            value.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          );
+        }
+        return value;
+      }
+    </script>
+  </body>
 </html>
