@@ -3,10 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tax Sync for Drivers</title>
+    <title>TaxSyncForDrivers</title>
+    <style>
+        .badge {
+            background-color: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Tax Sync for Drivers</h1>
+    <header>
+        <h1>Welcome to Tax Sync for Drivers <span class="badge" id="current-year"></span></h1>
+    </header>
     <p>This is a placeholder index.html file restored from an earlier commit.</p>
+
+    <script>
+        // Set the current year dynamically when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+    </script>
 </body>
 </html>
