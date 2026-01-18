@@ -29,7 +29,7 @@ export default defineConfig({
   ],
   // Start local dev server before running tests
   webServer: {
-    command: 'npx http-server . -p 3000 -s',
+    command: 'npx http-server . -p 3000',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
