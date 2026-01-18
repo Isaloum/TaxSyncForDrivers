@@ -1766,7 +1766,7 @@
                 // Process the document
                 const result = DocumentAutomation.processDocument(text);
 
-                if (result && result.success) {
+                if (result?.success) {
                   // Add result to document history
                   const historyDiv = document.getElementById('documentHistory');
                   if (historyDiv) {
@@ -1776,25 +1776,65 @@
                       noDocsMsg.style.display = 'none';
                     }
 
-                    // Create a simple result card
+                    // Create a simple result card using safe DOM manipulation
                     const card = document.createElement('div');
                     card.className = 'document-card';
-                    card.innerHTML = `
-                      <div class="document-card-header">
-                        <div class="document-type">${result.type || 'Document'}</div>
-                        <span class="confidence-badge confidence-high">✓ Processed</span>
-                      </div>
-                      <div class="extracted-fields">
-                        <div class="field-item">
-                          <div class="field-label">Category</div>
-                          <div class="field-value">${result.category?.category || 'N/A'}</div>
-                        </div>
-                        <div class="field-item">
-                          <div class="field-label">Amount</div>
-                          <div class="field-value">$${(result.category?.amount || 0).toLocaleString()}</div>
-                        </div>
-                      </div>
-                    `;
+                    
+                    // Create header
+                    const header = document.createElement('div');
+                    header.className = 'document-card-header';
+                    
+                    const typeDiv = document.createElement('div');
+                    typeDiv.className = 'document-type';
+                    typeDiv.textContent = result.type || 'Document';
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'confidence-badge confidence-high';
+                    badge.textContent = '✓ Processed';
+                    
+                    header.appendChild(typeDiv);
+                    header.appendChild(badge);
+                    
+                    // Create extracted fields
+                    const fieldsDiv = document.createElement('div');
+                    fieldsDiv.className = 'extracted-fields';
+                    
+                    // Category field
+                    const categoryItem = document.createElement('div');
+                    categoryItem.className = 'field-item';
+                    
+                    const categoryLabel = document.createElement('div');
+                    categoryLabel.className = 'field-label';
+                    categoryLabel.textContent = 'Category';
+                    
+                    const categoryValue = document.createElement('div');
+                    categoryValue.className = 'field-value';
+                    categoryValue.textContent = result.category?.category || 'N/A';
+                    
+                    categoryItem.appendChild(categoryLabel);
+                    categoryItem.appendChild(categoryValue);
+                    
+                    // Amount field
+                    const amountItem = document.createElement('div');
+                    amountItem.className = 'field-item';
+                    
+                    const amountLabel = document.createElement('div');
+                    amountLabel.className = 'field-label';
+                    amountLabel.textContent = 'Amount';
+                    
+                    const amountValue = document.createElement('div');
+                    amountValue.className = 'field-value';
+                    amountValue.textContent = '$' + (result.category?.amount || 0).toLocaleString();
+                    
+                    amountItem.appendChild(amountLabel);
+                    amountItem.appendChild(amountValue);
+                    
+                    fieldsDiv.appendChild(categoryItem);
+                    fieldsDiv.appendChild(amountItem);
+                    
+                    card.appendChild(header);
+                    card.appendChild(fieldsDiv);
+                    
                     historyDiv.insertBefore(card, historyDiv.firstChild);
                   }
 
