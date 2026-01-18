@@ -221,6 +221,13 @@
         transition: all 0.2s;
         background: #fff;
       }
+      textarea {
+        min-height: 200px;
+        max-width: 100%;
+        resize: vertical;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+      }
       input:focus,
       select:focus,
       textarea:focus {
@@ -1352,6 +1359,9 @@
             <div id="upload" class="ai-tab-panel">
               <h3>💻 <span data-i18n="documentAI.documentUpload">Document Upload</span></h3>
               <div class="upload-section">
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #ffc107;">
+                  <strong>⚠️ Note:</strong> PDF text extraction is coming soon. For now, please copy text from your PDF and use the "Paste Text" section below, or upload an image or text file.
+                </div>
                 <div class="upload-zone" id="uploadZone">
                   <div class="upload-content">
                     <div class="upload-icon">📄</div>
@@ -1365,7 +1375,7 @@
                       type="file"
                       id="fileInput"
                       multiple
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt"
+                      accept="image/*,text/plain"
                       style="display: none"
                     />
                   </div>
@@ -1373,8 +1383,7 @@
 
                 <div class="upload-info">
                   <div class="file-types">
-                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> PDF,
-                    JPG, PNG, DOC, DOCX, TXT
+                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> Images (JPG, PNG, GIF, WebP), Text files (TXT)
                   </div>
                   <div class="upload-features">
                     <ul>
@@ -1908,10 +1917,6 @@
       }
 
       function handleFiles(files) {
-        // For now, just show an alert that file upload is in demo mode
-        // In a real implementation, you would use FileReader to read text from images/PDFs
-        // and pass it to an OCR library like Tesseract.js
-
         const file = files[0];
         const fileName = file.name;
         const fileExt = fileName.split('.').pop().toLowerCase();
@@ -1925,10 +1930,21 @@
             processDocumentText();
           };
           reader.readAsText(file);
+        } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(fileExt)) {
+          // Image file - show helpful message
+          showProcessingStatus('📸 Image uploaded! OCR processing requires additional library (Tesseract.js).');
+          setTimeout(() => {
+            showProcessingStatus('💡 For now, please extract text from your image and paste it in the text area below.');
+            setTimeout(() => {
+              document.getElementById('processingStatus').style.display = 'none';
+            }, 3000);
+          }, 2000);
         } else {
-          alert(
-            'File upload with OCR is coming soon! For now, please:\n\n1. Use text extraction from your PDF/image\n2. Paste the text in the "Manual Text Input" field\n3. Click "Process Document"\n\nOr try these sample texts:\n\n• T4: "Box 14: Employment income $50,000.00"\n• Uber: "Uber Weekly Summary\\nGross earnings: $1,250.50\\n78 trips"\n• Gas Receipt: "Shell\\nTotal: $67.45"'
-          );
+          // Unsupported file type
+          showProcessingStatus('⚠️ Unsupported file type. Please use images or text files.');
+          setTimeout(() => {
+            document.getElementById('processingStatus').style.display = 'none';
+          }, 3000);
         }
       }
 
