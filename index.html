@@ -1456,7 +1456,54 @@
                   </div>
                 </div>
 
-                <!-- Document Results Display -->
+                <!-- Document Results Display (Individual Result) -->
+                <div id="documentResults" style="display: none">
+                  <div class="document-card" style="background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-top: 1rem; box-shadow: var(--shadow);">
+                    
+                    <!-- Document Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+                      <div id="docType" style="font-size: 1.125rem; font-weight: 700; color: var(--accent);"></div>
+                      <div id="docConfidence" style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.875rem; font-weight: 600; background: rgba(16, 185, 129, 0.1); color: var(--success);"></div>
+                    </div>
+                    
+                    <!-- Extracted Data -->
+                    <div>
+                      <h4 style="margin-bottom: 0.5rem;">Extracted Data:</h4>
+                      <pre id="extractedData" style="background: var(--bg); padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.875rem;"></pre>
+                    </div>
+                    
+                    <!-- Category Info -->
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div>
+                          <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Category</div>
+                          <div id="categoryName" style="font-size: 1.125rem; font-weight: 700;"></div>
+                        </div>
+                        <div>
+                          <div id="amountLabel" style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Amount</div>
+                          <div id="categoryAmount" style="font-size: 1.125rem; font-weight: 700; color: var(--accent);"></div>
+                        </div>
+                        <div id="deductionItem" style="display: none;">
+                          <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Deductible Amount</div>
+                          <div id="deductibleAmount" style="font-size: 1.125rem; font-weight: 700; color: var(--success);"></div>
+                        </div>
+                        <div id="savingsItem" style="display: none;">
+                          <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Tax Savings</div>
+                          <div id="taxSavings" style="font-size: 1.125rem; font-weight: 700; color: var(--success);"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Warnings -->
+                    <div id="warningsSection" style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.05); border: 1px solid var(--warning); border-radius: 6px;">
+                      <div style="font-weight: 600; color: var(--warning); margin-bottom: 0.5rem;">⚠️ Warnings</div>
+                      <ul id="warningsList" style="margin: 0.5rem 0 0 1.5rem; color: var(--warning);"></ul>
+                    </div>
+                    
+                  </div>
+                </div>
+
+                <!-- Document Results Display (History) -->
                 <div id="documentResultsDisplay" class="processed-documents">
                   <h4 data-i18n="documentAI.processedDocs">Processed Documents</h4>
                   <div id="documentHistory" class="document-list">
@@ -1745,7 +1792,15 @@
 
       // Document Processing Functions
       function processDocumentText() {
-        const text = document.getElementById('documentText').value.trim();
+        const textarea = document.getElementById('documentText');
+        
+        if (!textarea) {
+          console.error('Textarea element not found');
+          alert('Error: Text input not found. Please refresh the page.');
+          return;
+        }
+        
+        const text = textarea.value.trim();
 
         if (!text) {
           alert('Please enter document text');
@@ -1765,6 +1820,33 @@
               try {
                 // Process the document
                 const result = DocumentAutomation.processDocument(text);
+
+        copilot/fix-element-id-mismatches
+                // Hide processing status
+                const statusEl = document.getElementById('processingStatus');
+                if (statusEl) {
+                  statusEl.style.display = 'none';
+                }
+
+                if (result.success) {
+                  displayDocumentResults(result);
+                  showProcessingStatus('✅ Complete! Document processed successfully');
+                  setTimeout(() => {
+                    if (statusEl) {
+                      statusEl.style.display = 'none';
+                    }
+                  }, 2000);
+                } else {
+                  alert('Error: ' + (result.error || 'Unable to process document'));
+                  console.error('Processing failed:', result);
+                }
+              } catch (error) {
+                console.error('Error processing document:', error);
+                alert('Error processing document: ' + error.message);
+                const statusEl = document.getElementById('processingStatus');
+                if (statusEl) {
+                  statusEl.style.display = 'none';
+                }
 
                 if (result?.success) {
                   // Add result to document history
@@ -1855,6 +1937,7 @@
                 document.getElementById('processingStatus').style.display = 'none';
                 alert('Error: ' + error.message);
                 console.error('Processing error:', error);
+        main
               }
             }, 500);
           }, 500);
@@ -1883,75 +1966,146 @@
       }
 
       function displayDocumentResults(result) {
-        // Show results section
-        document.getElementById('documentResults').style.display = 'block';
-
-        // Display document type and confidence
-        document.getElementById('docType').textContent = result.type.replace(/_/g, ' ');
-        document.getElementById('docConfidence').textContent =
-          (result.confidence * 100).toFixed(0) + '%';
-
-        // Display extracted data
-        document.getElementById('extractedData').textContent = JSON.stringify(result.data, null, 2);
-
-        // Display category information
-        const category = result.category;
-        document.getElementById('categoryName').textContent =
-          category.category?.replace(/_/g, ' ') || 'N/A';
-
-        // Set amount label based on type
-        const amountLabel = document.getElementById('amountLabel');
-        if (category.type === 'income') {
-          amountLabel.textContent = 'Income Amount:';
-        } else {
-          amountLabel.textContent = 'Expense Amount:';
+        // Validate result object
+        if (!result || typeof result !== 'object') {
+          console.error('Invalid result object:', result);
+          return;
         }
 
-        document.getElementById('categoryAmount').textContent =
-          '$' + (category.amount || 0).toLocaleString();
-
-        // Show/hide deduction and savings for expenses
+        // Get required elements with null checks
+        const documentResults = document.getElementById('documentResults');
+        const docType = document.getElementById('docType');
+        const docConfidence = document.getElementById('docConfidence');
+        const extractedData = document.getElementById('extractedData');
+        const categoryName = document.getElementById('categoryName');
+        const amountLabel = document.getElementById('amountLabel');
+        const categoryAmount = document.getElementById('categoryAmount');
         const deductionItem = document.getElementById('deductionItem');
         const savingsItem = document.getElementById('savingsItem');
+        const deductibleAmount = document.getElementById('deductibleAmount');
+        const taxSavings = document.getElementById('taxSavings');
+        const warningsSection = document.getElementById('warningsSection');
+        const warningsList = document.getElementById('warningsList');
 
+        // Check if all required elements exist
+        if (!documentResults) {
+          console.error('documentResults element not found');
+          return;
+        }
+
+        // Show results section
+        documentResults.style.display = 'block';
+
+        // Display document type and confidence
+        if (docType) {
+          docType.textContent = result.type ? result.type.replace(/_/g, ' ') : 'Unknown Document';
+        }
+        
+        if (docConfidence) {
+          const confidence = result.confidence || 0;
+          docConfidence.textContent = (confidence * 100).toFixed(0) + '%';
+          
+          // Update confidence badge styling based on level
+          if (confidence > 0.8) {
+            docConfidence.style.background = 'rgba(16, 185, 129, 0.1)';
+            docConfidence.style.color = 'var(--success)';
+          } else if (confidence > 0.5) {
+            docConfidence.style.background = 'rgba(245, 158, 11, 0.1)';
+            docConfidence.style.color = 'var(--warning)';
+          } else {
+            docConfidence.style.background = 'rgba(239, 68, 68, 0.1)';
+            docConfidence.style.color = 'var(--danger)';
+          }
+        }
+
+        // Display extracted data
+        if (extractedData) {
+          extractedData.textContent = JSON.stringify(result.data, null, 2);
+        }
+
+        // Display category information
+        const category = result.category || {};
+        
+        if (categoryName) {
+          categoryName.textContent = category.category?.replace(/_/g, ' ') || 'N/A';
+        }
+
+        // Set amount label based on type
+        if (amountLabel) {
+          if (category.type === 'income') {
+            amountLabel.textContent = 'Income Amount:';
+          } else {
+            amountLabel.textContent = 'Expense Amount:';
+          }
+        }
+
+        if (categoryAmount) {
+          categoryAmount.textContent = '$' + (category.amount || 0).toLocaleString();
+        }
+
+        // Show/hide deduction and savings for expenses
         if (category.type === 'expense') {
-          deductionItem.style.display = 'block';
-          savingsItem.style.display = 'block';
-          document.getElementById('deductibleAmount').textContent =
-            '$' + (category.deductibleAmount || 0).toLocaleString();
-          document.getElementById('taxSavings').textContent = '$' + (category.taxSavings || 0);
+          if (deductionItem) {
+            deductionItem.style.display = 'block';
+          }
+          if (savingsItem) {
+            savingsItem.style.display = 'block';
+          }
+          if (deductibleAmount) {
+            deductibleAmount.textContent = '$' + (category.deductibleAmount || 0).toLocaleString();
+          }
+          if (taxSavings) {
+            taxSavings.textContent = '$' + (category.taxSavings || 0);
+          }
         } else {
-          deductionItem.style.display = 'none';
-          savingsItem.style.display = 'none';
+          if (deductionItem) {
+            deductionItem.style.display = 'none';
+          }
+          if (savingsItem) {
+            savingsItem.style.display = 'none';
+          }
         }
 
         // Display warnings if any
         if (result.warnings && result.warnings.length > 0) {
-          const warningsSection = document.getElementById('warningsSection');
-          const warningsList = document.getElementById('warningsList');
-
-          warningsSection.style.display = 'block';
-          warningsList.innerHTML = '';
-
-          result.warnings.forEach((warning) => {
-            const li = document.createElement('li');
-            li.textContent = warning;
-            warningsList.appendChild(li);
-          });
+          if (warningsSection) {
+            warningsSection.style.display = 'block';
+          }
+          if (warningsList) {
+            warningsList.innerHTML = '';
+            result.warnings.forEach((warning) => {
+              const li = document.createElement('li');
+              li.textContent = warning;
+              warningsList.appendChild(li);
+            });
+          }
         } else {
-          document.getElementById('warningsSection').style.display = 'none';
+          if (warningsSection) {
+            warningsSection.style.display = 'none';
+          }
         }
 
+        // Switch to results tab
+        switchAITab('results');
+
         // Scroll to results
-        document
-          .getElementById('documentResults')
-          .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        documentResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
       function clearDocumentForm() {
-        document.getElementById('documentText').value = '';
-        document.getElementById('documentResults').style.display = 'none';
-        document.getElementById('processingStatus').style.display = 'none';
+        const documentText = document.getElementById('documentText');
+        const documentResults = document.getElementById('documentResults');
+        const processingStatus = document.getElementById('processingStatus');
+        
+        if (documentText) {
+          documentText.value = '';
+        }
+        if (documentResults) {
+          documentResults.style.display = 'none';
+        }
+        if (processingStatus) {
+          processingStatus.style.display = 'none';
+        }
       }
 
       // File upload handling
