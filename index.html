@@ -1360,7 +1360,7 @@
               <h3>💻 <span data-i18n="documentAI.documentUpload">Document Upload</span></h3>
               <div class="upload-section">
                 <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #ffc107;">
-                  <strong>⚠️ Note:</strong> PDF text extraction is coming soon. For now, please copy text from your PDF and use the "Paste Text" section below, or upload an image or text file.
+                  <strong>⚠️ Note:</strong> For PDF files, please copy the text and use the "Paste Text" section below. Direct PDF text extraction coming soon!
                 </div>
                 <div class="upload-zone" id="uploadZone">
                   <div class="upload-content">
@@ -1375,7 +1375,7 @@
                       type="file"
                       id="fileInput"
                       multiple
-                      accept="image/*,text/plain"
+                      accept="image/*,text/plain,application/pdf,.pdf"
                       style="display: none"
                     />
                   </div>
@@ -1383,7 +1383,7 @@
 
                 <div class="upload-info">
                   <div class="file-types">
-                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> Images (JPG, PNG, GIF, WebP), Text files (TXT)
+                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> PDF, Images (JPG, PNG, GIF, WebP), Text files (TXT)
                   </div>
                   <div class="upload-features">
                     <ul>
@@ -1762,21 +1762,99 @@
             showProcessingStatus('🧮 Calculating tax impact...');
 
             setTimeout(() => {
-              // Process the document
-              const result = DocumentAutomation.processDocument(text);
+              try {
+                // Process the document
+                const result = DocumentAutomation.processDocument(text);
 
-              // Hide processing status
-              document.getElementById('processingStatus').style.display = 'none';
+                if (result?.success) {
+                  // Add result to document history
+                  const historyDiv = document.getElementById('documentHistory');
+                  if (historyDiv) {
+                    // Remove "no documents" message
+                    const noDocsMsg = historyDiv.querySelector('.no-documents');
+                    if (noDocsMsg) {
+                      noDocsMsg.style.display = 'none';
+                    }
 
-              if (result.success) {
-                displayDocumentResults(result);
-                showProcessingStatus('✅ Complete! Document processed successfully');
-                setTimeout(() => {
+                    // Create a simple result card using safe DOM manipulation
+                    const card = document.createElement('div');
+                    card.className = 'document-card';
+                    
+                    // Create header
+                    const header = document.createElement('div');
+                    header.className = 'document-card-header';
+                    
+                    const typeDiv = document.createElement('div');
+                    typeDiv.className = 'document-type';
+                    typeDiv.textContent = result.type || 'Document';
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'confidence-badge confidence-high';
+                    badge.textContent = '✓ Processed';
+                    
+                    header.appendChild(typeDiv);
+                    header.appendChild(badge);
+                    
+                    // Create extracted fields
+                    const fieldsDiv = document.createElement('div');
+                    fieldsDiv.className = 'extracted-fields';
+                    
+                    // Category field
+                    const categoryItem = document.createElement('div');
+                    categoryItem.className = 'field-item';
+                    
+                    const categoryLabel = document.createElement('div');
+                    categoryLabel.className = 'field-label';
+                    categoryLabel.textContent = 'Category';
+                    
+                    const categoryValue = document.createElement('div');
+                    categoryValue.className = 'field-value';
+                    categoryValue.textContent = result.category?.category || 'N/A';
+                    
+                    categoryItem.appendChild(categoryLabel);
+                    categoryItem.appendChild(categoryValue);
+                    
+                    // Amount field
+                    const amountItem = document.createElement('div');
+                    amountItem.className = 'field-item';
+                    
+                    const amountLabel = document.createElement('div');
+                    amountLabel.className = 'field-label';
+                    amountLabel.textContent = 'Amount';
+                    
+                    const amountValue = document.createElement('div');
+                    amountValue.className = 'field-value';
+                    amountValue.textContent = '$' + (result.category?.amount || 0).toLocaleString();
+                    
+                    amountItem.appendChild(amountLabel);
+                    amountItem.appendChild(amountValue);
+                    
+                    fieldsDiv.appendChild(categoryItem);
+                    fieldsDiv.appendChild(amountItem);
+                    
+                    card.appendChild(header);
+                    card.appendChild(fieldsDiv);
+                    
+                    historyDiv.insertBefore(card, historyDiv.firstChild);
+                  }
+
+                  // Show success message
+                  showProcessingStatus('✅ Complete! Document processed successfully');
+                  
+                  // Switch to results tab
+                  setTimeout(() => {
+                    switchAITab('results');
+                    document.getElementById('processingStatus').style.display = 'none';
+                  }, 1000);
+                } else {
                   document.getElementById('processingStatus').style.display = 'none';
-                }, 2000);
-              } else {
-                alert('Error: ' + (result.error || 'Unable to process document'));
-                console.error('Processing failed:', result);
+                  alert('Error: ' + (result?.error || 'Unable to process document'));
+                  console.error('Processing failed:', result);
+                }
+              } catch (error) {
+                document.getElementById('processingStatus').style.display = 'none';
+                alert('Error: ' + error.message);
+                console.error('Processing error:', error);
               }
             }, 500);
           }, 500);
@@ -1921,7 +1999,19 @@
         const fileName = file.name;
         const fileExt = fileName.split('.').pop().toLowerCase();
 
-        if (fileExt === 'txt') {
+        if (fileExt === 'pdf') {
+          // PDF file - show helpful message directing to paste text
+          showProcessingStatus('📄 PDF detected!');
+          setTimeout(() => {
+            showProcessingStatus('💡 Please copy the text from your PDF and paste it in the "Paste Text" section above.');
+            setTimeout(() => {
+              document.getElementById('processingStatus').style.display = 'none';
+              // Scroll to text input area
+              document.getElementById('documentText').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              document.getElementById('documentText').focus();
+            }, 3000);
+          }, 1500);
+        } else if (fileExt === 'txt') {
           // Read text file
           const reader = new FileReader();
           reader.onload = function (e) {
@@ -1932,16 +2022,18 @@
           reader.readAsText(file);
         } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(fileExt)) {
           // Image file - show helpful message
-          showProcessingStatus('📸 Image uploaded! OCR processing requires additional library (Tesseract.js).');
+          showProcessingStatus('📸 Image uploaded!');
           setTimeout(() => {
-            showProcessingStatus('💡 For now, please extract text from your image and paste it in the text area below.');
+            showProcessingStatus('💡 OCR processing requires additional library (Tesseract.js). For now, please extract text from your image and paste it in the text area above.');
             setTimeout(() => {
               document.getElementById('processingStatus').style.display = 'none';
+              document.getElementById('documentText').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              document.getElementById('documentText').focus();
             }, 3000);
-          }, 2000);
+          }, 1500);
         } else {
           // Unsupported file type
-          showProcessingStatus('⚠️ Unsupported file type. Please use images or text files.');
+          showProcessingStatus('⚠️ Unsupported file type. Please use PDF, images, or text files.');
           setTimeout(() => {
             document.getElementById('processingStatus').style.display = 'none';
           }, 3000);
