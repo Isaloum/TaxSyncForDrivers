@@ -1114,6 +1114,15 @@
         }
       }
     </style>
+    
+    <!-- PDF.js Library for PDF text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+      // Configure PDF.js worker
+      if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    </script>
   </head>
   <body>
     <header>
@@ -1359,8 +1368,9 @@
             <div id="upload" class="ai-tab-panel">
               <h3>💻 <span data-i18n="documentAI.documentUpload">Document Upload</span></h3>
               <div class="upload-section">
-                <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #ffc107;">
-                  <strong>⚠️ Note:</strong> PDF text extraction is coming soon. For now, please copy text from your PDF and use the "Paste Text" section below, or upload an image or text file.
+                <div style="background: #d1f2eb; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #10b981;">
+                  <strong>✅ PDF Support Enabled!</strong> You can now upload PDF files. Text will be automatically extracted and processed.
+                  <br><small style="color: #64748b; margin-top: 0.5rem; display: block;">Note: Image-based PDFs (scanned documents) cannot be processed yet. Please use the "Paste Text" option for those.</small>
                 </div>
                 <div class="upload-zone" id="uploadZone">
                   <div class="upload-content">
@@ -1383,7 +1393,7 @@
 
                 <div class="upload-info">
                   <div class="file-types">
-                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> Images (JPG, PNG, GIF, WebP), Text files (TXT)
+                    <strong data-i18n="documentAI.supportedFormats">Supported formats:</strong> <strong style="color: var(--success);">PDF</strong>, Images (JPG, PNG, GIF, WebP), Text files (TXT)
                   </div>
                   <div class="upload-features">
                     <ul>
@@ -2290,6 +2300,53 @@
         });
       }
 
+      /**
+       * Display error message to user
+       */
+      function showUploadError(fileName, errorMessage) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'background: #fee; border: 1px solid #fcc; padding: 1rem; border-radius: 8px; margin: 1rem 0; color: #c00;';
+        errorDiv.innerHTML = `
+          <strong>❌ Error processing ${fileName}</strong>
+          <br><small>${errorMessage}</small>
+          ${errorMessage.includes('image-based') ? '<br><br><em>💡 Tip: Try copying the text from the PDF and pasting it in the text area below.</em>' : ''}
+        `;
+        
+        const uploadZone = document.getElementById('uploadZone');
+        if (uploadZone && uploadZone.parentNode) {
+          uploadZone.parentNode.insertBefore(errorDiv, uploadZone.nextSibling);
+          
+          // Auto-remove after 8 seconds
+          setTimeout(() => errorDiv.remove(), 8000);
+        }
+      }
+
+      /**
+       * Extract text from PDF file using PDF.js
+       * @param {File} file - The PDF file to extract text from
+       * @returns {Promise<string>} - Extracted text content
+       */
+      async function extractTextFromPDF(file) {
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          let fullText = '';
+          
+          // Extract text from each page
+          for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => item.str).join(' ');
+            fullText += pageText + '\n';
+          }
+          
+          return fullText.trim();
+        } catch (error) {
+          console.error('Error extracting text from PDF:', error);
+          throw new Error('Failed to extract text from PDF: ' + error.message);
+        }
+      }
+
       // Process uploaded files
       async function processFiles(files) {
         if (files.length === 0) return;
@@ -2299,13 +2356,33 @@
 
         for (const file of files) {
           try {
-            // For now, read file as text (PDF processing would need additional library)
-            const text = await readFileAsText(file);
+            let text = '';
+            
+            // Check if file is PDF
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+              // Extract text from PDF using PDF.js
+              console.log('Processing PDF:', file.name);
+              text = await extractTextFromPDF(file);
+              
+              if (!text || text.trim().length === 0) {
+                throw new Error('No text could be extracted from this PDF. It may be an image-based PDF.');
+              }
+            } else {
+              // Read text file normally
+              text = await readFileAsText(file);
+            }
+            
+            // Process the extracted text
             const result = quickProcess(text);
             result.fileName = file.name;
             results.push(result);
+            
           } catch (error) {
             console.error('Error processing file:', file.name, error);
+            
+            // Show user-friendly error message
+            showUploadError(file.name, error.message);
+            
             results.push({
               success: false,
               fileName: file.name,
