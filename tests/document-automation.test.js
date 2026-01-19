@@ -99,7 +99,7 @@ test('extractDocumentData: extracts Uber trips count', () => {
   const text = '78 trips completed this week';
   const result = DocumentAutomation.extractDocumentData(text, 'UBER_SUMMARY');
   assert.ok(result.success);
-  assert.strictEqual(result.data.trips, '78');
+  assert.strictEqual(result.data.trips, 78);
 });
 
 test('extractDocumentData: extracts Lyft distance', () => {
@@ -373,4 +373,27 @@ test('processDocument: handles taxi statement', () => {
   assert.strictEqual(result.success, true);
   assert.strictEqual(result.type, 'TAXI_STATEMENT');
   assert.strictEqual(result.data.grossIncome, 3500);
+});
+
+test('processDocument: extracts Uber document with "Gross fares" pattern', () => {
+  const text = `
+UBER RIDES – GROSS FARES BREAKDOWN
+This section indicates the fees you have charged to Riders. 
+Gross fares:  $1,250.00
+Rider fees and surcharges (tolls, airport fees, etc.): $0.00
+Total GROSS FARES: $1,250.00
+Online Mileage: 450 km
+Trip count: 75 trips
+  `;
+  const result = DocumentAutomation.processDocument(text);
+  assert.strictEqual(result.success, true);
+  assert.strictEqual(result.type, 'UBER_SUMMARY');
+  assert.ok(result.data.grossFares, 'grossFares should be extracted');
+  assert.strictEqual(result.data.grossFares, 1250);
+  assert.strictEqual(result.data.distance, 450);
+  assert.strictEqual(result.data.trips, 75);
+  assert.strictEqual(result.category.amount, 1250);
+  assert.strictEqual(result.category.type, 'income');
+  assert.strictEqual(result.category.category, 'rideshare_income');
+  assert.strictEqual(result.warnings.length, 0, 'Should have no warnings');
 });
