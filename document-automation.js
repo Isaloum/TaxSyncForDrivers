@@ -17,7 +17,6 @@ const NUMERIC_FIELDS = [
   'ppip',
   'grossEarnings',
   'grossFares',
-  'totalGrossFares',
   'tips',
   'fees',
   'grossIncome',
@@ -233,7 +232,7 @@ export function extractDocumentData(text, docType) {
     const match = text.match(regex);
     if (match) {
       // Find the first non-undefined capture group, or use full match
-      let value = match[1] || match[2] || match[0];
+      let value = match[1] || match[2] || match[3] || match[0];
 
       // Clean up numeric values
       if (NUMERIC_FIELDS.includes(field)) {
@@ -336,7 +335,7 @@ export function categorizeExpense(documentData) {
     case 'UBER_SUMMARY':
     case 'LYFT_SUMMARY':
     case 'TAXI_STATEMENT':
-      const income = data.grossEarnings || data.grossFares || data.totalGrossFares || data.grossIncome || 0;
+      const income = data.grossEarnings || data.grossFares || data.grossIncome || 0;
       const platformFees = data.fees || 0;
       const tips = data.tips || 0;
       return {
@@ -426,7 +425,7 @@ export function validateExtractedData(data, docType) {
   }
 
   // Check for missing critical fields
-  if (!data.amount && !data.income && !data.grossEarnings && !data.grossFares && !data.totalGrossFares && !data.grossIncome) {
+  if (!data.amount && !data.income && !data.grossEarnings && !data.grossFares && !data.grossIncome) {
     warnings.push('⚠️ No amount detected - manual entry required');
   }
 
