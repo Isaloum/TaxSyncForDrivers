@@ -229,14 +229,21 @@ export function extractDocumentData(text, docType) {
   let fieldsExtracted = 0;
 
   for (const [field, regex] of Object.entries(pattern.extractors)) {
-    // Reset regex lastIndex for global regexes
-    regex.lastIndex = 0;
-    
     let match = null;
     if (regex.global) {
+      // Reset regex lastIndex for global regexes
+      regex.lastIndex = 0;
+      
       // For global regex, iterate through all matches to find one with valid capture groups
       let tempMatch;
+      let lastIndex = -1;
       while ((tempMatch = regex.exec(text)) !== null) {
+        // Prevent infinite loop on zero-length matches
+        if (tempMatch.index === lastIndex) {
+          break;
+        }
+        lastIndex = tempMatch.index;
+        
         // Check if any capture group has a value
         if (tempMatch[1] || tempMatch[2] || tempMatch[3]) {
           match = tempMatch;
