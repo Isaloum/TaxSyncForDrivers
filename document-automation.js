@@ -16,12 +16,16 @@ const NUMERIC_FIELDS = [
   'qpp',
   'ppip',
   'grossEarnings',
+  'grossFares',
+  'totalGrossFares',
   'tips',
   'fees',
   'grossIncome',
   'netAmount',
   'monthlyCost',
   'businessUse',
+  'distance',
+  'trips',
 ];
 const TEXT_FIELDS = ['employer', 'payer', 'station', 'serviceType'];
 
@@ -77,8 +81,10 @@ const DOCUMENT_PATTERNS = {
     extractors: {
       grossEarnings:
         /(?:Gross earnings?|Total earnings?|Trip earnings?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-      trips: /(\d+)\s*trips?/i,
-      distance: /([\d,]+\.?\d*)\s*(?:km|kilometers?)/i,
+      grossFares:
+        /(?:Gross fares?|Total\s+gross\s+fares?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+      trips: /(?:Trip\s+count[:\s]*(\d+)|(\d+)\s*trips?)/i,
+      distance: /(?:Online\s+mileage|Distance|Mileage)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?)?|([\d,]+\.?\d*)\s*(?:km|kilometers?)/i,
       tips: /(?:Tips?|Pourboires?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
       fees: /(?:Uber fee|Service fee|Commission)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
     },
@@ -89,8 +95,10 @@ const DOCUMENT_PATTERNS = {
     extractors: {
       grossEarnings:
         /(?:Gross earnings?|Total earnings?|Ride earnings?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-      trips: /(\d+)\s*(?:rides?|trips?)/i,
-      distance: /([\d,]+\.?\d*)\s*(?:km|kilometers?|miles?)/i,
+      grossFares:
+        /(?:Gross fares?|Total\s+gross\s+fares?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+      trips: /(?:Trip\s+count[:\s]*(\d+)|(\d+)\s*(?:rides?|trips?))/i,
+      distance: /(?:Online\s+mileage|Distance|Mileage)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?|miles?)?|([\d,]+\.?\d*)\s*(?:km|kilometers?|miles?)/i,
       tips: /(?:Tips?|Gratuities?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
       fees: /(?:Lyft fee|Service fee|Commission)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
     },
@@ -224,7 +232,8 @@ export function extractDocumentData(text, docType) {
   for (const [field, regex] of Object.entries(pattern.extractors)) {
     const match = text.match(regex);
     if (match) {
-      let value = match[1] || match[0];
+      // Find the first non-undefined capture group, or use full match
+      let value = match[1] || match[2] || match[0];
 
       // Clean up numeric values
       if (NUMERIC_FIELDS.includes(field)) {
@@ -327,7 +336,7 @@ export function categorizeExpense(documentData) {
     case 'UBER_SUMMARY':
     case 'LYFT_SUMMARY':
     case 'TAXI_STATEMENT':
-      const income = data.grossEarnings || data.grossIncome || 0;
+      const income = data.grossEarnings || data.grossFares || data.totalGrossFares || data.grossIncome || 0;
       const platformFees = data.fees || 0;
       const tips = data.tips || 0;
       return {
@@ -417,7 +426,7 @@ export function validateExtractedData(data, docType) {
   }
 
   // Check for missing critical fields
-  if (!data.amount && !data.income && !data.grossEarnings && !data.grossIncome) {
+  if (!data.amount && !data.income && !data.grossEarnings && !data.grossFares && !data.totalGrossFares && !data.grossIncome) {
     warnings.push('⚠️ No amount detected - manual entry required');
   }
 
