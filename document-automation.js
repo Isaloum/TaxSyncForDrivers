@@ -76,16 +76,16 @@ const DOCUMENT_PATTERNS = {
   },
 
   UBER_SUMMARY: {
-    patterns: ['Uber', 'Weekly Summary', 'Driver Partner', 'Trip Earnings', 'Promotions'],
+    patterns: ['Uber', 'Weekly Summary', 'Driver Partner', 'Trip Earnings', 'Promotions', 'GROSS FARES'],
     extractors: {
       grossEarnings:
-        /(?:Gross earnings?|Total earnings?|Trip earnings?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+        /(?:Gross\s+earnings?|Total\s+earnings?|Trip\s+earnings?)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
       grossFares:
-        /(?:Gross fares?|Total\s+gross\s+fares?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-      trips: /(?:Trip\s+count[:\s]*(\d+)|(\d+)\s*trips?)/i,
-      distance: /(?:Online\s+mileage|Distance|Mileage)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?)?|([\d,]+\.?\d*)\s*(?:km|kilometers?)/i,
-      tips: /(?:Tips?|Pourboires?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-      fees: /(?:Uber fee|Service fee|Commission)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+        /(?:Gross\s+fares?|Total\s+gross\s+fares?|GROSS\s+FARES)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
+      trips: /(?:Trip\s+count|trips?|rides?)[:\s]*(\d+)|(\d+)\s*(?:trips?|rides?)\b/gi,
+      distance: /(?:Online\s+mileage|Distance\s+driven|Distance|Mileage)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?)?|([\d,]+\.?\d*)\s*(?:km|kilometers?)\b/gi,
+      tips: /(?:Tips?|Pourboires?)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
+      fees: /(?:Uber\s+fee|Service\s+fee|Commission|fees?)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
     },
   },
 
@@ -93,13 +93,13 @@ const DOCUMENT_PATTERNS = {
     patterns: ['Lyft', 'Weekly Summary', 'Driver Dashboard', 'Ride Earnings'],
     extractors: {
       grossEarnings:
-        /(?:Gross earnings?|Total earnings?|Ride earnings?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+        /(?:Gross\s+earnings?|Total\s+earnings?|Ride\s+earnings?)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
       grossFares:
-        /(?:Gross fares?|Total\s+gross\s+fares?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-      trips: /(?:Trip\s+count[:\s]*(\d+)|(\d+)\s*(?:rides?|trips?))/i,
-      distance: /(?:Online\s+mileage|Distance|Mileage)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?|miles?)?|([\d,]+\.?\d*)\s*(?:km|kilometers?|miles?)/i,
-      tips: /(?:Tips?|Gratuities?)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-      fees: /(?:Lyft fee|Service fee|Commission)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+        /(?:Gross\s+fares?|Total\s+gross\s+fares?)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
+      trips: /(?:Trip\s+count|trips?|rides?)[:\s]*(\d+)|(\d+)\s*(?:rides?|trips?)\b/gi,
+      distance: /(?:Online\s+mileage|Distance\s+driven|Distance|Mileage)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?)?|([\d,]+\.?\d*)\s*(?:km|kilometers?)\b/gi,
+      tips: /(?:Tips?|Pourboires?)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
+      fees: /(?:Service\s+fee|Commission|Lyft\s+fee)[:\s]*\$?\s*([\d,]+\.?\d*)/gi,
     },
   },
 
@@ -229,9 +229,33 @@ export function extractDocumentData(text, docType) {
   let fieldsExtracted = 0;
 
   for (const [field, regex] of Object.entries(pattern.extractors)) {
-    const match = text.match(regex);
+    let match = null;
+    if (regex.global) {
+      // Reset regex lastIndex for global regexes
+      regex.lastIndex = 0;
+      
+      // For global regex, iterate through all matches to find one with valid capture groups
+      let tempMatch;
+      let lastIndex = -1;
+      while ((tempMatch = regex.exec(text)) !== null) {
+        // Prevent infinite loop on zero-length matches
+        if (tempMatch.index === lastIndex) {
+          break;
+        }
+        lastIndex = tempMatch.index;
+        
+        // Check if any capture group has a value
+        if (tempMatch[1] || tempMatch[2] || tempMatch[3]) {
+          match = tempMatch;
+          break;
+        }
+      }
+    } else {
+      match = text.match(regex);
+    }
+    
     if (match) {
-      // Find the first non-undefined capture group, or use full match
+      // Take the first non-undefined capture group, or use full match
       let value = match[1] || match[2] || match[3] || match[0];
 
       // Clean up numeric values
