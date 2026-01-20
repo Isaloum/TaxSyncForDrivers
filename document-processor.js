@@ -57,28 +57,36 @@ export class DocumentProcessor {
    * @returns {Promise<string>} - Extracted text
    */
   async extractTextFromPDF(file) {
-    // Placeholder for PDF text extraction
-    // In production, this would use pdf.js or similar library
-    // For now, we'll use the FileReader API to read it as text
-    // Note: This won't work for binary PDFs - need proper PDF library
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const text = e.target.result;
-        // Basic text extraction - in production, use pdf.js
-        resolve(text);
-      };
-
-      reader.onerror = () => {
-        reject(new Error('Failed to read PDF file'));
-      };
-
-      // For now, just try to read as text
-      // In production, use proper PDF parsing
-      reader.readAsText(file);
-    });
+    // Check if PDF.js is available
+    if (typeof pdfjsLib === 'undefined') {
+      throw new Error('PDF.js library not loaded. Please refresh the page.');
+    }
+    
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      
+      // Extract text from each page
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        fullText += pageText + '\n';
+      }
+      
+      const extractedText = fullText.trim();
+      
+      // Check if we actually got any text
+      if (!extractedText || extractedText.length === 0) {
+        throw new Error('No text could be extracted from this PDF. It may be an image-based (scanned) PDF.');
+      }
+      
+      return extractedText;
+    } catch (error) {
+      console.error('PDF extraction error:', error);
+      throw new Error('Failed to extract text from PDF: ' + error.message);
+    }
   }
 
   /**
@@ -119,9 +127,16 @@ export class DocumentProcessor {
    * @returns {ProcessingResult}
    */
   processText(text) {
+    console.log('processText called with text length:', text?.length || 0);
+    
     try {
+      if (!text || text.trim().length === 0) {
+        throw new Error('Empty text provided');
+      }
+      
       // Step 1: Classify document
       const documentType = classifyDocument(text);
+      console.log('Document classified as:', documentType);
 
       if (documentType === DOCUMENT_TYPES.UNKNOWN) {
         return {
@@ -131,20 +146,21 @@ export class DocumentProcessor {
           validation: {
             isValid: false,
             errors: ['Could not identify document type'],
-            warnings: [],
+            warnings: ['Please ensure the text is from a supported document: T4, T4A, RL-1, RL-2, Uber/Lyft summary, or receipt'],
             confidenceScore: 0,
           },
           rawText: text,
-          error:
-            'Could not identify document type. Please ensure the document is a supported tax form or receipt.',
+          error: 'Could not identify document type. Please ensure the document is a supported tax form or receipt.',
         };
       }
 
       // Step 2: Extract data based on document type
       const extractedData = extractFields(text, documentType);
+      console.log('Extracted data:', extractedData);
 
       // Step 3: Validate extracted data
       const validation = validateData(extractedData, documentType);
+      console.log('Validation result:', validation);
 
       return {
         success: validation.isValid,
@@ -155,6 +171,7 @@ export class DocumentProcessor {
         error: validation.isValid ? null : validation.errors.join('; '),
       };
     } catch (error) {
+      console.error('processText error:', error);
       return {
         success: false,
         documentType: DOCUMENT_TYPES.UNKNOWN,

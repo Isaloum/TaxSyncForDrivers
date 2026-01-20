@@ -2351,11 +2351,13 @@
       async function processFiles(files) {
         if (files.length === 0) return;
 
+        console.log('processFiles called with', files.length, 'file(s)');
         showProcessingStatus(true);
         const results = [];
 
         for (const file of files) {
           try {
+            console.log('Processing file:', file.name, 'type:', file.type);
             let text = '';
             
             // Check if file is PDF
@@ -2372,9 +2374,18 @@
               text = await readFileAsText(file);
             }
             
+            console.log('Extracted text length:', text?.length || 0);
+            
             // Process the extracted text
             const result = quickProcess(text);
             result.fileName = file.name;
+            
+            console.log('Processing result:', { 
+              success: result.success, 
+              documentType: result.documentType,
+              error: result.error 
+            });
+            
             results.push(result);
             
           } catch (error) {
@@ -2388,10 +2399,18 @@
               fileName: file.name,
               error: error.message,
               documentType: 'UNKNOWN',
+              extractedData: {},
+              validation: {
+                isValid: false,
+                errors: [error.message],
+                warnings: [],
+                confidenceScore: 0,
+              },
             });
           }
         }
 
+        console.log('Total results:', results.length);
         processedDocuments = processedDocuments.concat(results);
         showProcessingStatus(false);
         displayResults(results);
@@ -2410,6 +2429,8 @@
       // Process text input
       window.processText = function () {
         const text = document.getElementById('documentText').value;
+        console.log('processText called, text length:', text?.length || 0);
+        
         if (!text.trim()) {
           alert('Veuillez entrer du texte à traiter');
           return;
@@ -2417,12 +2438,26 @@
 
         showProcessingStatus(true);
         setTimeout(() => {
-          const result = quickProcess(text);
-          result.fileName = 'Texte saisi manuellement';
-          processedDocuments.push(result);
-          showProcessingStatus(false);
-          displayResults([result]);
-          document.getElementById('documentText').value = '';
+          try {
+            console.log('Processing text input...');
+            const result = quickProcess(text);
+            result.fileName = 'Texte saisi manuellement';
+            
+            console.log('Text processing result:', {
+              success: result.success,
+              documentType: result.documentType,
+              error: result.error
+            });
+            
+            processedDocuments.push(result);
+            showProcessingStatus(false);
+            displayResults([result]);
+            document.getElementById('documentText').value = '';
+          } catch (error) {
+            console.error('Error in processText:', error);
+            showProcessingStatus(false);
+            alert('Erreur lors du traitement: ' + error.message);
+          }
         }, 500);
       };
 
