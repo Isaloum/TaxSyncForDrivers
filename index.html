@@ -2518,20 +2518,29 @@
 
       // Display processing results
       function displayResults(results) {
-        const container = document.getElementById('resultsContainer');
-        const resultsDiv = document.getElementById('documentResults');
+        const container = document.getElementById('documentHistory');
+        const resultsDiv = document.getElementById('documentResultsDisplay');
+        
+        if (!container) {
+          console.error('Results container not found!');
+          return;
+        }
 
-        if (!container || !resultsDiv) return;
+        // Clear "no documents" message
+        const noDocsMsg = container.querySelector('.no-documents');
+        if (noDocsMsg) noDocsMsg.remove();
 
-        resultsDiv.style.display = 'block';
-
+        // Add each result card
         results.forEach((result) => {
           const card = createDocumentCard(result);
           container.appendChild(card);
         });
 
-        // Scroll to results
-        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // Switch to results tab and scroll
+        switchAITab('results');
+        if (resultsDiv) {
+          resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       }
 
       // Create a document card for display
