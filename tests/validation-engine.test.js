@@ -153,6 +153,54 @@ describe('Validation Engine Tests', () => {
       assert.strictEqual(result.isValid, true);
     });
 
+    it('should allow zero amounts for inactive periods', () => {
+      const data = {
+        grossFares: 0,
+        tips: 0,
+        distance: 6,
+        period: '2024',
+      };
+      const result = validatePlatformSummary(data);
+      assert.strictEqual(result.isValid, true);
+      // Should NOT warn about all fields being zero since distance is 6
+      const hasAllZeroWarning = result.warnings.some((w) => w.includes('All fields are zero'));
+      assert.strictEqual(hasAllZeroWarning, false);
+    });
+
+    it('should warn when all fields are truly zero', () => {
+      const data = {
+        grossFares: 0,
+        tips: 0,
+        distance: 0,
+        netEarnings: 0,
+        period: '2024',
+      };
+      const result = validatePlatformSummary(data);
+      assert.strictEqual(result.isValid, true);
+      assert.ok(result.warnings.some((w) => w.includes('All fields are zero')));
+    });
+
+    it('should validate year range (2020-2030)', () => {
+      const data = {
+        grossFares: 1250,
+        period: '2024',
+      };
+      const result = validatePlatformSummary(data);
+      assert.strictEqual(result.isValid, true);
+      // Year 2024 should be valid, no warnings about year
+      const hasYearWarning = result.warnings.some((w) => w.includes('Year'));
+      assert.strictEqual(hasYearWarning, false);
+    });
+
+    it('should warn on year outside reasonable range', () => {
+      const data = {
+        grossFares: 1250,
+        period: '2035',
+      };
+      const result = validatePlatformSummary(data);
+      assert.ok(result.warnings.some((w) => w.includes('Year') && w.includes('2035')));
+    });
+
     it('should reject when net exceeds gross', () => {
       const data = {
         grossFares: 1000,

@@ -184,16 +184,23 @@ export function validatePlatformSummary(data) {
 
   // Required: gross fares/earnings
   const grossAmount = data.grossFares || data.grossEarnings || 0;
-  if (grossAmount <= 0) {
-    errors.push('Gross fares/earnings is required and must be positive');
-    confidenceScore -= 50;
+  
+  // Allow zero amounts for inactive periods, but warn if ALL fields are zero
+  const allFieldsZero = grossAmount === 0 && 
+    (data.tips === 0 || !data.tips) && 
+    (data.distance === 0 || !data.distance) && 
+    (data.netEarnings === 0 || !data.netEarnings);
+  
+  if (allFieldsZero) {
+    warnings.push('All fields are zero - this might be an inactive period or incomplete document');
+    confidenceScore -= 30;
   } else if (!isValidAmount(grossAmount, 0, 50000)) {
     warnings.push('Weekly/monthly earnings seem unusually high');
     confidenceScore -= 10;
   }
 
   // Check if net earnings are less than gross
-  if (data.netEarnings && data.netEarnings > grossAmount) {
+  if (data.netEarnings && data.netEarnings > grossAmount && grossAmount > 0) {
     errors.push('Net earnings cannot exceed gross earnings');
     confidenceScore -= 30;
   }
@@ -208,6 +215,18 @@ export function validatePlatformSummary(data) {
   if (!data.period && !data.startDate) {
     warnings.push('No time period information found');
     confidenceScore -= 20;
+  }
+  
+  // Validate year if present (should be reasonable: 2020-2030)
+  if (data.period) {
+    const yearMatch = data.period.toString().match(/\d{4}/);
+    if (yearMatch) {
+      const year = parseInt(yearMatch[0]);
+      if (year < 2020 || year > 2030) {
+        warnings.push(`Year ${year} seems outside reasonable range (2020-2030)`);
+        confidenceScore -= 15;
+      }
+    }
   }
 
   return {

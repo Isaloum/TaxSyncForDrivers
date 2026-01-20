@@ -97,6 +97,37 @@ describe('Pattern Library Tests', () => {
       assert.strictEqual(docType, DOCUMENT_TYPES.UBER_SUMMARY);
     });
 
+    it('should identify Uber annual tax summary 2024 format', () => {
+      const uberTaxText = `
+        UBER RIDES - GROSS FARES BREAKDOWN
+        This section indicates the fees you have charged to Riders.
+        GST you collected from Riders QST you collected from Riders CA$0.00
+        CA$0.00
+        Total CA$0.00
+
+        UBER RIDES - FEES BREAKDOWN
+        This section indicates the fees you have paid to Uber.
+        GST you paid to Uber CA$0.00
+        QST you paid to Uber CA$0.00
+        Total CA$0.00
+
+        UBER EATS - GROSS FARES BREAKDOWN
+        GST you collected from Uber CA$0.00
+        QST you collected from Uber CA$0.00
+        Total CA$0.00
+
+        OTHER INCOME BREAKDOWN
+        This section indicates other amounts paid to you by Uber.
+        GST you collected from Uber QST you collected from Uber Total CA$0.00
+        CA$0.00
+
+        OTHER POTENTIAL DEDUCTIONS
+        Online Mileage 6 km
+      `;
+      const docType = classifyDocument(uberTaxText);
+      assert.strictEqual(docType, DOCUMENT_TYPES.UBER_SUMMARY);
+    });
+
     it('should extract Uber fields correctly', () => {
       const uberText = `
         Gross Fares: $1,250.00
@@ -113,6 +144,54 @@ describe('Pattern Library Tests', () => {
       assert.strictEqual(fields.distance, 350.5);
       assert.strictEqual(fields.trips, 45);
       assert.strictEqual(fields.netEarnings, 1075);
+    });
+
+    it('should extract Uber 2024 tax summary with CA$ format', () => {
+      const uberTaxText = `
+        UBER RIDES - GROSS FARES BREAKDOWN
+        This section indicates the fees you have charged to Riders.
+        GST you collected from Riders CA$150.50
+        QST you collected from Riders CA$75.25
+        Total CA$1,500.00
+
+        UBER RIDES - FEES BREAKDOWN
+        Total CA$250.00
+
+        UBER EATS - GROSS FARES BREAKDOWN
+        Total CA$500.00
+
+        OTHER POTENTIAL DEDUCTIONS
+        Online Mileage 350 km
+      `;
+      const fields = extractFields(uberTaxText, DOCUMENT_TYPES.UBER_SUMMARY);
+      assert.strictEqual(fields.grossFares, 2000); // 1500 + 500 from both sections
+      assert.strictEqual(fields.serviceFees, 250);
+      assert.strictEqual(fields.distance, 350);
+      assert.strictEqual(fields.gstCollected, 150.5);
+      assert.strictEqual(fields.qstCollected, 75.25);
+    });
+
+    it('should extract period/year from tax summary', () => {
+      const uberTaxText = `
+        Tax summary for the period 2024
+        UBER RIDES - GROSS FARES BREAKDOWN
+        Total CA$0.00
+      `;
+      const fields = extractFields(uberTaxText, DOCUMENT_TYPES.UBER_SUMMARY);
+      assert.strictEqual(fields.period, '2024');
+    });
+
+    it('should handle zero amounts in tax summary', () => {
+      const uberTaxText = `
+        UBER RIDES - GROSS FARES BREAKDOWN
+        Total CA$0.00
+        UBER EATS - GROSS FARES BREAKDOWN
+        Total CA$0.00
+        Online Mileage 6 km
+      `;
+      const fields = extractFields(uberTaxText, DOCUMENT_TYPES.UBER_SUMMARY);
+      assert.strictEqual(fields.grossFares, 0);
+      assert.strictEqual(fields.distance, 6);
     });
   });
 

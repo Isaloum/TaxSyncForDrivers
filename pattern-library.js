@@ -62,17 +62,40 @@ export const RL2_PATTERNS = {
 
 // Uber Summary Pattern Extractors
 export const UBER_PATTERNS = {
-  grossFares: /(?:Gross\s+Fares?|Total\s+Fares?|Revenue)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  tips: /Tips[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  tolls: /Tolls?[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  distance:
-    /(?:Total\s+)?(?:Distance|Kilometers?|Kilometres?)[:\s]*([\d,]+\.?\d*)\s*(?:km|kilometers?|kilometres?)?/i,
-  trips: /(?:Total\s+)?Trips?[:\s]*(\d+)/i,
-  serviceFees: /(?:Service\s+Fee|Uber\s+Fee)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  netEarnings: /(?:Net\s+Earnings?|Total\s+Payout)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  period: /(?:Week|Period)[:\s]*([A-Za-z]+\s+\d+\s*-\s*[A-Za-z]+\s+\d+,?\s*\d{4})/i,
-  startDate: /(?:From|Start)[:\s]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
-  endDate: /(?:To|End)[:\s]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
+  // Match "Total CA$XXX.XX" or "Total $XXX.XX" after GROSS FARES, or simple "Gross Fares: $XXX"
+  grossFares: /(?:(?:GROSS\s+FARES\s+BREAKDOWN|Gross\s+Fares?|Total\s+Fares?|Revenue)[\s\S]{0,500}?Total[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*)|(?:Gross\s+Fares?|Total\s+Fares?|Revenue)[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*))/i,
+  
+  // Match Uber Eats fares separately
+  uberEatsFares: /UBER\s+EATS.*?GROSS\s+FARES[\s\S]{0,300}?Total[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*)/i,
+  
+  // Tips (may appear multiple times)
+  tips: /Tips?[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*)/i,
+  
+  // Tolls
+  tolls: /Tolls?[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*)/i,
+  
+  // Distance - match "Online Mileage X km" or standard patterns
+  distance: /(?:Online\s+Mileage|(?:Total\s+)?(?:Distance|Kilometers?|Kilometres?|Mileage))[\s:]*(\d+(?:\.\d+)?)\s*(?:km|kilometers?|kilometres?)?/i,
+  
+  // Trips/Rides
+  trips: /(?:Total\s+)?(?:Trips?|Rides?)[\s:]*(\d+)/i,
+  
+  // Service Fees - match total fees paid to Uber
+  serviceFees: /(?:(?:FEES\s+BREAKDOWN|Service\s+Fee|Uber\s+Fee)[\s\S]{0,300}?Total[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*)|(?:Service\s+Fee|Uber\s+Fee)[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*))/i,
+  
+  // Net Earnings
+  netEarnings: /(?:Net\s+Earnings?|Total\s+Payout)[\s:]*(?:CA)?\$?\s*([\d,]+\.?\d*)/i,
+  
+  // Period/Year
+  period: /(?:Tax\s+summary\s+for\s+the\s+period|Week|Period)[\s:]*(\d{4}|[A-Za-z]+\s+\d+\s*-\s*[A-Za-z]+\s+\d+,?\s*\d{4})/i,
+  
+  // Date formats
+  startDate: /(?:From|Start)[\s:]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
+  endDate: /(?:To|End)[\s:]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
+  
+  // GST/QST collected (Canadian tax specific)
+  gstCollected: /GST\s+you\s+collected.*?(?:CA)?\$?\s*([\d,]+\.?\d*)/i,
+  qstCollected: /QST\s+you\s+collected.*?(?:CA)?\$?\s*([\d,]+\.?\d*)/i,
 };
 
 // Lyft Summary Pattern Extractors
@@ -160,7 +183,7 @@ export const CLASSIFICATION_PATTERNS = {
   T4A: /(?:T4A|Statement\s+of\s+Pension).*(?:Box\s+16|Box\s+18)/is,
   RL1: /(?:RL-1|Relevé\s+1).*(?:Case\s+A|Box\s+A)/is,
   RL2: /(?:RL-2|Relevé\s+2).*(?:Case\s+A|Pension)/is,
-  UBER_SUMMARY: /(?:Uber|uber\.com).*(?:Gross\s+Fares?|Weekly\s+Summary|Driver\s+Summary)/is,
+  UBER_SUMMARY: /(?:Uber|uber\.com).*(?:Gross\s+Fares?|Weekly\s+Summary|Driver\s+Summary|Tax\s+summary\s+for\s+the\s+period|GROSS\s+FARES\s+BREAKDOWN|FEES\s+BREAKDOWN)/is,
   LYFT_SUMMARY: /(?:Lyft|lyft\.com).*(?:Driver\s+Earnings?|Weekly\s+Summary)/is,
   TAXI_STATEMENT: /(?:Taxi|Cab|Dispatch).*(?:Gross\s+Income|Commission)/is,
   GAS_RECEIPT: /(?:Shell|Esso|Petro-Canada|Gas|Fuel|Gasoline).*(?:Liters?|Litres?)/is,
@@ -180,12 +203,26 @@ export const CLASSIFICATION_PATTERNS = {
  */
 export function extractValue(text, pattern) {
   const match = text.match(pattern);
-  if (!match || !match[1]) return null;
+  if (!match) return null;
 
-  const value = match[1].trim();
+  // Find first non-empty capture group (support patterns with multiple alternatives)
+  let value = null;
+  for (let i = 1; i < match.length; i++) {
+    if (match[i] !== undefined) {
+      value = match[i].trim();
+      break;
+    }
+  }
+  
+  if (!value) return null;
 
-  // Check if it looks like a date (don't parse as number)
+  // Check if it looks like a date or year (don't parse as number)
   if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(value) || /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+  
+  // Check if it's a 4-digit year (keep as string for period/year fields)
+  if (/^\d{4}$/.test(value) && parseInt(value) >= 1900 && parseInt(value) <= 2100) {
     return value;
   }
 
@@ -260,6 +297,16 @@ export function extractFields(text, docType) {
     }
   }
 
+  // Special handling for Uber summaries: sum multiple income sources
+  if (docType === DOCUMENT_TYPES.UBER_SUMMARY) {
+    // If we have both Uber Rides and Uber Eats fares, sum them
+    if (result.uberEatsFares && typeof result.uberEatsFares === 'number') {
+      const baseGrossFares = result.grossFares || 0;
+      result.grossFares = Math.round((baseGrossFares + result.uberEatsFares) * 100) / 100;
+      // Keep uberEatsFares for reference
+    }
+  }
+
   return result;
 }
 
@@ -285,8 +332,8 @@ export function classifyDocument(text, filename = '') {
       confidence: 0,
     },
     UBER_SUMMARY: {
-      keywords: ['uber', 'driver partner', 'weekly summary', 'trip earnings', 'gross fare'],
-      patterns: [/uber.*partner/i, /weekly.*summary/i, /gross.*fare/i, /uber\.com/i],
+      keywords: ['uber', 'driver partner', 'weekly summary', 'trip earnings', 'gross fare', 'tax summary for the period', 'gross fares breakdown', 'fees breakdown', 'uber rides', 'uber eats'],
+      patterns: [/uber.*partner/i, /weekly.*summary/i, /gross.*fare/i, /uber\.com/i, /tax\s+summary\s+for\s+the\s+period/i, /GROSS\s+FARES\s+BREAKDOWN/i],
       confidence: 0,
     },
     LYFT_SUMMARY: {
@@ -378,8 +425,8 @@ export function classifyDocumentWithConfidence(text, filename = '') {
       confidence: 0,
     },
     UBER_SUMMARY: {
-      keywords: ['uber', 'driver partner', 'weekly summary', 'trip earnings', 'gross fare'],
-      patterns: [/uber.*partner/i, /weekly.*summary/i, /gross.*fare/i, /uber\.com/i],
+      keywords: ['uber', 'driver partner', 'weekly summary', 'trip earnings', 'gross fare', 'tax summary for the period', 'gross fares breakdown', 'fees breakdown', 'uber rides', 'uber eats'],
+      patterns: [/uber.*partner/i, /weekly.*summary/i, /gross.*fare/i, /uber\.com/i, /tax\s+summary\s+for\s+the\s+period/i, /GROSS\s+FARES\s+BREAKDOWN/i],
       confidence: 0,
     },
     LYFT_SUMMARY: {
