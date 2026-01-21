@@ -445,6 +445,12 @@ export function classifyDocument(text, filename = '') {
       keywords: ['t4', 'statement of remuneration', 'employment income', 'box 14'],
       patterns: [/(?:T4|Statement\s+of\s+Remuneration)/i, /Box\s+14/i, /Employment\s+Income/i],
       confidence: 0,
+      excludeIfPresent: ['t4a', 'pension', 'fees for services'], // Don't match T4 if T4A indicators present
+    },
+    T4A: {
+      keywords: ['t4a', 'statement of pension', 'fees for services', 'commissions', 'box 048', 'box 020', 'box 028', 'box 024', 'other income'],
+      patterns: [/T4A/i, /Statement\s+of\s+Pension/i, /Box\s+(?:048|020|028|024)/i, /Fees\s+for\s+services/i],
+      confidence: 0,
     },
     RL1: {
       keywords: ['rl-1', 'rl1', 'relevé 1', "revenu d'emploi", 'case a'],
@@ -542,6 +548,12 @@ export function classifyDocumentWithConfidence(text, filename = '') {
     T4: {
       keywords: ['t4', 'statement of remuneration', 'employment income', 'box 14'],
       patterns: [/(?:T4|Statement\s+of\s+Remuneration)/i, /Box\s+14/i, /Employment\s+Income/i],
+      confidence: 0,
+      excludeIfPresent: ['t4a', 'pension', 'fees for services'],
+    },
+    T4A: {
+      keywords: ['t4a', 'statement of pension', 'fees for services', 'commissions', 'box 048', 'box 020', 'box 028', 'box 024', 'other income'],
+      patterns: [/T4A/i, /Statement\s+of\s+Pension/i, /Box\s+(?:048|020|028|024)/i, /Fees\s+for\s+services/i],
       confidence: 0,
     },
     RL1: {
