@@ -130,6 +130,7 @@ export const GAS_RECEIPT_PATTERNS = {
   total: /(?:Total|Montant|Amount)[:\s]*(?:CA)?\$?\s*([0-9]+\.[0-9]{2})/i,
   
   // Volume - supports both "Liters: 45.5" and "45.5 L" formats
+  // Uses two capture groups to handle different word order - extractValue finds first non-empty group
   liters: /(?:Litres?|Liters?)[:\s]+([0-9]+\.[0-9]{1,3})|([0-9]+\.[0-9]{1,3})\s*L(?:\s|$)/i,
   pricePerLiter: /(?:Price\s+per\s+L|PPL)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
   

@@ -145,7 +145,7 @@ export function compareHomeOfficeMethods(workDaysAtHome, workspace, expenses, ne
 
 /**
  * Quebec-specific home office calculation (TP-78)
- * Similar to federal T777 but may have different eligible expense list
+ * Quebec follows the same rules and eligible expenses as federal T777
  * @param {object} workspace - Workspace dimensions
  * @param {object} expenses - Annual expenses
  * @param {number} netBusinessIncome - Net business income
@@ -153,6 +153,5 @@ export function compareHomeOfficeMethods(workDaysAtHome, workspace, expenses, ne
  */
 export function calculateQuebecHomeOffice(workspace, expenses, netBusinessIncome) {
   // Quebec follows same rules as federal T777
-  // But may have different eligible expense list
   return calculateDetailedHomeOffice(workspace, expenses, netBusinessIncome);
 }

@@ -1944,7 +1944,7 @@
           document.getElementById('homeOfficeComparison').style.display = 'none';
           document.getElementById('homeOfficeDeduction').textContent = '$' + result.deduction.toLocaleString();
           document.getElementById('homeOfficeRecommendation').textContent = 
-            `Déduction (méthode simplifiée: ${result.workDays} jours × $${result.ratePerDay})`;
+            `${result.workDays} × $${result.ratePerDay}`;
           document.getElementById('homeOfficeWarnings').style.display = 'none';
         } else {
           const workspace = {
@@ -1981,12 +1981,12 @@
           document.getElementById('homeOfficeComparison').style.display = 'none';
           document.getElementById('homeOfficeDeduction').textContent = '$' + result.deduction.toLocaleString();
           document.getElementById('homeOfficeRecommendation').textContent = 
-            `Déduction (méthode détaillée: ${result.breakdown.workspacePercent}% de l'espace)`;
+            `${result.breakdown.workspacePercent}%`;
           
           if (result.breakdown.limitedByIncome) {
             document.getElementById('homeOfficeWarnings').style.display = 'block';
             document.getElementById('homeOfficeWarnings').querySelector('p').textContent = 
-              `⚠️ Déduction limitée par le revenu net. Montant inutilisé: $${result.breakdown.unusedAmount.toLocaleString()} (peut être reporté)`;
+              `⚠️ $${result.breakdown.unusedAmount.toLocaleString()}`;
           } else {
             document.getElementById('homeOfficeWarnings').style.display = 'none';
           }
