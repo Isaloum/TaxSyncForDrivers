@@ -3446,15 +3446,15 @@
         if (result.type === 'T4A' || result.documentType === 'T4A') {
           t4aCard.style.display = 'block';
           
-          // Populate T4A fields
+          // Populate T4A fields using correct property names from extractT4A
           document.getElementById('t4aPayerName').textContent = data.payerName || 'N/A';
-          document.getElementById('t4aBox048').textContent = '$' + (data.box048 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          document.getElementById('t4aBox020').textContent = '$' + (data.box020 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          document.getElementById('t4aBox028').textContent = '$' + (data.box028 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          document.getElementById('t4aBox022').textContent = '$' + (data.box022 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox048').textContent = '$' + (data.feesForServices || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox020').textContent = '$' + (data.commissions || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox028').textContent = '$' + (data.otherIncome || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox022').textContent = '$' + (data.incomeTaxDeducted || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           
-          // Calculate total income
-          const totalIncome = (data.box048 || 0) + (data.box020 || 0) + (data.box028 || 0);
+          // Calculate total income (or use pre-calculated value)
+          const totalIncome = data.totalIncome || ((data.feesForServices || 0) + (data.commissions || 0) + (data.otherIncome || 0));
           document.getElementById('t4aTotalIncome').textContent = '$' + totalIncome.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         } else {
           t4aCard.style.display = 'none';
