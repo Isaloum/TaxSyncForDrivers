@@ -18,13 +18,13 @@ test('calculateRrspImpact: with contribution reduces income', () => {
 
 test('calculateRrspImpact: contribution capped at limit', () => {
   const result = calculateRrspImpact(60000, 50000);
-  assert.ok(result.contribution <= 31560); // 2025 RRSP limit
+  assert.ok(result.contribution <= 32490); // 2026 RRSP limit
 });
 
 test('calculateRrspImpact: uses correct marginal rate', () => {
   const result = calculateRrspImpact(60000, 5000);
-  // Income 60000 should be in third bracket (rate 0.4375)
-  assert.strictEqual(result.marginalRate, 0.4375);
+  // Income 60000 should be in third bracket (rate 0.395)
+  assert.strictEqual(result.marginalRate, 0.395);
 });
 
 test('calculateRrspImpact: tax saved equals contribution × rate', () => {
@@ -42,11 +42,11 @@ test('calculateRrspImpact: handles edge case of zero income', () => {
 
 test('calculateRrspImpact: highest marginal rate for high income', () => {
   const result = calculateRrspImpact(300000, 10000);
-  assert.strictEqual(result.marginalRate, 0.6625);
+  assert.strictEqual(result.marginalRate, 0.5875);
 });
 
-test('MARGINAL_RATES: has 6 brackets', () => {
-  assert.strictEqual(MARGINAL_RATES.length, 6);
+test('MARGINAL_RATES: has 8 brackets', () => {
+  assert.strictEqual(MARGINAL_RATES.length, 8);
 });
 
 test('MARGINAL_RATES: rates increase progressively', () => {

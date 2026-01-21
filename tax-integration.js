@@ -35,30 +35,28 @@ function calculateTaxes(profile) {
   const netIncome = Math.max(0, totalIncome - totalDeductions);
 
   // Simplified tax calculation (Quebec + Federal)
-  // Federal tax brackets 2025 (simplified)
+  // Federal tax brackets 2026 (indexed 2%, lowest rate reduced to 14%)
   let federalTax = 0;
-  if (netIncome > 165430) {
-    federalTax = 165430 * 0.29 + (netIncome - 165430) * 0.33;
-  } else if (netIncome > 114750) {
-    federalTax = 114750 * 0.26 + (netIncome - 114750) * 0.29;
-  } else if (netIncome > 58015) {
-    federalTax = 58015 * 0.205 + (netIncome - 58015) * 0.26;
-  } else if (netIncome > 55867) {
-    federalTax = 55867 * 0.15 + (netIncome - 55867) * 0.205;
+  if (netIncome > 258482) {
+    federalTax = 258482 * 0.29 + (netIncome - 258482) * 0.33;
+  } else if (netIncome > 181440) {
+    federalTax = 181440 * 0.26 + (netIncome - 181440) * 0.29;
+  } else if (netIncome > 117045) {
+    federalTax = 117045 * 0.205 + (netIncome - 117045) * 0.26;
+  } else if (netIncome > 58523) {
+    federalTax = 58523 * 0.14 + (netIncome - 58523) * 0.205;
   } else {
-    federalTax = netIncome * 0.15;
+    federalTax = netIncome * 0.14; // REDUCED from 15% to 14%
   }
 
-  // Quebec tax brackets 2025 (simplified)
+  // Quebec tax brackets 2026 (indexed 2.05%)
   let quebecTax = 0;
-  if (netIncome > 136270) {
-    quebecTax = 136270 * 0.2575 + (netIncome - 136270) * 0.2575;
-  } else if (netIncome > 102040) {
-    quebecTax = 102040 * 0.24 + (netIncome - 102040) * 0.2575;
-  } else if (netIncome > 51780) {
-    quebecTax = 51780 * 0.2 + (netIncome - 51780) * 0.24;
-  } else if (netIncome > 19355) {
-    quebecTax = 19355 * 0.14 + (netIncome - 19355) * 0.2;
+  if (netIncome > 132245) {
+    quebecTax = 132245 * 0.2575 + (netIncome - 132245) * 0.2575;
+  } else if (netIncome > 108680) {
+    quebecTax = 108680 * 0.24 + (netIncome - 108680) * 0.2575;
+  } else if (netIncome > 54345) {
+    quebecTax = 54345 * 0.19 + (netIncome - 54345) * 0.24;
   } else {
     quebecTax = netIncome * 0.14;
   }

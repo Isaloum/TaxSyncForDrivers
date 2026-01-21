@@ -212,21 +212,27 @@ Generic webhook for testing and custom integrations.
 | Phone | 50% | Bill total × 0.50 |
 | Parking | 100% | Receipt total × 1.00 |
 
-### Tax Rates (Quebec + Federal, 2025)
+### Tax Rates (Quebec + Federal, 2026)
 
-**Federal Tax Brackets:**
-- Up to $55,867: 15%
-- $55,867 - $58,015: 20.5%
-- $58,015 - $114,750: 26%
-- $114,750 - $165,430: 29%
-- Over $165,430: 33%
+**Federal Tax Brackets (2026):**
+- Up to $58,523: **14%** *(reduced from 15%)*
+- $58,523 - $117,045: 20.5%
+- $117,045 - $181,440: 26%
+- $181,440 - $258,482: 29%
+- Over $258,482: 33%
 
-**Quebec Tax Brackets:**
-- Up to $19,355: 14%
-- $19,355 - $51,780: 20%
-- $51,780 - $102,040: 24%
-- $102,040 - $136,270: 25.75%
-- Over $136,270: 25.75%
+**Quebec Tax Brackets (2026):**
+- Up to $54,345: 14%
+- $54,345 - $108,680: 19%
+- $108,680 - $132,245: 24%
+- Over $132,245: 25.75%
+
+**Key 2026 Updates:**
+- Federal lowest tax rate reduced from 15% to 14%
+- All brackets indexed ~2% for inflation
+- QPP contribution rate: 13.8% for self-employed (up from 12.8%)
+- QPP maximum pensionable earnings: $73,200
+- Canada Workers Benefit: Max $1,549 single / $2,578 family
 
 ## Testing
 

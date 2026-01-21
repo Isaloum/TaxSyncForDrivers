@@ -7,6 +7,8 @@
 [![Tests](https://img.shields.io/badge/tests-229%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
 [![Coverage](https://img.shields.io/badge/coverage-83%25-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
 
+**✨ 2026 Tax Rates:** Now updated with official CRA and Revenu Québec 2026 rates, including the federal tax rate reduction to 14%. See [TAX_RATES_2026.md](TAX_RATES_2026.md) for details.
+
 ## 💡 Why TaxSyncForDrivers?
 
 **Uber/Lyft/Taxi drivers lose $3,000-$5,000/year on taxes**
