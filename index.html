@@ -1454,6 +1454,13 @@
                       <div class="impact-value" id="totalSavings">$0</div>
                     </div>
                   </div>
+                  <div style="margin-top: 0.5rem; text-align: center;">
+                    <button 
+                      onclick="updateTaxImpactSummary()" 
+                      style="padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+                      🔄 Recalculate
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Processing Status -->
@@ -1938,7 +1945,9 @@
 
         // Display extracted data
         if (extractedData) {
-          extractedData.textContent = JSON.stringify(result.data, null, 2);
+          // Use extractedData field from quickProcess or data field from DocumentAutomation
+          const dataToDisplay = result.extractedData || result.data || {};
+          extractedData.textContent = JSON.stringify(dataToDisplay, null, 2);
         }
 
         // Display category information
@@ -2231,13 +2240,17 @@
 
       // Global state for document processing
       let processedDocuments = [];
+      let lastProcessedFile = { name: '', time: 0 };
 
       // Drag and drop functionality
       const uploadZone = document.getElementById('uploadZone');
       const fileInput = document.getElementById('fileInput');
 
       if (uploadZone) {
-        uploadZone.addEventListener('click', () => fileInput.click());
+        uploadZone.addEventListener('click', () => {
+          console.log('📁 Opening file picker...');
+          fileInput.click();
+        });
 
         uploadZone.addEventListener('dragover', (e) => {
           e.preventDefault();
@@ -2257,9 +2270,13 @@
       }
 
       if (fileInput) {
+        console.log('✅ File input listener attached');
         fileInput.addEventListener('change', async (e) => {
+          console.log('🔥 File input change event fired with', e.target.files.length, 'files');
           const files = Array.from(e.target.files);
           await processFiles(files);
+          // Clear file input to ensure change event fires again for same file
+          fileInput.value = '';
         });
       }
 
@@ -2315,6 +2332,18 @@
         if (files.length === 0) return;
 
         console.log('processFiles called with', files.length, 'file(s)');
+        
+        // Check for duplicate processing within 2 seconds
+        if (files.length === 1) {
+          const file = files[0];
+          const now = Date.now();
+          if (file.name === lastProcessedFile.name && (now - lastProcessedFile.time) < 2000) {
+            console.log('⚠️ Duplicate file processing detected within 2 seconds, skipping:', file.name);
+            return;
+          }
+          lastProcessedFile = { name: file.name, time: now };
+        }
+        
         showProcessingStatus(true);
         const results = [];
 
@@ -2499,6 +2528,9 @@
           container.appendChild(card);
         });
 
+        // Update Tax Impact Summary
+        updateTaxImpactSummary();
+
         // Switch to results tab and scroll
         switchAITab('results');
         if (resultsDiv) {
@@ -2631,6 +2663,80 @@
           );
         }
         return value;
+      }
+
+      // Update Tax Impact Summary based on all processed documents
+      function updateTaxImpactSummary() {
+        let totalIncome = 0;
+        let totalDeductions = 0;
+        const VEHICLE_DEDUCTION_RATE_2026 = 0.70; // $0.70 per km for first 5,000 km
+        const MARGINAL_TAX_RATE = 0.44; // Approximate 44% marginal rate for Quebec
+
+        // Calculate totals from all processed documents
+        processedDocuments.forEach((doc) => {
+          if (!doc.success || !doc.extractedData) return;
+
+          const data = doc.extractedData;
+          const docType = doc.documentType;
+
+          // Income from rideshare platforms
+          if (docType === 'UBER_SUMMARY' || docType === 'LYFT_SUMMARY' || docType === 'TAXI_STATEMENT') {
+            const grossFares = data.grossFares || data.grossEarnings || data.grossIncome || 0;
+            const tips = data.tips || 0;
+            const tolls = data.tolls || 0;
+            totalIncome += grossFares + tips + tolls;
+
+            // Calculate vehicle deduction from distance
+            if (data.distance) {
+              const deduction = data.distance * VEHICLE_DEDUCTION_RATE_2026;
+              totalDeductions += deduction;
+            }
+          }
+
+          // Employment income from T4/RL1
+          if (docType === 'T4' || docType === 'RL-1' || docType === 'T4A' || docType === 'RL-2') {
+            const employmentIncome = data.employmentIncome || 0;
+            totalIncome += employmentIncome;
+          }
+
+          // Expense receipts
+          if (docType === 'GAS_RECEIPT' || docType === 'MAINTENANCE_RECEIPT' || 
+              docType === 'PARKING_RECEIPT' || docType === 'PHONE_BILL') {
+            const amount = data.total || data.amount || 0;
+            // Apply business use percentage (80% for most vehicle expenses)
+            const businessPortion = amount * 0.8;
+            totalDeductions += businessPortion;
+          }
+        });
+
+        // Calculate tax savings
+        const taxSavings = totalDeductions * MARGINAL_TAX_RATE;
+
+        // Update the UI
+        const totalIncomeEl = document.getElementById('totalIncome');
+        const totalDeductionsEl = document.getElementById('totalDeductions');
+        const totalSavingsEl = document.getElementById('totalSavings');
+
+        if (totalIncomeEl) {
+          totalIncomeEl.textContent = '$' + totalIncome.toLocaleString('fr-CA', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
+        }
+
+        if (totalDeductionsEl) {
+          totalDeductionsEl.textContent = '$' + totalDeductions.toLocaleString('fr-CA', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
+        }
+
+        if (totalSavingsEl) {
+          totalSavingsEl.textContent = '$' + taxSavings.toLocaleString('fr-CA', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
+        }
       }
     </script>
   </body>

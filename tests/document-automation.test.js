@@ -192,9 +192,12 @@ test('categorizeExpense: categorizes Uber income', () => {
   assert.strictEqual(result.category, 'rideshare_income');
   assert.strictEqual(result.type, 'income');
   assert.strictEqual(result.source, 'Uber');
-  assert.strictEqual(result.amount, 1000);
+  assert.strictEqual(result.amount, 1150); // Total income: grossEarnings + tips + tolls
+  assert.strictEqual(result.grossFares, 1000);
   assert.strictEqual(result.tips, 150);
-  assert.strictEqual(result.netIncome, 950); // 1000 + 150 - 200
+  assert.strictEqual(result.fees, 200);
+  assert.strictEqual(result.serviceFees, 200);
+  assert.strictEqual(result.netIncome, 950); // 1000 + 150 + 0 - 200
 });
 
 test('categorizeExpense: categorizes T4 employment income', () => {

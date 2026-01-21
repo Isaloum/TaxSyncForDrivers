@@ -173,6 +173,21 @@ export function validateRL1(data) {
 }
 
 /**
+ * Check if a period represents an annual time frame
+ * @param {string|number} period - Period string or year number
+ * @returns {boolean} - Whether this is an annual period
+ */
+export function isAnnualPeriod(period) {
+  if (!period) return false;
+  const periodStr = period.toString().toLowerCase();
+  return (
+    periodStr.match(/^\d{4}$/) ||  // Just a year like "2023"
+    periodStr.includes('annual') ||
+    periodStr.includes('year')
+  );
+}
+
+/**
  * Validate Uber/Lyft summary data
  * @param {object} data - Extracted platform summary data
  * @returns {ValidationResult}
@@ -185,6 +200,9 @@ export function validatePlatformSummary(data) {
   // Required: gross fares/earnings
   const grossAmount = data.grossFares || data.grossEarnings || 0;
   
+  // Check if this is an annual period
+  const isAnnual = isAnnualPeriod(data.period);
+  
   // Allow zero amounts for inactive periods, but warn if ALL fields are zero
   const allFieldsZero = grossAmount === 0 && 
     (data.tips === 0 || !data.tips) && 
@@ -194,9 +212,17 @@ export function validatePlatformSummary(data) {
   if (allFieldsZero) {
     warnings.push('All fields are zero - this might be an inactive period or incomplete document');
     confidenceScore -= 30;
-  } else if (!isValidAmount(grossAmount, 0, 50000)) {
-    warnings.push('Weekly/monthly earnings seem unusually high');
-    confidenceScore -= 10;
+  } else {
+    // Use different thresholds based on period type
+    const maxAmount = isAnnual ? 200000 : 50000;  // Annual vs weekly/monthly
+    if (!isValidAmount(grossAmount, 0, maxAmount)) {
+      if (isAnnual) {
+        warnings.push('Annual earnings seem unusually high (over $200,000)');
+      } else {
+        warnings.push('Weekly/monthly earnings seem unusually high');
+      }
+      confidenceScore -= 10;
+    }
   }
 
   // Check if net earnings are less than gross
@@ -205,9 +231,14 @@ export function validatePlatformSummary(data) {
     confidenceScore -= 30;
   }
 
-  // Validate distance (if present)
-  if (data.distance && (data.distance < 0 || data.distance > 10000)) {
-    warnings.push('Distance seems unreasonable for a weekly/monthly period');
+  // Validate distance (if present) - different thresholds for annual vs weekly/monthly
+  const maxDistance = isAnnual ? 100000 : 10000;  // Annual vs weekly/monthly
+  if (data.distance && (data.distance < 0 || data.distance > maxDistance)) {
+    if (isAnnual) {
+      warnings.push('Distance seems unreasonable for an annual period (over 100,000 km)');
+    } else {
+      warnings.push('Distance seems unreasonable for a weekly/monthly period');
+    }
     confidenceScore -= 10;
   }
 
