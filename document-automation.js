@@ -360,16 +360,20 @@ export function categorizeExpense(documentData) {
     case 'LYFT_SUMMARY':
     case 'TAXI_STATEMENT':
       const income = data.grossEarnings || data.grossFares || data.grossIncome || 0;
-      const platformFees = data.fees || 0;
+      const platformFees = data.fees || data.serviceFees || 0;
       const tips = data.tips || 0;
+      const tolls = data.tolls || 0;
       return {
         category: 'rideshare_income',
         type: 'income',
         source: type === 'UBER_SUMMARY' ? 'Uber' : type === 'LYFT_SUMMARY' ? 'Lyft' : 'Taxi',
-        amount: income,
+        amount: income + tips + tolls,  // Total income including tips and tolls
+        grossFares: income,
         tips: tips,
+        tolls: tolls,
         fees: platformFees,
-        netIncome: income + tips - platformFees,
+        serviceFees: platformFees,  // Include both field names for compatibility
+        netIncome: income + tips + tolls - platformFees,
         trips: data.trips || 0,
         distance: data.distance || 0,
         description: `${type === 'UBER_SUMMARY' ? 'Uber' : type === 'LYFT_SUMMARY' ? 'Lyft' : 'Taxi'} income`,
@@ -448,8 +452,12 @@ export function validateExtractedData(data, docType) {
     }
   }
 
-  // Check for missing critical fields
-  if (!data.amount && !data.income && !data.grossEarnings && !data.grossFares && !data.grossIncome) {
+  // Check for missing critical fields - only warn if ALL numeric fields are missing or zero
+  const hasAnyAmount = data.amount || data.income || data.grossEarnings || 
+                       data.grossFares || data.grossIncome || data.tips || 
+                       data.netEarnings || data.distance || data.serviceFees;
+  
+  if (!hasAnyAmount) {
     warnings.push('⚠️ No amount detected - manual entry required');
   }
 

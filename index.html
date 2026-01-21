@@ -1938,7 +1938,9 @@
 
         // Display extracted data
         if (extractedData) {
-          extractedData.textContent = JSON.stringify(result.data, null, 2);
+          // Use extractedData field from quickProcess or data field from DocumentAutomation
+          const dataToDisplay = result.extractedData || result.data || {};
+          extractedData.textContent = JSON.stringify(dataToDisplay, null, 2);
         }
 
         // Display category information
@@ -2257,9 +2259,13 @@
       }
 
       if (fileInput) {
+        console.log('✅ File input listener attached');
         fileInput.addEventListener('change', async (e) => {
+          console.log('🔥 File input change event fired with', e.target.files.length, 'files');
           const files = Array.from(e.target.files);
           await processFiles(files);
+          // Clear file input to ensure change event fires again for same file
+          fileInput.value = '';
         });
       }
 
@@ -2499,6 +2505,9 @@
           container.appendChild(card);
         });
 
+        // Update Tax Impact Summary
+        updateTaxImpactSummary();
+
         // Switch to results tab and scroll
         switchAITab('results');
         if (resultsDiv) {
@@ -2631,6 +2640,80 @@
           );
         }
         return value;
+      }
+
+      // Update Tax Impact Summary based on all processed documents
+      function updateTaxImpactSummary() {
+        let totalIncome = 0;
+        let totalDeductions = 0;
+        const VEHICLE_DEDUCTION_RATE_2026 = 0.70; // $0.70 per km for first 5,000 km
+        const MARGINAL_TAX_RATE = 0.44; // Approximate 44% marginal rate for Quebec
+
+        // Calculate totals from all processed documents
+        processedDocuments.forEach((doc) => {
+          if (!doc.success || !doc.extractedData) return;
+
+          const data = doc.extractedData;
+          const docType = doc.documentType;
+
+          // Income from rideshare platforms
+          if (docType === 'UBER_SUMMARY' || docType === 'LYFT_SUMMARY' || docType === 'TAXI_STATEMENT') {
+            const grossFares = data.grossFares || data.grossEarnings || data.grossIncome || 0;
+            const tips = data.tips || 0;
+            const tolls = data.tolls || 0;
+            totalIncome += grossFares + tips + tolls;
+
+            // Calculate vehicle deduction from distance
+            if (data.distance) {
+              const deduction = data.distance * VEHICLE_DEDUCTION_RATE_2026;
+              totalDeductions += deduction;
+            }
+          }
+
+          // Employment income from T4/RL1
+          if (docType === 'T4' || docType === 'RL-1' || docType === 'T4A' || docType === 'RL-2') {
+            const employmentIncome = data.employmentIncome || 0;
+            totalIncome += employmentIncome;
+          }
+
+          // Expense receipts
+          if (docType === 'GAS_RECEIPT' || docType === 'MAINTENANCE_RECEIPT' || 
+              docType === 'PARKING_RECEIPT' || docType === 'PHONE_BILL') {
+            const amount = data.total || data.amount || 0;
+            // Apply business use percentage (80% for most vehicle expenses)
+            const businessPortion = amount * 0.8;
+            totalDeductions += businessPortion;
+          }
+        });
+
+        // Calculate tax savings
+        const taxSavings = totalDeductions * MARGINAL_TAX_RATE;
+
+        // Update the UI
+        const totalIncomeEl = document.getElementById('totalIncome');
+        const totalDeductionsEl = document.getElementById('totalDeductions');
+        const totalSavingsEl = document.getElementById('totalSavings');
+
+        if (totalIncomeEl) {
+          totalIncomeEl.textContent = '$' + totalIncome.toLocaleString('fr-CA', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
+        }
+
+        if (totalDeductionsEl) {
+          totalDeductionsEl.textContent = '$' + totalDeductions.toLocaleString('fr-CA', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
+        }
+
+        if (totalSavingsEl) {
+          totalSavingsEl.textContent = '$' + taxSavings.toLocaleString('fr-CA', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
+        }
       }
     </script>
   </body>
