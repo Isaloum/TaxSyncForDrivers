@@ -129,8 +129,8 @@ export const GAS_RECEIPT_PATTERNS = {
   // Amount patterns
   total: /(?:Total|Montant|Amount)[:\s]*(?:CA)?\$?\s*([0-9]+\.[0-9]{2})/i,
   
-  // Volume
-  liters: /([0-9]+\.[0-9]{1,3})\s*(?:L|Litres?|Liters?)/i,
+  // Volume - supports both "Liters: 45.5" and "45.5 L" formats
+  liters: /(?:Litres?|Liters?)[:\s]+([0-9]+\.[0-9]{1,3})|([0-9]+\.[0-9]{1,3})\s*L(?:\s|$)/i,
   pricePerLiter: /(?:Price\s+per\s+L|PPL)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
   
   // Date
