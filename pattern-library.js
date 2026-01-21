@@ -12,6 +12,8 @@ export const DOCUMENT_TYPES = {
   GAS_RECEIPT: 'GAS_RECEIPT',
   MAINTENANCE_RECEIPT: 'MAINTENANCE_RECEIPT',
   INSURANCE_DOC: 'INSURANCE_DOC',
+  INSURANCE_RECEIPT: 'INSURANCE_RECEIPT',
+  VEHICLE_REGISTRATION: 'VEHICLE_REGISTRATION',
   PARKING_RECEIPT: 'PARKING_RECEIPT',
   PHONE_BILL: 'PHONE_BILL',
   MEAL_RECEIPT: 'MEAL_RECEIPT',
@@ -121,29 +123,45 @@ export const TAXI_PATTERNS = {
 
 // Gas Receipt Pattern Extractors
 export const GAS_RECEIPT_PATTERNS = {
-  total: /(?:Total|Amount)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  liters: /(?:Liters?|Litres?|L)[:\s]*([\d,]+\.?\d*)/i,
+  // Vendor detection
+  vendor: /(?:Esso|Petro-Canada|Shell|Ultramar|Irving|Canadian Tire|Costco)/i,
+  
+  // Amount patterns
+  total: /(?:Total|Montant|Amount)[:\s]*(?:CA)?\$?\s*([0-9]+\.[0-9]{2})/i,
+  
+  // Volume
+  liters: /([0-9]+\.[0-9]{1,3})\s*(?:L|Litres?|Liters?)/i,
   pricePerLiter: /(?:Price\s+per\s+L|PPL)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  date: /(?:Date)[:\s]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
-  vendor: /^([A-Za-z0-9\s&'-]+?)(?:\n|Date|Total)/im,
+  
+  // Date
+  date: /(\d{2}[-/]\d{2}[-/]\d{2,4})/,
+  
+  // Odometer (if available)
+  odometer: /(?:Odomètre|Odometer|KM)[:\s]*([0-9,]+)/i,
+  
+  // Legacy station pattern for backward compatibility
   station: /(?:Shell|Esso|Petro-Canada|Canadian Tire Gas|Ultramar|Costco|Irving)/i,
 };
 
 // Maintenance Receipt Pattern Extractors
 export const MAINTENANCE_RECEIPT_PATTERNS = {
-  total: /(?:Total|Amount|Grand\s+Total)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  vendor: /(?:Canadian Tire|Midas|Mr\. Lube|Jiffy Lube|Garage|Concessionnaire|Dealer)/i,
+  serviceType: /(Oil Change|Tire Rotation|Brake Service|Inspection|Alignment|Vidange|Freins)/i,
+  parts: /(?:Parts|Pièces)[:\s]*(?:CA)?\$?\s*([0-9,]+\.[0-9]{2})/i,
+  labor: /(?:Labor|Labour|Main-d'œuvre)[:\s]*(?:CA)?\$?\s*([0-9,]+\.[0-9]{2})/i,
+  total: /(?:Total|Grand Total|Montant Total)[:\s]*(?:CA)?\$?\s*([0-9,]+\.[0-9]{2})/i,
   subtotal: /(?:Subtotal|Sub-Total)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
   tax: /(?:Tax|GST|QST|HST)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  labor: /(?:Labor|Labour)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
-  parts: /(?:Parts)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
   date: /(?:Date)[:\s]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
-  vendor: /^([A-Za-z0-9\s&'-]+?)(?:\n|Date|Invoice)/im,
-  serviceType: /(?:Oil\s+Change|Tire\s+Rotation|Brake|Inspection|Repair)/i,
 };
 
 // Insurance Document Pattern Extractors
 export const INSURANCE_PATTERNS = {
-  premium: /(?:Premium|Annual\s+Premium|Total\s+Premium)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  provider: /(?:Intact|Desjardins|Bélairdirect|TD Insurance|Aviva|La Capitale)/i,
+  premium: /(?:Prime|Premium|Monthly Payment)[:\s]*(?:CA)?\$?\s*([0-9,]+\.[0-9]{2})/i,
+  period: /(?:Coverage Period|Période)[:\s]*(\d{2}[-/]\d{2}[-/]\d{2,4})\s*(?:to|à)\s*(\d{2}[-/]\d{2}[-/]\d{2,4})/i,
+  vehicleYear: /(\d{4})\s+(?:Honda|Toyota|Ford|Chevrolet|Nissan|Mazda|Hyundai|Kia)/i,
+  vehicleMake: /(Honda|Toyota|Ford|Chevrolet|Nissan|Mazda|Hyundai|Kia)/i,
   policyNumber: /(?:Policy\s+Number|Policy\s+#)[:\s]*([\w-]+)/i,
   effectiveDate: /(?:Effective\s+Date|Start\s+Date)[:\s]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
   expiryDate: /(?:Expiry\s+Date|End\s+Date)[:\s]*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
@@ -186,9 +204,10 @@ export const CLASSIFICATION_PATTERNS = {
   UBER_SUMMARY: /(?:Uber|uber\.com).*(?:Gross\s+Fares?|Weekly\s+Summary|Driver\s+Summary|Tax\s+summary\s+for\s+the\s+period|GROSS\s+FARES\s+BREAKDOWN|FEES\s+BREAKDOWN)/is,
   LYFT_SUMMARY: /(?:Lyft|lyft\.com).*(?:Driver\s+Earnings?|Weekly\s+Summary)/is,
   TAXI_STATEMENT: /(?:Taxi|Cab|Dispatch).*(?:Gross\s+Income|Commission)/is,
-  GAS_RECEIPT: /(?:Shell|Esso|Petro-Canada|Gas|Fuel|Gasoline).*(?:Liters?|Litres?)/is,
-  MAINTENANCE_RECEIPT: /(?:Oil\s+Change|Tire|Brake|Repair|Service).*(?:Labor|Parts)/is,
-  INSURANCE_DOC: /(?:Insurance|Policy).*(?:Premium|Coverage|Effective\s+Date)/is,
+  GAS_RECEIPT: /(?:Shell|Esso|Petro-Canada|Ultramar|Irving|Canadian Tire|Costco|Gas|Fuel|Essence|Gasoline).*(?:Liters?|Litres?|L\s)/is,
+  MAINTENANCE_RECEIPT: /(?:Oil\s+Change|Vidange|Tire|Pneu|Brake|Frein|Repair|Réparation|Service|Canadian Tire|Midas|Mr\.\s+Lube|Jiffy Lube).*(?:Labor|Labour|Main-d'œuvre|Parts|Pièces)/is,
+  INSURANCE_RECEIPT: /(?:Intact|Desjardins|Bélairdirect|TD Insurance|Aviva|La Capitale).*(?:Prime|Premium|Monthly Payment|Coverage Period|Période)/is,
+  INSURANCE_DOC: /(?:Insurance|Assurance|Policy).*(?:Premium|Coverage|Effective\s+Date)/is,
   PARKING_RECEIPT: /(?:Parking|Park).*(?:Duration|Zone)/is,
   PHONE_BILL:
     /(?:Wireless|Mobile|Cell|Phone|Rogers|Bell|Telus|Fido).*(?:Billing\s+Period|Data\s+Usage)/is,
@@ -274,6 +293,7 @@ export function extractFields(text, docType) {
       patterns = MAINTENANCE_RECEIPT_PATTERNS;
       break;
     case DOCUMENT_TYPES.INSURANCE_DOC:
+    case DOCUMENT_TYPES.INSURANCE_RECEIPT:
       patterns = INSURANCE_PATTERNS;
       break;
     case DOCUMENT_TYPES.PARKING_RECEIPT:
@@ -342,13 +362,18 @@ export function classifyDocument(text, filename = '') {
       confidence: 0,
     },
     GAS_RECEIPT: {
-      keywords: ['shell', 'esso', 'petro', 'gas', 'fuel', 'gasoline', 'liters', 'litres'],
-      patterns: [/(shell|esso|petro-canada|ultramar)/i, /fuel|gas/i, /liters?|litres?/i],
+      keywords: ['shell', 'esso', 'petro', 'ultramar', 'irving', 'canadian tire', 'costco', 'gas', 'fuel', 'essence', 'gasoline', 'liters', 'litres'],
+      patterns: [/(shell|esso|petro-canada|ultramar|irving|canadian tire|costco)/i, /fuel|gas|essence/i, /liters?|litres?/i],
       confidence: 0,
     },
     MAINTENANCE_RECEIPT: {
-      keywords: ['oil change', 'tire', 'brake', 'service', 'repair', 'maintenance'],
-      patterns: [/oil.*change/i, /tire.*service/i, /brake.*repair/i, /labor|labour/i],
+      keywords: ['oil change', 'vidange', 'tire', 'pneu', 'brake', 'frein', 'service', 'repair', 'réparation', 'maintenance', 'canadian tire', 'midas', 'mr. lube', 'jiffy lube'],
+      patterns: [/oil.*change|vidange/i, /tire.*service|pneu/i, /brake.*repair|frein/i, /labor|labour|main-d'œuvre/i],
+      confidence: 0,
+    },
+    INSURANCE_RECEIPT: {
+      keywords: ['insurance', 'assurance', 'intact', 'desjardins', 'belair', 'bélairdirect', 'td insurance', 'aviva', 'la capitale', 'premium', 'prime'],
+      patterns: [/(intact|desjardins|bélairdirect|td insurance|aviva|la capitale)/i, /prime|premium|monthly payment/i, /coverage period|période/i],
       confidence: 0,
     },
   };
@@ -435,13 +460,18 @@ export function classifyDocumentWithConfidence(text, filename = '') {
       confidence: 0,
     },
     GAS_RECEIPT: {
-      keywords: ['shell', 'esso', 'petro', 'gas', 'fuel', 'gasoline', 'liters', 'litres'],
-      patterns: [/(shell|esso|petro-canada|ultramar)/i, /fuel|gas/i, /liters?|litres?/i],
+      keywords: ['shell', 'esso', 'petro', 'ultramar', 'irving', 'canadian tire', 'costco', 'gas', 'fuel', 'essence', 'gasoline', 'liters', 'litres'],
+      patterns: [/(shell|esso|petro-canada|ultramar|irving|canadian tire|costco)/i, /fuel|gas|essence/i, /liters?|litres?/i],
       confidence: 0,
     },
     MAINTENANCE_RECEIPT: {
-      keywords: ['oil change', 'tire', 'brake', 'service', 'repair', 'maintenance'],
-      patterns: [/oil.*change/i, /tire.*service/i, /brake.*repair/i, /labor|labour/i],
+      keywords: ['oil change', 'vidange', 'tire', 'pneu', 'brake', 'frein', 'service', 'repair', 'réparation', 'maintenance', 'canadian tire', 'midas', 'mr. lube', 'jiffy lube'],
+      patterns: [/oil.*change|vidange/i, /tire.*service|pneu/i, /brake.*repair|frein/i, /labor|labour|main-d'œuvre/i],
+      confidence: 0,
+    },
+    INSURANCE_RECEIPT: {
+      keywords: ['insurance', 'assurance', 'intact', 'desjardins', 'belair', 'bélairdirect', 'td insurance', 'aviva', 'la capitale', 'premium', 'prime'],
+      patterns: [/(intact|desjardins|bélairdirect|td insurance|aviva|la capitale)/i, /prime|premium|monthly payment/i, /coverage period|période/i],
       confidence: 0,
     },
   };
