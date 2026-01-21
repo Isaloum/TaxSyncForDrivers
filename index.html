@@ -1335,6 +1335,10 @@
           <span class="tab-icon">💼</span
           ><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span>
         </button>
+        <button class="tab-btn" data-tab="businessExpenses">
+          <span class="tab-icon">📊</span
+          ><span class="tab-label" data-i18n="tabs.businessExpenses">Business Expenses</span>
+        </button>
       </nav>
       <section id="vehicle" class="tab-content active">
         <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
@@ -1673,6 +1677,41 @@
                       <div style="font-weight: 600; color: var(--warning); margin-bottom: 0.5rem;">⚠️ Warnings</div>
                       <ul id="warningsList" style="margin: 0.5rem 0 0 1.5rem; color: var(--warning);"></ul>
                     </div>
+
+                    <!-- T4A Display Card -->
+                    <div id="t4aCard" style="display: none; margin-top: 1rem; padding: 1.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;">
+                      <h4 style="margin-bottom: 1rem; color: var(--accent);">📄 T4A - Statement of Contractor Payments</h4>
+                      <div style="display: grid; gap: 0.75rem;">
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 0.5rem;">
+                          <div style="font-weight: 600;">Payer Name:</div>
+                          <div id="t4aPayerName"></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 0.5rem;">
+                          <div style="font-weight: 600;">Box 048 - Fees for Services:</div>
+                          <div id="t4aBox048" style="color: var(--accent);"></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 0.5rem;">
+                          <div style="font-weight: 600;">Box 020 - Commissions:</div>
+                          <div id="t4aBox020" style="color: var(--accent);"></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 0.5rem;">
+                          <div style="font-weight: 600;">Box 028 - Other Income:</div>
+                          <div id="t4aBox028" style="color: var(--accent);"></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); margin-top: 0.5rem;">
+                          <div style="font-weight: 700; font-size: 1.125rem;">Total Income:</div>
+                          <div id="t4aTotalIncome" style="font-weight: 700; font-size: 1.125rem; color: var(--accent);"></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 0.5rem;">
+                          <div style="font-weight: 600;">Box 022 - Tax Deducted:</div>
+                          <div id="t4aBox022" style="color: var(--success);"></div>
+                        </div>
+                      </div>
+                      <div style="margin-top: 1rem; padding: 1rem; background: rgba(10, 118, 112, 0.05); border: 1px solid var(--accent); border-radius: 6px;">
+                        <div style="font-weight: 600; color: var(--accent); margin-bottom: 0.5rem;">ℹ️ Important</div>
+                        <p style="font-size: 0.875rem; margin: 0;">T4A income is self-employment income. You can deduct business expenses against this income to reduce your taxable amount. Use the Business Expenses tab to track your deductible expenses.</p>
+                      </div>
+                    </div>
                     
                   </div>
                 </div>
@@ -2005,6 +2044,116 @@
           </div>
         </div>
       </section>
+      <section id="businessExpenses" class="tab-content">
+        <h2>📊 <span data-i18n="businessExpenses.title">Business Expense Tracker</span></h2>
+        <p data-i18n="businessExpenses.subtitle">
+          Track your business expenses for T2125 form preparation
+        </p>
+
+        <!-- Manual Expense Entry Form -->
+        <fieldset>
+          <legend data-i18n="businessExpenses.addExpense">Add Expense</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="expenseDate" data-i18n="businessExpenses.date">Date</label>
+              <input type="date" id="expenseDate" />
+            </div>
+            <div class="form-group">
+              <label for="expenseVendor" data-i18n="businessExpenses.vendor">Vendor</label>
+              <input type="text" id="expenseVendor" placeholder="e.g., Gas Station" />
+            </div>
+            <div class="form-group">
+              <label for="expenseCategory" data-i18n="businessExpenses.category">Category</label>
+              <select id="expenseCategory">
+                <option value="ADVERTISING">Advertising</option>
+                <option value="MEALS_ENTERTAINMENT">Meals & Entertainment (50% deductible)</option>
+                <option value="BAD_DEBTS">Bad Debts</option>
+                <option value="INSURANCE">Insurance</option>
+                <option value="INTEREST">Interest & Bank Charges</option>
+                <option value="FEES">Professional Fees</option>
+                <option value="OFFICE">Office Expenses</option>
+                <option value="SUPPLIES">Supplies</option>
+                <option value="PHONE_UTILITIES">Phone & Utilities</option>
+                <option value="RENT">Rent</option>
+                <option value="REPAIRS">Repairs & Maintenance</option>
+                <option value="TRAVEL">Travel</option>
+                <option value="VEHICLE" selected>Vehicle Expenses</option>
+                <option value="HOME_OFFICE">Home Office</option>
+                <option value="OTHER">Other Expenses</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="expenseAmount" data-i18n="businessExpenses.amount">Amount ($)</label>
+              <input type="number" id="expenseAmount" placeholder="0.00" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="expenseDescription" data-i18n="businessExpenses.description">Description (Optional)</label>
+            <input type="text" id="expenseDescription" placeholder="e.g., Gas for business trips" />
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="addManualExpense()" data-i18n="businessExpenses.addButton">
+              Add Expense
+            </button>
+          </div>
+        </fieldset>
+
+        <!-- Expense Summary -->
+        <div id="expenseSummary" class="result-box" style="margin-top: 2rem;">
+          <div class="result-title">
+            📈 <span data-i18n="businessExpenses.summary">Expense Summary</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4 data-i18n="businessExpenses.totalReceipts">Total Receipts</h4>
+              <div class="amount" id="totalReceipts">0</div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="businessExpenses.totalExpenses">Total Expenses</h4>
+              <div class="amount" id="totalExpenses">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="businessExpenses.totalDeductible">Total Deductible</h4>
+              <div class="amount" id="totalDeductible">$0.00</div>
+            </div>
+          </div>
+
+          <!-- Category Breakdown Table -->
+          <div style="margin-top: 1.5rem;">
+            <h4 data-i18n="businessExpenses.categoryBreakdown">Category Breakdown</h4>
+            <div style="overflow-x: auto; margin-top: 1rem;">
+              <table style="width: 100%; border-collapse: collapse; background: var(--card);">
+                <thead>
+                  <tr style="background: var(--bg); border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.75rem; text-align: left;">Category</th>
+                    <th style="padding: 0.75rem; text-align: center;">T2125 Line</th>
+                    <th style="padding: 0.75rem; text-align: center;">Count</th>
+                    <th style="padding: 0.75rem; text-align: right;">Total Amount</th>
+                    <th style="padding: 0.75rem; text-align: right;">Deductible</th>
+                  </tr>
+                </thead>
+                <tbody id="categoryBreakdownBody">
+                  <tr>
+                    <td colspan="5" style="padding: 1rem; text-align: center; color: var(--muted);">
+                      No expenses added yet
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Export Buttons -->
+          <div class="btn-group" style="margin-top: 1.5rem;">
+            <button class="btn" onclick="exportToT2125JSON()" data-i18n="businessExpenses.exportJSON">
+              Export to T2125 JSON
+            </button>
+            <button class="btn btn-secondary" onclick="exportToCSV()" data-i18n="businessExpenses.exportCSV">
+              Export to CSV
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
     <footer>
       <div class="footer-content">
@@ -2052,6 +2201,11 @@
     <script type="module">
       import DocumentAutomation from './document-automation.js';
       window.DocumentAutomation = DocumentAutomation;
+    </script>
+    <script type="module">
+      import { BusinessExpenseTracker, EXPENSE_CATEGORIES } from './business-expense-tracker.js';
+      window.expenseTracker = new BusinessExpenseTracker();
+      window.EXPENSE_CATEGORIES = EXPENSE_CATEGORIES;
     </script>
     <script>
       // Auto-update year in header
@@ -2540,6 +2694,9 @@
             warningsSection.style.display = 'none';
           }
         }
+
+        // Display T4A card if applicable
+        displayT4ACard(result);
 
         // Switch to results tab
         switchAITab('results');
@@ -3277,6 +3434,201 @@
           });
         }
       }
+
+      // T4A Display Handler
+      function displayT4ACard(result) {
+        const t4aCard = document.getElementById('t4aCard');
+        if (!t4aCard) return;
+
+        const data = result.extractedData || result.data || {};
+        
+        // Check if this is a T4A document
+        if (result.type === 'T4A' || result.documentType === 'T4A') {
+          t4aCard.style.display = 'block';
+          
+          // Populate T4A fields
+          document.getElementById('t4aPayerName').textContent = data.payerName || 'N/A';
+          document.getElementById('t4aBox048').textContent = '$' + (data.box048 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox020').textContent = '$' + (data.box020 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox028').textContent = '$' + (data.box028 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          document.getElementById('t4aBox022').textContent = '$' + (data.box022 || 0).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          
+          // Calculate total income
+          const totalIncome = (data.box048 || 0) + (data.box020 || 0) + (data.box028 || 0);
+          document.getElementById('t4aTotalIncome').textContent = '$' + totalIncome.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        } else {
+          t4aCard.style.display = 'none';
+        }
+      }
+
+      // Business Expense Functions
+      function addManualExpense() {
+        const date = document.getElementById('expenseDate').value;
+        const vendor = document.getElementById('expenseVendor').value;
+        const category = document.getElementById('expenseCategory').value;
+        const amount = parseFloat(document.getElementById('expenseAmount').value);
+        const description = document.getElementById('expenseDescription').value;
+
+        if (!date || !vendor || !amount || amount <= 0) {
+          alert('Please fill in all required fields (Date, Vendor, Amount)');
+          return;
+        }
+
+        // Add expense using the tracker
+        if (window.expenseTracker) {
+          window.expenseTracker.addExpense({
+            date,
+            vendor,
+            category,
+            amount,
+            description,
+          });
+
+          // Clear form
+          document.getElementById('expenseDate').value = '';
+          document.getElementById('expenseVendor').value = '';
+          document.getElementById('expenseAmount').value = '';
+          document.getElementById('expenseDescription').value = '';
+          document.getElementById('expenseCategory').value = 'VEHICLE';
+
+          // Update summary
+          updateExpenseSummary();
+
+          // Show success message
+          alert('Expense added successfully!');
+        }
+      }
+
+      function updateExpenseSummary() {
+        if (!window.expenseTracker) return;
+
+        const tracker = window.expenseTracker;
+        const expenses = tracker.expenses;
+
+        // Update totals
+        const totalReceipts = expenses.length;
+        const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+        const totalDeductible = expenses.reduce((sum, exp) => sum + exp.deductibleAmount, 0);
+
+        document.getElementById('totalReceipts').textContent = totalReceipts;
+        document.getElementById('totalExpenses').textContent = '$' + totalExpenses.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('totalDeductible').textContent = '$' + totalDeductible.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Update category breakdown table
+        const categoryBreakdownBody = document.getElementById('categoryBreakdownBody');
+        categoryBreakdownBody.innerHTML = '';
+
+        if (expenses.length === 0) {
+          categoryBreakdownBody.innerHTML = '<tr><td colspan="5" style="padding: 1rem; text-align: center; color: var(--muted);">No expenses added yet</td></tr>';
+          return;
+        }
+
+        // Group expenses by category
+        const categoryGroups = {};
+        expenses.forEach(exp => {
+          if (!categoryGroups[exp.category]) {
+            categoryGroups[exp.category] = {
+              count: 0,
+              totalAmount: 0,
+              totalDeductible: 0,
+            };
+          }
+          categoryGroups[exp.category].count++;
+          categoryGroups[exp.category].totalAmount += exp.amount;
+          categoryGroups[exp.category].totalDeductible += exp.deductibleAmount;
+        });
+
+        // Render table rows
+        Object.keys(categoryGroups).forEach(categoryKey => {
+          const categoryInfo = window.EXPENSE_CATEGORIES[categoryKey];
+          const group = categoryGroups[categoryKey];
+          
+          const row = document.createElement('tr');
+          row.style.borderBottom = '1px solid var(--border)';
+          row.innerHTML = `
+            <td style="padding: 0.75rem;">${categoryInfo.label}</td>
+            <td style="padding: 0.75rem; text-align: center;">${categoryInfo.code}</td>
+            <td style="padding: 0.75rem; text-align: center;">${group.count}</td>
+            <td style="padding: 0.75rem; text-align: right;">$${group.totalAmount.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 600; color: var(--success);">$${group.totalDeductible.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+          `;
+          categoryBreakdownBody.appendChild(row);
+        });
+      }
+
+      function exportToT2125JSON() {
+        if (!window.expenseTracker) return;
+
+        const tracker = window.expenseTracker;
+        const t2125Data = tracker.exportForTaxFiling();
+
+        // Create download link
+        const dataStr = JSON.stringify(t2125Data, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `t2125-expenses-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+      }
+
+      function exportToCSV() {
+        if (!window.expenseTracker) return;
+
+        const tracker = window.expenseTracker;
+        const expenses = tracker.expenses;
+
+        if (expenses.length === 0) {
+          alert('No expenses to export');
+          return;
+        }
+
+        // Create CSV content
+        const headers = ['Date', 'Vendor', 'Category', 'T2125 Line', 'Amount', 'Deduction Rate', 'Deductible Amount', 'Description'];
+        const rows = expenses.map(exp => {
+          const categoryInfo = window.EXPENSE_CATEGORIES[exp.category];
+          return [
+            exp.date,
+            exp.vendor,
+            categoryInfo.label,
+            categoryInfo.code,
+            exp.amount.toFixed(2),
+            (exp.deductionRate * 100).toFixed(0) + '%',
+            exp.deductibleAmount.toFixed(2),
+            exp.description || '',
+          ];
+        });
+
+        let csvContent = headers.join(',') + '\n';
+        rows.forEach(row => {
+          csvContent += row.map(field => `"${field}"`).join(',') + '\n';
+        });
+
+        // Create download link
+        const dataBlob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `business-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+      }
+
+      // Initialize expense summary on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        updateExpenseSummary();
+        
+        // Set default date to today
+        const expenseDateField = document.getElementById('expenseDate');
+        if (expenseDateField) {
+          expenseDateField.value = new Date().toISOString().split('T')[0];
+        }
+      });
     </script>
   </body>
 </html>
