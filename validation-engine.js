@@ -126,6 +126,59 @@ export function validateT4(data) {
 }
 
 /**
+ * Validate T4A slip data (contractor/freelancer income)
+ * @param {object} data - Extracted T4A data
+ * @returns {ValidationResult}
+ */
+export function validateT4A(data) {
+  const errors = [];
+  const warnings = [];
+  let confidenceScore = 100;
+
+  // Calculate total income from various T4A boxes
+  const totalIncome = (data.feesForServices || 0) + 
+                      (data.commissions || 0) + 
+                      (data.pension || 0) + 
+                      (data.lumpSum || 0) + 
+                      (data.otherIncome || 0);
+
+  // At least one income field should be present and positive
+  if (totalIncome <= 0) {
+    errors.push('At least one income field (Box 048, 020, 016, 024, or 028) is required');
+    confidenceScore -= 50;
+  } else if (!isValidAmount(totalIncome, 0, 1000000)) {
+    warnings.push('Total T4A income seems unusually high');
+    confidenceScore -= 10;
+  }
+
+  // Check for reasonable income tax deducted
+  if (data.incomeTaxDeducted && data.incomeTaxDeducted > totalIncome * 0.5) {
+    warnings.push('Income tax deducted exceeds 50% of total income');
+    confidenceScore -= 15;
+  }
+
+  // Validate year if present
+  const currentYear = CURRENT_TAX_YEAR;
+  if (data.year && (data.year < currentYear - 3 || data.year > currentYear)) {
+    warnings.push(`Tax year ${data.year} is outside expected range`);
+    confidenceScore -= 10;
+  }
+
+  // Check for payer information
+  if (!data.payerName || data.payerName.length === 0) {
+    warnings.push('Payer name not found');
+    confidenceScore -= 10;
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidenceScore: Math.max(0, confidenceScore),
+  };
+}
+
+/**
  * Validate RL-1 slip data
  * @param {object} data - Extracted RL-1 data
  * @returns {ValidationResult}
@@ -367,8 +420,10 @@ export function validateExpenseReceipt(data, expenseType) {
 export function validateData(data, docType) {
   switch (docType) {
     case DOCUMENT_TYPES.T4:
-    case DOCUMENT_TYPES.T4A:
       return validateT4(data);
+
+    case DOCUMENT_TYPES.T4A:
+      return validateT4A(data);
 
     case DOCUMENT_TYPES.RL1:
     case DOCUMENT_TYPES.RL2:
@@ -386,6 +441,7 @@ export function validateData(data, docType) {
     case DOCUMENT_TYPES.PARKING_RECEIPT:
     case DOCUMENT_TYPES.PHONE_BILL:
     case DOCUMENT_TYPES.MEAL_RECEIPT:
+    case DOCUMENT_TYPES.BUSINESS_RECEIPT:
       return validateExpenseReceipt(data, docType);
 
     default:

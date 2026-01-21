@@ -17,6 +17,7 @@ export const DOCUMENT_TYPES = {
   PARKING_RECEIPT: 'PARKING_RECEIPT',
   PHONE_BILL: 'PHONE_BILL',
   MEAL_RECEIPT: 'MEAL_RECEIPT',
+  BUSINESS_RECEIPT: 'BUSINESS_RECEIPT',
   UNKNOWN: 'UNKNOWN',
 };
 
@@ -33,13 +34,40 @@ export const T4_PATTERNS = {
   year: /(?:Year|Année|Tax Year)[:\s]*(\d{4})/i,
 };
 
-// T4A Pattern Extractors (Other Income)
+// T4A Pattern Extractors (Contractor/Freelancer Income)
 export const T4A_PATTERNS = {
-  pension: /(?:Box|Case)\s+16[:\s]*([\d,]+\.?\d*)/i,
-  lumpSum: /(?:Box|Case)\s+18[:\s]*([\d,]+\.?\d*)/i,
-  selfEmployment: /(?:Box|Case)\s+20[:\s]*([\d,]+\.?\d*)/i,
-  incomeTax: /(?:Box|Case)\s+22[:\s]*([\d,]+\.?\d*)/i,
-  year: /(?:Year|Année|Tax Year)[:\s]*(\d{4})/i,
+  // Box 048 - Fees for services (most common for contractors)
+  feesForServices: /(?:Box|Case)\s+048[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 020 - Self-employed commissions
+  commissions: /(?:Box|Case)\s+020[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 016 - Pension or superannuation
+  pension: /(?:Box|Case)\s+016[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 024 - Lump-sum payments
+  lumpSum: /(?:Box|Case)\s+024[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 028 - Other income
+  otherIncome: /(?:Box|Case)\s+028[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 022 - Income tax deducted (if any)
+  incomeTaxDeducted: /(?:Box|Case)\s+022[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Payer information
+  payerName: /(?:Payer|Payeur|Company|Entreprise)[:\s]*([A-Za-z0-9\s&.,'-]+?)(?:\n|Box|Case|Address)/i,
+  payerBusinessNumber: /(?:Business Number|Numéro d'entreprise)[:\s]*(\d{9}\s?[A-Z]{2}\s?\d{4})/i,
+  
+  // Recipient information
+  recipientName: /(?:Recipient|Bénéficiaire)[:\s]*([A-Za-z\s'-]+?)(?:\n|Address|SIN)/i,
+  recipientSIN: /(?:SIN|NAS)[:\s]*(\d{3}[\s-]?\d{3}[\s-]?\d{3})/i,
+  
+  // Tax year
+  year: /(?:Tax Year|Année d'imposition|Year|Année)[:\s]*(\d{4})/i,
+  
+  // Legacy fields for backward compatibility
+  selfEmployment: /(?:Box|Case)\s+020[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  incomeTax: /(?:Box|Case)\s+022[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
 };
 
 // RL-1 Pattern Extractors (Quebec Employment)
@@ -196,10 +224,71 @@ export const MEAL_RECEIPT_PATTERNS = {
   restaurant: /^([A-Za-z0-9\s&'-]+?)(?:\n|Date|Total)/im,
 };
 
+// Business Expense Receipt Patterns
+export const BUSINESS_EXPENSE_PATTERNS = {
+  // Office supplies
+  officeSupplies: {
+    keywords: ['staples', 'bureau en gros', 'office depot', 'costco', 'walmart', 'amazon'],
+    categories: ['paper', 'papier', 'pen', 'stylo', 'printer', 'imprimante', 'ink', 'encre', 'envelope', 'enveloppe'],
+  },
+  
+  // Software/subscriptions
+  software: {
+    keywords: ['microsoft', 'adobe', 'quickbooks', 'freshbooks', 'shopify', 'dropbox', 'google workspace', 'zoom'],
+    patterns: /(?:subscription|abonnement|monthly|mensuel)/i,
+  },
+  
+  // Professional fees
+  professionalFees: {
+    keywords: ['accountant', 'comptable', 'lawyer', 'avocat', 'notary', 'notaire', 'consultant', 'cpa'],
+    patterns: /(?:professional fee|honoraires professionnels|consulting fee|frais de consultation)/i,
+  },
+  
+  // Advertising/marketing
+  advertising: {
+    keywords: ['google ads', 'facebook ads', 'meta', 'advertising', 'publicité', 'marketing', 'flyer', 'dépliant'],
+    patterns: /(?:ad spend|dépenses publicitaires|promotion|campagne)/i,
+  },
+  
+  // Bank fees
+  bankFees: {
+    keywords: ['monthly fee', 'frais mensuels', 'transaction fee', 'frais de transaction', 'overdraft', 'découvert'],
+    patterns: /(?:bank|banque|service charge|frais de service)/i,
+  },
+  
+  // Professional development
+  training: {
+    keywords: ['course', 'cours', 'training', 'formation', 'workshop', 'atelier', 'conference', 'conférence', 'seminar', 'séminaire'],
+    patterns: /(?:tuition|frais de scolarité|certification|accréditation)/i,
+  },
+  
+  // Business insurance
+  businessInsurance: {
+    keywords: ['liability insurance', 'assurance responsabilité', 'business insurance', 'assurance entreprise', 'errors & omissions', 'erreurs et omissions'],
+  },
+  
+  // Licenses and permits
+  licenses: {
+    keywords: ['license', 'licence', 'permit', 'permis', 'registration', 'enregistrement', 'membership', 'adhésion'],
+  },
+  
+  // Meals and entertainment (50% deductible)
+  mealsEntertainment: {
+    keywords: ['restaurant', 'coffee', 'café', 'lunch', 'dîner', 'dinner', 'souper', 'client meeting', 'rencontre client'],
+    deductionRate: 0.5, // Only 50% deductible
+  },
+  
+  // General receipt patterns
+  amount: /(?:Total|Montant|Amount|Subtotal|Sous-total)[:\s]*(?:CA)?\$?\s*([0-9,]+\.\d{2})/i,
+  tax: /(?:GST|TPS|HST|TVH|QST|TVQ)[:\s]*(?:CA)?\$?\s*([0-9,]+\.\d{2})/i,
+  date: /(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/,
+  vendor: /^([A-Z][A-Za-z\s&.'-]{2,40})/m,
+};
+
 // Document classification patterns
 export const CLASSIFICATION_PATTERNS = {
   T4: /(?:T4|Statement\s+of\s+Remuneration).*(?:Box\s+14|Employment\s+Income)/is,
-  T4A: /(?:T4A|Statement\s+of\s+Pension).*(?:Box\s+16|Box\s+18)/is,
+  T4A: /(?:T4A|Statement\s+of\s+Pension).*(?:Box\s+(?:016|020|024|028|048|16|18|20|22|24|28|48)|Fees\s+for\s+services|Commissions?)/is,
   RL1: /(?:RL-1|Relevé\s+1).*(?:Case\s+A|Box\s+A)/is,
   RL2: /(?:RL-2|Relevé\s+2).*(?:Case\s+A|Pension)/is,
   UBER_SUMMARY: /(?:Uber|uber\.com).*(?:Gross\s+Fares?|Weekly\s+Summary|Driver\s+Summary|Tax\s+summary\s+for\s+the\s+period|GROSS\s+FARES\s+BREAKDOWN|FEES\s+BREAKDOWN)/is,
@@ -213,6 +302,7 @@ export const CLASSIFICATION_PATTERNS = {
   PHONE_BILL:
     /(?:Wireless|Mobile|Cell|Phone|Rogers|Bell|Telus|Fido).*(?:Billing\s+Period|Data\s+Usage)/is,
   MEAL_RECEIPT: /(?:Restaurant|Café|Coffee|Food|Tim\s+Hortons|McDonald's).*(?:Subtotal|Tip)/is,
+  BUSINESS_RECEIPT: /(?:receipt|reçu|invoice|facture).*(?:total|montant|amount|subtotal)/is,
 };
 
 /**
@@ -305,6 +395,15 @@ export function extractFields(text, docType) {
       break;
     case DOCUMENT_TYPES.MEAL_RECEIPT:
       patterns = MEAL_RECEIPT_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.BUSINESS_RECEIPT:
+      // For business receipts, extract general receipt patterns
+      patterns = {
+        amount: BUSINESS_EXPENSE_PATTERNS.amount,
+        tax: BUSINESS_EXPENSE_PATTERNS.tax,
+        date: BUSINESS_EXPENSE_PATTERNS.date,
+        vendor: BUSINESS_EXPENSE_PATTERNS.vendor,
+      };
       break;
     default:
       return {};
