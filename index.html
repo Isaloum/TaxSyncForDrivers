@@ -2223,43 +2223,6 @@
         document.getElementById('fileInput').click();
       }
 
-      // Initialize drag and drop for upload zone
-      document.addEventListener('DOMContentLoaded', function () {
-        const uploadZone = document.getElementById('uploadZone');
-        if (uploadZone) {
-          uploadZone.addEventListener('click', () => {
-            document.getElementById('fileInput').click();
-          });
-
-          uploadZone.addEventListener('dragover', handleDragOver);
-          uploadZone.addEventListener('drop', handleFileDrop);
-          uploadZone.addEventListener('dragleave', handleDragLeave);
-        }
-      });
-
-      function handleDragOver(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.add('dragover');
-      }
-
-      function handleDragLeave(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('dragover');
-      }
-
-      function handleFileDrop(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('dragover');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          handleFiles(files);
-        }
-      }
-
       setLang('fr');
     </script>
     <script type="module">
@@ -2270,24 +2233,24 @@
       let processedDocuments = [];
 
       // Drag and drop functionality
-      const dropZone = document.getElementById('dropZone');
+      const uploadZone = document.getElementById('uploadZone');
       const fileInput = document.getElementById('fileInput');
 
-      if (dropZone) {
-        dropZone.addEventListener('click', () => fileInput.click());
+      if (uploadZone) {
+        uploadZone.addEventListener('click', () => fileInput.click());
 
-        dropZone.addEventListener('dragover', (e) => {
+        uploadZone.addEventListener('dragover', (e) => {
           e.preventDefault();
-          dropZone.classList.add('drag-over');
+          uploadZone.classList.add('drag-over');
         });
 
-        dropZone.addEventListener('dragleave', () => {
-          dropZone.classList.remove('drag-over');
+        uploadZone.addEventListener('dragleave', () => {
+          uploadZone.classList.remove('drag-over');
         });
 
-        dropZone.addEventListener('drop', async (e) => {
+        uploadZone.addEventListener('drop', async (e) => {
           e.preventDefault();
-          dropZone.classList.remove('drag-over');
+          uploadZone.classList.remove('drag-over');
           const files = Array.from(e.dataTransfer.files);
           await processFiles(files);
         });
