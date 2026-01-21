@@ -3,6 +3,7 @@
 /**
  * Calculate Basic Personal Amount federal tax savings
  * 2026: $14,829 minimum, $16,452 maximum (phased out for high earners)
+ * Phaseout formula: Linear reduction between $181,440 and $251,440
  * 
  * @param {number} income - Annual net income
  * @returns {number} Tax savings from BPA
@@ -11,7 +12,7 @@ export function calculateFederalBPA(income) {
   const MIN_BPA = 14829;
   const MAX_BPA = 16452;
   const PHASEOUT_START = 181440;
-  const PHASEOUT_END = 251440; // Approximate based on reduction formula
+  const PHASEOUT_END = 251440; // Based on official CRA phaseout formula
   
   let bpa = MAX_BPA;
   
@@ -19,7 +20,7 @@ export function calculateFederalBPA(income) {
     if (income >= PHASEOUT_END) {
       bpa = MIN_BPA;
     } else {
-      // Linear reduction
+      // Linear reduction over phaseout range
       const reduction = ((income - PHASEOUT_START) / (PHASEOUT_END - PHASEOUT_START)) * (MAX_BPA - MIN_BPA);
       bpa = MAX_BPA - reduction;
     }

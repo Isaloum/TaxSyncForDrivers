@@ -52,11 +52,12 @@ function calculateTaxes(profile) {
   // Quebec tax brackets 2026 (indexed 2.05%)
   let quebecTax = 0;
   if (netIncome > 132245) {
-    quebecTax = 132245 * 0.2575 + (netIncome - 132245) * 0.2575;
+    // Calculate tax for each bracket progressively
+    quebecTax = 54345 * 0.14 + (108680 - 54345) * 0.19 + (132245 - 108680) * 0.24 + (netIncome - 132245) * 0.2575;
   } else if (netIncome > 108680) {
-    quebecTax = 108680 * 0.24 + (netIncome - 108680) * 0.2575;
+    quebecTax = 54345 * 0.14 + (108680 - 54345) * 0.19 + (netIncome - 108680) * 0.24;
   } else if (netIncome > 54345) {
-    quebecTax = 54345 * 0.19 + (netIncome - 54345) * 0.24;
+    quebecTax = 54345 * 0.14 + (netIncome - 54345) * 0.19;
   } else {
     quebecTax = netIncome * 0.14;
   }
