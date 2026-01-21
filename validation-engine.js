@@ -382,6 +382,7 @@ export function validateData(data, docType) {
     case DOCUMENT_TYPES.GAS_RECEIPT:
     case DOCUMENT_TYPES.MAINTENANCE_RECEIPT:
     case DOCUMENT_TYPES.INSURANCE_DOC:
+    case DOCUMENT_TYPES.INSURANCE_RECEIPT: // INSURANCE_RECEIPT is for provider-specific receipts (Intact, Desjardins, etc.), INSURANCE_DOC is for generic insurance documents
     case DOCUMENT_TYPES.PARKING_RECEIPT:
     case DOCUMENT_TYPES.PHONE_BILL:
     case DOCUMENT_TYPES.MEAL_RECEIPT:

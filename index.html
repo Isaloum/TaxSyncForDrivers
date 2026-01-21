@@ -1170,6 +1170,10 @@
           <span class="tab-icon">🤖</span
           ><span class="tab-label" data-i18n="tabs.documentAI">Document AI</span>
         </button>
+        <button class="tab-btn" data-tab="homeOffice">
+          <span class="tab-icon">🏠</span
+          ><span class="tab-label" data-i18n="tabs.homeOffice">Bureau à domicile</span>
+        </button>
         <button class="tab-btn" data-tab="quarterly">
           <span class="tab-icon">📅</span
           ><span class="tab-label" data-i18n="tabs.quarterly">Acomptes trimestriels</span>
@@ -1534,6 +1538,137 @@
           </div>
         </div>
       </section>
+      <section id="homeOffice" class="tab-content">
+        <h2>🏠 <span data-i18n="homeOffice.title">Calculateur Bureau à domicile</span></h2>
+        <p data-i18n="homeOffice.subtitle">
+          Comparez les méthodes simplifiée et détaillée pour maximiser vos déductions
+        </p>
+
+        <div class="method-selector" style="margin: 2rem 0;">
+          <label style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <input type="radio" name="homeOfficeMethod" value="simplified" checked onchange="toggleHomeOfficeMethod()">
+            <span data-i18n="homeOffice.simplifiedOption">Méthode simplifiée (2$/jour, max 500$)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 1rem;">
+            <input type="radio" name="homeOfficeMethod" value="detailed" onchange="toggleHomeOfficeMethod()">
+            <span data-i18n="homeOffice.detailedOption">Méthode détaillée (reçus requis)</span>
+          </label>
+        </div>
+
+        <!-- Simplified Method Fields -->
+        <div id="homeOfficeSimplifiedFields">
+          <fieldset>
+            <legend data-i18n="homeOffice.simplifiedTitle">Méthode simplifiée</legend>
+            <div class="form-group">
+              <label for="workDaysHome" data-i18n="homeOffice.workDays">Jours travaillés à domicile:</label>
+              <input type="number" id="workDaysHome" value="200" min="0" max="250" />
+              <small data-i18n="homeOffice.maxDays">Maximum 250 jours par année</small>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Detailed Method Fields -->
+        <div id="homeOfficeDetailedFields" style="display:none;">
+          <fieldset>
+            <legend data-i18n="homeOffice.workspaceDimensions">Dimensions de l'espace de travail</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="workspaceArea" data-i18n="homeOffice.workspaceArea">Superficie du bureau (pi²):</label>
+                <input type="number" id="workspaceArea" value="150" min="0" />
+              </div>
+              <div class="form-group">
+                <label for="totalHomeArea" data-i18n="homeOffice.totalHomeArea">Superficie totale du domicile (pi²):</label>
+                <input type="number" id="totalHomeArea" value="1200" min="0" />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="homeOffice.annualExpenses">Dépenses annuelles</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="expenseRent" data-i18n="homeOffice.rent">Loyer (si locataire) ($):</label>
+                <input type="number" id="expenseRent" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expenseMortgage" data-i18n="homeOffice.mortgage">Intérêts hypothécaires (si propriétaire) ($):</label>
+                <input type="number" id="expenseMortgage" value="0" min="0" step="0.01" />
+                <small data-i18n="homeOffice.mortgageNote">Intérêts seulement, pas le capital!</small>
+              </div>
+              <div class="form-group">
+                <label for="expensePropertyTax" data-i18n="homeOffice.propertyTax">Taxe foncière ($):</label>
+                <input type="number" id="expensePropertyTax" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expenseHomeInsurance" data-i18n="homeOffice.homeInsurance">Assurance habitation ($):</label>
+                <input type="number" id="expenseHomeInsurance" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expenseUtilities" data-i18n="homeOffice.utilities">Services publics (chauffage, électricité, eau) ($):</label>
+                <input type="number" id="expenseUtilities" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expenseMaintenance" data-i18n="homeOffice.maintenance">Entretien et réparations ($):</label>
+                <input type="number" id="expenseMaintenance" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expenseCondoFees" data-i18n="homeOffice.condoFees">Frais de condo ($):</label>
+                <input type="number" id="expenseCondoFees" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expenseInternet" data-i18n="homeOffice.internet">Internet ($):</label>
+                <input type="number" id="expenseInternet" value="0" min="0" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="expensePhone" data-i18n="homeOffice.phone">Téléphone ($):</label>
+                <input type="number" id="expensePhone" value="0" min="0" step="0.01" />
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-group">
+            <label for="netBusinessIncome" data-i18n="homeOffice.netIncome">Revenu net d'entreprise (avant déduction du bureau) ($):</label>
+            <input type="number" id="netBusinessIncome" value="50000" min="0" step="0.01" />
+            <small data-i18n="homeOffice.incomeNote">La déduction ne peut excéder ce montant</small>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn" onclick="calculateHomeOffice()" data-i18n="homeOffice.calculate">
+            Calculer ma déduction
+          </button>
+          <button class="btn btn-secondary" onclick="resetHomeOffice()" data-i18n="common.reset">
+            Réinitialiser
+          </button>
+        </div>
+
+        <div id="homeOfficeResults" class="result-box" style="display:none; margin-top:2rem;">
+          <div class="result-title">
+            📊 <span data-i18n="homeOffice.results">Résultats du calcul</span>
+          </div>
+          <div class="method-comparison" id="homeOfficeComparison" style="display:none;">
+            <div class="method-card">
+              <h4 data-i18n="homeOffice.simplifiedMethod">Méthode simplifiée</h4>
+              <div class="amount" id="homeOfficeSimplifiedAmount">$0</div>
+              <div id="homeOfficeSimplifiedBreakdown" style="font-size: 0.875rem; color: var(--muted); margin-top: 0.5rem;"></div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="homeOffice.detailedMethod">Méthode détaillée</h4>
+              <div class="amount" id="homeOfficeDetailedAmount">$0</div>
+              <div id="homeOfficeDetailedBreakdown" style="font-size: 0.875rem; color: var(--muted); margin-top: 0.5rem;"></div>
+            </div>
+          </div>
+          <div class="savings-summary">
+            <div class="savings-amount" id="homeOfficeDeduction">$0</div>
+            <div class="savings-label" id="homeOfficeRecommendation" data-i18n="homeOffice.totalDeduction">
+              Déduction recommandée
+            </div>
+          </div>
+          <div id="homeOfficeWarnings" style="margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.05); border: 1px solid var(--warning); border-radius: 6px; display: none;">
+            <p style="margin: 0; color: var(--warning);"></p>
+          </div>
+        </div>
+      </section>
       <section id="quarterly" class="tab-content">
         <h2>📅 <span data-i18n="quarterly.title">Planificateur d'acomptes trimestriels</span></h2>
         <p data-i18n="quarterly.description">
@@ -1782,6 +1917,100 @@
         document.getElementById('businessPercent').value = '80';
         document.getElementById('vehicleResults').style.display = 'none';
       }
+
+      // Home Office Calculator Functions
+      function toggleHomeOfficeMethod() {
+        const method = document.querySelector('input[name="homeOfficeMethod"]:checked').value;
+        const simplifiedFields = document.getElementById('homeOfficeSimplifiedFields');
+        const detailedFields = document.getElementById('homeOfficeDetailedFields');
+        
+        if (method === 'simplified') {
+          simplifiedFields.style.display = 'block';
+          detailedFields.style.display = 'none';
+        } else {
+          simplifiedFields.style.display = 'none';
+          detailedFields.style.display = 'block';
+        }
+      }
+
+      function calculateHomeOffice() {
+        const method = document.querySelector('input[name="homeOfficeMethod"]:checked').value;
+        
+        if (method === 'simplified') {
+          const workDays = parseFloat(document.getElementById('workDaysHome').value) || 0;
+          const result = calculateSimplifiedHomeOffice(workDays);
+          
+          document.getElementById('homeOfficeResults').style.display = 'block';
+          document.getElementById('homeOfficeComparison').style.display = 'none';
+          document.getElementById('homeOfficeDeduction').textContent = '$' + result.deduction.toLocaleString();
+          document.getElementById('homeOfficeRecommendation').textContent = 
+            `${result.workDays} × $${result.ratePerDay}`;
+          document.getElementById('homeOfficeWarnings').style.display = 'none';
+        } else {
+          const workspace = {
+            workspaceArea: parseFloat(document.getElementById('workspaceArea').value) || 0,
+            totalHomeArea: parseFloat(document.getElementById('totalHomeArea').value) || 0
+          };
+          
+          const expenses = {
+            rent: parseFloat(document.getElementById('expenseRent').value) || 0,
+            mortgageInterest: parseFloat(document.getElementById('expenseMortgage').value) || 0,
+            propertyTax: parseFloat(document.getElementById('expensePropertyTax').value) || 0,
+            homeInsurance: parseFloat(document.getElementById('expenseHomeInsurance').value) || 0,
+            utilities: parseFloat(document.getElementById('expenseUtilities').value) || 0,
+            maintenanceRepairs: parseFloat(document.getElementById('expenseMaintenance').value) || 0,
+            condoFees: parseFloat(document.getElementById('expenseCondoFees').value) || 0,
+            internet: parseFloat(document.getElementById('expenseInternet').value) || 0,
+            phone: parseFloat(document.getElementById('expensePhone').value) || 0
+          };
+          
+          const netIncome = parseFloat(document.getElementById('netBusinessIncome').value) || 50000;
+          
+          const result = calculateDetailedHomeOffice(workspace, expenses, netIncome);
+          
+          if (result.error) {
+            document.getElementById('homeOfficeResults').style.display = 'block';
+            document.getElementById('homeOfficeComparison').style.display = 'none';
+            document.getElementById('homeOfficeDeduction').textContent = '$0';
+            document.getElementById('homeOfficeWarnings').style.display = 'block';
+            document.getElementById('homeOfficeWarnings').querySelector('p').textContent = '⚠️ ' + result.error;
+            return;
+          }
+          
+          document.getElementById('homeOfficeResults').style.display = 'block';
+          document.getElementById('homeOfficeComparison').style.display = 'none';
+          document.getElementById('homeOfficeDeduction').textContent = '$' + result.deduction.toLocaleString();
+          document.getElementById('homeOfficeRecommendation').textContent = 
+            `${result.breakdown.workspacePercent}%`;
+          
+          if (result.breakdown.limitedByIncome) {
+            document.getElementById('homeOfficeWarnings').style.display = 'block';
+            document.getElementById('homeOfficeWarnings').querySelector('p').textContent = 
+              `⚠️ $${result.breakdown.unusedAmount.toLocaleString()}`;
+          } else {
+            document.getElementById('homeOfficeWarnings').style.display = 'none';
+          }
+        }
+      }
+
+      function resetHomeOffice() {
+        document.getElementById('workDaysHome').value = '200';
+        document.getElementById('workspaceArea').value = '150';
+        document.getElementById('totalHomeArea').value = '1200';
+        ['expenseRent', 'expenseMortgage', 'expensePropertyTax', 'expenseHomeInsurance', 
+         'expenseUtilities', 'expenseMaintenance', 'expenseCondoFees', 'expenseInternet', 
+         'expensePhone'].forEach(id => document.getElementById(id).value = '0');
+        document.getElementById('netBusinessIncome').value = '50000';
+        document.getElementById('homeOfficeResults').style.display = 'none';
+        document.querySelector('input[name="homeOfficeMethod"][value="simplified"]').checked = true;
+        toggleHomeOfficeMethod();
+      }
+
+      // Make functions globally accessible for onclick handlers
+      window.toggleHomeOfficeMethod = toggleHomeOfficeMethod;
+      window.calculateHomeOffice = calculateHomeOffice;
+      window.resetHomeOffice = resetHomeOffice;
+
       function calculateQuarterly() {
         const i = parseFloat(document.getElementById('estimatedIncome').value) || 0;
         const b =
@@ -2237,6 +2466,16 @@
     <script type="module">
       // Import document processing modules
       import { quickProcess } from './document-processor.js';
+      import { 
+        calculateSimplifiedHomeOffice,
+        calculateDetailedHomeOffice,
+        compareHomeOfficeMethods
+      } from './home-office-calculator.js';
+
+      // Make home office calculator functions globally available
+      window.calculateSimplifiedHomeOffice = calculateSimplifiedHomeOffice;
+      window.calculateDetailedHomeOffice = calculateDetailedHomeOffice;
+      window.compareHomeOfficeMethods = compareHomeOfficeMethods;
 
       // Global state for document processing
       let processedDocuments = [];
