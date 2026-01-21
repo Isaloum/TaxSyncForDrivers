@@ -428,6 +428,153 @@
       .toggle input:checked + .toggle-slider:before {
         transform: translateX(24px);
       }
+      /* Home Office Method Selector Cards */
+      .method-selector-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+      .method-selector-cards .method-card {
+        position: relative;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+        text-align: left;
+      }
+      .method-selector-cards .method-card:hover {
+        border-color: #0d9488;
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15);
+        transform: translateY(-2px);
+      }
+      .method-selector-cards .method-card input[type="radio"] {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+      .method-selector-cards .method-card input[type="radio"]:checked + .card-content {
+        opacity: 1;
+      }
+      .method-selector-cards .method-card input[type="radio"]:checked {
+        accent-color: #0d9488;
+      }
+      .method-selector-cards .method-card input[type="radio"]:not(:checked) + .card-content {
+        opacity: 0.6;
+      }
+      .method-selector-cards .card-content h4 {
+        margin: 0 0 0.5rem 0;
+        color: #0f766e;
+        font-size: 1.25rem;
+      }
+      .method-selector-cards .card-content .highlight {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #0d9488;
+        margin: 0.5rem 0;
+        display: block;
+      }
+      .method-selector-cards .card-content .limit {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0.25rem 0 1rem 0;
+        display: block;
+      }
+      .method-selector-cards .card-content .benefits {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0 0 0;
+      }
+      .method-selector-cards .card-content .benefits li {
+        padding: 0.25rem 0;
+        font-size: 0.9rem;
+        color: #475569;
+      }
+      .help-section {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+      }
+      .help-section h5 {
+        color: #0f766e;
+        font-size: 1.1rem;
+        margin: 0 0 1rem 0;
+      }
+      .example-box {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .example-box strong {
+        color: var(--accent);
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .example-box p {
+        margin: 0.25rem 0;
+        color: var(--text);
+      }
+      .example-box .calc {
+        font-weight: 600;
+        color: #0d9488;
+        margin-top: 0.5rem;
+      }
+      .example-box .calc strong {
+        display: inline;
+        color: #0d9488;
+      }
+      .example-box .tip {
+        color: #f59e0b;
+        font-weight: 600;
+        margin-top: 0.5rem;
+      }
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .comparison-grid .result-card {
+        background: white;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+      }
+      .comparison-grid .result-card h5 {
+        color: var(--accent);
+        margin: 0 0 0.75rem 0;
+      }
+      .comparison-grid .result-card .amount {
+        font-size: 2rem;
+        font-weight: 800;
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+        color: var(--text);
+      }
+      .recommendation-banner {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        margin-top: 1rem;
+      }
+      .recommendation-banner strong {
+        color: var(--accent);
+      }
+      .recommendation-banner span {
+        color: var(--text);
+        font-weight: 600;
+      }
       @media (max-width: 768px) {
         .hero h1 {
           font-size: 1.75rem;
@@ -436,6 +583,12 @@
           grid-template-columns: repeat(2, 1fr);
         }
         .method-comparison {
+          grid-template-columns: 1fr;
+        }
+        .method-selector-cards {
+          grid-template-columns: 1fr;
+        }
+        .comparison-grid {
           grid-template-columns: 1fr;
         }
       }
@@ -1544,15 +1697,53 @@
           Comparez les méthodes simplifiée et détaillée pour maximiser vos déductions
         </p>
 
-        <div class="method-selector" style="margin: 2rem 0;">
-          <label style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-            <input type="radio" name="homeOfficeMethod" value="simplified" checked onchange="toggleHomeOfficeMethod()">
-            <span data-i18n="homeOffice.simplifiedOption">Méthode simplifiée (2$/jour, max 500$)</span>
+        <div class="method-selector-cards">
+          <label class="method-card" for="homeOfficeSimplified">
+            <input type="radio" name="homeOfficeMethod" id="homeOfficeSimplified" value="simplified" checked onchange="toggleHomeOfficeMethod()">
+            <div class="card-content">
+              <h4 data-i18n="homeOffice.simplifiedCardTitle">📅 Méthode simplifiée</h4>
+              <span class="highlight" data-i18n="homeOffice.simplifiedHighlight">2$ par jour travaillé</span>
+              <span class="limit" data-i18n="homeOffice.simplifiedLimit">Maximum: 500$/an</span>
+              <ul class="benefits">
+                <li data-i18n="homeOffice.simplifiedBenefit1">✅ Aucun reçu requis</li>
+                <li data-i18n="homeOffice.simplifiedBenefit2">✅ Calcul rapide</li>
+                <li data-i18n="homeOffice.simplifiedBenefit3">✅ Idéal pour télétravail occasionnel</li>
+              </ul>
+            </div>
           </label>
-          <label style="display: flex; align-items: center; gap: 1rem;">
-            <input type="radio" name="homeOfficeMethod" value="detailed" onchange="toggleHomeOfficeMethod()">
-            <span data-i18n="homeOffice.detailedOption">Méthode détaillée (reçus requis)</span>
+          
+          <label class="method-card" for="homeOfficeDetailed">
+            <input type="radio" name="homeOfficeMethod" id="homeOfficeDetailed" value="detailed" onchange="toggleHomeOfficeMethod()">
+            <div class="card-content">
+              <h4 data-i18n="homeOffice.detailedCardTitle">🧾 Méthode détaillée</h4>
+              <span class="highlight" data-i18n="homeOffice.detailedHighlight">Basée sur vos dépenses réelles</span>
+              <span class="limit" data-i18n="homeOffice.detailedLimit">Déduction plus élevée possible</span>
+              <ul class="benefits">
+                <li data-i18n="homeOffice.detailedBenefit1">✅ Maximise votre remboursement</li>
+                <li data-i18n="homeOffice.detailedBenefit2">⚠️ Reçus requis (loyer, électricité, etc.)</li>
+                <li data-i18n="homeOffice.detailedBenefit3">⚠️ Mesures de bureau nécessaires</li>
+              </ul>
+            </div>
           </label>
+        </div>
+
+        <!-- Help Section with Examples -->
+        <div class="help-section">
+          <h5 data-i18n="homeOffice.helpTitle">💡 Quelle méthode choisir?</h5>
+          
+          <div class="example-box">
+            <strong data-i18n="homeOffice.exampleSimplifiedTitle">Exemple - Méthode simplifiée:</strong>
+            <p data-i18n="homeOffice.exampleSimplifiedText">Vous travaillez de la maison 200 jours par année.</p>
+            <p class="calc"><span data-i18n="homeOffice.exampleSimplifiedCalc">200 jours × 2$ = </span><strong data-i18n="homeOffice.exampleSimplifiedResult">400$ de déduction</strong></p>
+          </div>
+          
+          <div class="example-box">
+            <strong data-i18n="homeOffice.exampleDetailedTitle">Exemple - Méthode détaillée:</strong>
+            <p data-i18n="homeOffice.exampleDetailedText1">Bureau: 150 pi² / Maison totale: 1,200 pi² = 12.5%</p>
+            <p data-i18n="homeOffice.exampleDetailedText2">Dépenses annuelles: 24,000$ (loyer, électricité, etc.)</p>
+            <p class="calc"><span data-i18n="homeOffice.exampleDetailedCalc">24,000$ × 12.5% = </span><strong data-i18n="homeOffice.exampleDetailedResult">3,000$ de déduction</strong></p>
+            <p class="tip" data-i18n="homeOffice.exampleDetailedTip">⚡ Économie de 2,600$ vs. méthode simplifiée!</p>
+          </div>
         </div>
 
         <!-- Simplified Method Fields -->
@@ -1637,6 +1828,9 @@
           <button class="btn" onclick="calculateHomeOffice()" data-i18n="homeOffice.calculate">
             Calculer ma déduction
           </button>
+          <button class="btn btn-secondary" onclick="compareBothHomeOfficeMethods()" data-i18n="homeOffice.compareBoth">
+            🔄 Comparer les deux méthodes
+          </button>
           <button class="btn btn-secondary" onclick="resetHomeOffice()" data-i18n="common.reset">
             Réinitialiser
           </button>
@@ -1666,6 +1860,30 @@
           </div>
           <div id="homeOfficeWarnings" style="margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.05); border: 1px solid var(--warning); border-radius: 6px; display: none;">
             <p style="margin: 0; color: var(--warning);"></p>
+          </div>
+        </div>
+
+        <!-- Comparison Results -->
+        <div id="comparisonResults" class="result-box" style="display:none; margin-top:2rem;">
+          <div class="result-title">
+            🔄 <span>Comparaison des méthodes</span>
+          </div>
+          <div class="comparison-grid">
+            <div class="result-card simplified-result">
+              <h5 data-i18n="homeOffice.comparisonSimplified">Méthode simplifiée</h5>
+              <p class="amount" id="simplifiedResult">$0</p>
+            </div>
+            
+            <div class="result-card detailed-result">
+              <h5 data-i18n="homeOffice.comparisonDetailed">Méthode détaillée</h5>
+              <p class="amount" id="detailedResult">$0</p>
+            </div>
+            
+            <div class="recommendation-banner">
+              <strong data-i18n="homeOffice.bestOption">💰 Meilleure option:</strong> <span id="bestMethod"></span>
+              <br>
+              <strong data-i18n="homeOffice.savings">Économie:</strong> <span id="savingsAmount"></span>
+            </div>
           </div>
         </div>
       </section>
@@ -1869,6 +2087,20 @@
       document.getElementById('showDetailed').addEventListener('change', function () {
         document.getElementById('detailedSection').style.display = this.checked ? 'block' : 'none';
       });
+      
+      // Initialize home office method selector cards on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        // Set initial card styling for selected method
+        toggleHomeOfficeMethod();
+        
+        // Add event listeners to all radio buttons for visual feedback
+        document.querySelectorAll('input[name="homeOfficeMethod"]').forEach(radio => {
+          radio.addEventListener('change', function() {
+            toggleHomeOfficeMethod();
+          });
+        });
+      });
+      
       function calculateVehicle() {
         const km = parseFloat(document.getElementById('totalKm').value) || 0;
         const s = DriverCalculator.calculateSimplifiedVehicle(km);
@@ -1924,6 +2156,22 @@
         const simplifiedFields = document.getElementById('homeOfficeSimplifiedFields');
         const detailedFields = document.getElementById('homeOfficeDetailedFields');
         
+        // Update card styling
+        document.querySelectorAll('.method-selector-cards .method-card').forEach(card => {
+          card.style.borderColor = '#e2e8f0';
+          card.style.background = 'white';
+        });
+        
+        const selectedRadio = document.querySelector('input[name="homeOfficeMethod"]:checked');
+        if (selectedRadio) {
+          const parentCard = selectedRadio.closest('.method-card');
+          if (parentCard) {
+            parentCard.style.borderColor = '#0d9488';
+            parentCard.style.background = '#f0fdfa';
+          }
+        }
+        
+        // Toggle form fields
         if (method === 'simplified') {
           simplifiedFields.style.display = 'block';
           detailedFields.style.display = 'none';
@@ -2002,14 +2250,66 @@
          'expensePhone'].forEach(id => document.getElementById(id).value = '0');
         document.getElementById('netBusinessIncome').value = '50000';
         document.getElementById('homeOfficeResults').style.display = 'none';
+        document.getElementById('comparisonResults').style.display = 'none';
         document.querySelector('input[name="homeOfficeMethod"][value="simplified"]').checked = true;
         toggleHomeOfficeMethod();
+      }
+
+      function compareBothHomeOfficeMethods() {
+        // Get simplified method result
+        const workDays = parseFloat(document.getElementById('workDaysHome').value) || 0;
+        const simplifiedResult = calculateSimplifiedHomeOffice(workDays);
+        
+        // Get detailed method result
+        const workspace = {
+          workspaceArea: parseFloat(document.getElementById('workspaceArea').value) || 0,
+          totalHomeArea: parseFloat(document.getElementById('totalHomeArea').value) || 0
+        };
+        
+        const expenses = {
+          rent: parseFloat(document.getElementById('expenseRent').value) || 0,
+          mortgageInterest: parseFloat(document.getElementById('expenseMortgage').value) || 0,
+          propertyTax: parseFloat(document.getElementById('expensePropertyTax').value) || 0,
+          homeInsurance: parseFloat(document.getElementById('expenseHomeInsurance').value) || 0,
+          utilities: parseFloat(document.getElementById('expenseUtilities').value) || 0,
+          maintenanceRepairs: parseFloat(document.getElementById('expenseMaintenance').value) || 0,
+          condoFees: parseFloat(document.getElementById('expenseCondoFees').value) || 0,
+          internet: parseFloat(document.getElementById('expenseInternet').value) || 0,
+          phone: parseFloat(document.getElementById('expensePhone').value) || 0
+        };
+        
+        const netIncome = parseFloat(document.getElementById('netBusinessIncome').value) || 50000;
+        const detailedResult = calculateDetailedHomeOffice(workspace, expenses, netIncome);
+        
+        // Show comparison results
+        document.getElementById('comparisonResults').style.display = 'block';
+        document.getElementById('homeOfficeResults').style.display = 'none';
+        
+        document.getElementById('simplifiedResult').textContent = '$' + simplifiedResult.deduction.toLocaleString();
+        
+        if (detailedResult.error) {
+          document.getElementById('detailedResult').textContent = '$0';
+          document.getElementById('bestMethod').textContent = translations[currentLang]['homeOffice.comparisonSimplified'];
+          document.getElementById('savingsAmount').textContent = '$' + simplifiedResult.deduction.toLocaleString();
+        } else {
+          document.getElementById('detailedResult').textContent = '$' + detailedResult.deduction.toLocaleString();
+          
+          // Determine best method
+          if (simplifiedResult.deduction >= detailedResult.deduction) {
+            document.getElementById('bestMethod').textContent = translations[currentLang]['homeOffice.comparisonSimplified'];
+            document.getElementById('savingsAmount').textContent = '$' + (simplifiedResult.deduction - detailedResult.deduction).toLocaleString();
+          } else {
+            document.getElementById('bestMethod').textContent = translations[currentLang]['homeOffice.comparisonDetailed'];
+            document.getElementById('savingsAmount').textContent = '$' + (detailedResult.deduction - simplifiedResult.deduction).toLocaleString();
+          }
+        }
       }
 
       // Make functions globally accessible for onclick handlers
       window.toggleHomeOfficeMethod = toggleHomeOfficeMethod;
       window.calculateHomeOffice = calculateHomeOffice;
       window.resetHomeOffice = resetHomeOffice;
+      window.compareBothHomeOfficeMethods = compareBothHomeOfficeMethods;
 
       function calculateQuarterly() {
         const i = parseFloat(document.getElementById('estimatedIncome').value) || 0;
