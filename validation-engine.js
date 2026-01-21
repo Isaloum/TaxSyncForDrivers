@@ -111,8 +111,7 @@ export function validateT4(data) {
   }
 
   // Validate year
-  const currentYear = new Date().getFullYear();
-  if (data.year && (data.year < currentYear - 3 || data.year > currentYear)) {
+  if (data.year && (data.year < CURRENT_TAX_YEAR - 3 || data.year > CURRENT_TAX_YEAR)) {
     warnings.push(`Tax year ${data.year} is outside expected range`);
     confidenceScore -= 10;
   }

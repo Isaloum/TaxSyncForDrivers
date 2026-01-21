@@ -16,7 +16,7 @@ export const EXPENSE_CATEGORIES = {
   OFFICE: { label: 'Office Expenses', code: '8810', deductionRate: 1.0 },
   SUPPLIES: { label: 'Supplies', code: '8811', deductionRate: 1.0 },
   PHONE_UTILITIES: { label: 'Phone & Utilities', code: '9220', deductionRate: 1.0 },
-  RENT: { label: 'Rent', code: '9281', deductionRate: 1.0 },
+  RENT: { label: 'Rent', code: '8960', deductionRate: 1.0 },
   REPAIRS: { label: 'Repairs & Maintenance', code: '9270', deductionRate: 1.0 },
   TRAVEL: { label: 'Travel', code: '9200', deductionRate: 1.0 },
   VEHICLE: { label: 'Vehicle Expenses', code: '9281', deductionRate: 1.0 },
