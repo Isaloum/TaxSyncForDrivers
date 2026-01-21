@@ -4,6 +4,8 @@ import {
   calculateSolidarityCredit,
   calculateWorkPremium,
   calculateCWB,
+  calculateFederalBPA,
+  calculateQuebecBPA,
 } from '../credit-calculator.js';
 
 // Solidarity Credit Tests
@@ -66,20 +68,20 @@ test('calculateCWB returns number', () => {
   assert.strictEqual(typeof c, 'number');
 });
 
-test('calculateCWB: phase-in below $17,576', () => {
+test('calculateCWB: phase-in below base threshold', () => {
   const credit = calculateCWB(5000, false);
-  // 27% of 5000 = 1350, which is less than max 1519
-  assert.ok(credit > 0 && credit < 1519);
+  // 27% of 5000 = 1350, which is less than max 1549
+  assert.ok(credit > 0 && credit < 1549);
 });
 
 test('calculateCWB: full benefit in plateau range', () => {
   const credit = calculateCWB(20000, false);
-  assert.strictEqual(credit, 1519);
+  assert.strictEqual(credit, 1549);
 });
 
 test('calculateCWB: phase-out reduces benefit', () => {
   const credit = calculateCWB(30000, false);
-  assert.ok(credit > 0 && credit < 1519);
+  assert.ok(credit > 0 && credit < 1549);
 });
 
 test('calculateCWB: zero above phaseout', () => {
@@ -91,4 +93,40 @@ test('calculateCWB: higher max with dependents', () => {
   const single = calculateCWB(20000, false);
   const family = calculateCWB(20000, true);
   assert.ok(family > single);
+});
+
+// Federal BPA Tests
+test('calculateFederalBPA returns number', () => {
+  const bpa = calculateFederalBPA(50000);
+  assert.strictEqual(typeof bpa, 'number');
+});
+
+test('calculateFederalBPA: full credit for low income', () => {
+  const credit = calculateFederalBPA(50000);
+  // Should be max BPA × 14% = 16452 × 0.14 = 2303.28
+  assert.strictEqual(credit, 2303.28);
+});
+
+test('calculateFederalBPA: reduced credit for high income', () => {
+  const lowIncome = calculateFederalBPA(50000);
+  const highIncome = calculateFederalBPA(200000);
+  assert.ok(highIncome < lowIncome);
+});
+
+test('calculateFederalBPA: minimum credit above phaseout end', () => {
+  const credit = calculateFederalBPA(300000);
+  // Should be min BPA × 14% = 14829 × 0.14 = 2076.06
+  assert.strictEqual(credit, 2076.06);
+});
+
+// Quebec BPA Tests
+test('calculateQuebecBPA returns number', () => {
+  const bpa = calculateQuebecBPA();
+  assert.strictEqual(typeof bpa, 'number');
+});
+
+test('calculateQuebecBPA: returns correct amount', () => {
+  const credit = calculateQuebecBPA();
+  // 18952 × 0.14 = 2653.28
+  assert.strictEqual(credit, 2653.28);
 });

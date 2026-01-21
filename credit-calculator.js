@@ -1,4 +1,40 @@
-// credit-calculator.js — 2025 official credit formulas
+// credit-calculator.js — 2026 official credit formulas
+
+/**
+ * Calculate Basic Personal Amount federal tax savings
+ * 2026: $14,829 minimum, $16,452 maximum (phased out for high earners)
+ * 
+ * @param {number} income - Annual net income
+ * @returns {number} Tax savings from BPA
+ */
+export function calculateFederalBPA(income) {
+  const MIN_BPA = 14829;
+  const MAX_BPA = 16452;
+  const PHASEOUT_START = 181440;
+  const PHASEOUT_END = 251440; // Approximate based on reduction formula
+  
+  let bpa = MAX_BPA;
+  
+  if (income > PHASEOUT_START) {
+    if (income >= PHASEOUT_END) {
+      bpa = MIN_BPA;
+    } else {
+      // Linear reduction
+      const reduction = ((income - PHASEOUT_START) / (PHASEOUT_END - PHASEOUT_START)) * (MAX_BPA - MIN_BPA);
+      bpa = MAX_BPA - reduction;
+    }
+  }
+  
+  return Math.round(bpa * 0.14 * 100) / 100; // 14% lowest bracket rate
+}
+
+/**
+ * Calculate Quebec Basic Personal Amount
+ * 2026: $18,952
+ */
+export function calculateQuebecBPA() {
+  return Math.round(18952 * 0.14 * 100) / 100; // $2,653.28
+}
 
 /**
  * Calculate the Quebec Solidarity Tax Credit (Crédit pour la solidarité)
@@ -55,18 +91,20 @@ export function calculateWorkPremium(income, isSingle = true) {
  *
  * @param {number} income - Annual net income in CAD
  * @param {boolean} [hasDependents=false] - Whether the person has eligible dependents
- * @returns {number} Credit amount in CAD (max $1,519 single, $2,528 with dependents)
+ * @returns {number} Credit amount in CAD (max $1,549 single, $2,578 with dependents)
  */
 export function calculateCWB(income, hasDependents = false) {
-  const MAX_SINGLE = 1_519;
-  const MAX_FAMILY = 2_528;
-  const PHASEOUT_START_SINGLE = 25_539;
-  const PHASEOUT_START_FAMILY = 38_325;
+  // 2026 Canada Workers Benefit (indexed ~2%)
+  const MAX_SINGLE = 1549; // Increased from 1519
+  const MAX_FAMILY = 2578; // Increased from 2528
+  const PHASEOUT_START_SINGLE = 26050; // Increased
+  const PHASEOUT_START_FAMILY = 39092; // Increased
+  const BASE_THRESHOLD = 17928; // Minimum work income (indexed)
 
   const max = hasDependents ? MAX_FAMILY : MAX_SINGLE;
   const phaseoutStart = hasDependents ? PHASEOUT_START_FAMILY : PHASEOUT_START_SINGLE;
 
-  if (income <= 17_576) {
+  if (income <= BASE_THRESHOLD) {
     // Phase-in: 27% of income
     return Math.min(income * 0.27, max);
   } else if (income <= phaseoutStart) {

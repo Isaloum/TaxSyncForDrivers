@@ -1,5 +1,5 @@
 // driver-calculator.js — Tax calculations for Quebec rideshare & taxi drivers
-// 2025 CRA/Revenu Quebec rates for self-employed drivers
+// 2026 CRA/Revenu Quebec rates for self-employed drivers
 
 (function (global) {
   'use strict';
@@ -73,11 +73,11 @@
   }
 
   const SELF_EMPLOYMENT_RATES = {
-    qppRate: 0.128,
-    qppMaxPensionable: 71300,
-    qppExemption: 3500,
-    qpp2Rate: 0.02,
-    qpp2MaxEarnings: 81200,
+    qppRate: 0.138, // 6.9% employee + 6.9% employer = 13.8% self-employed
+    qppMaxPensionable: 73200, // 2026 YAMPE (indexed)
+    qppExemption: 3500, // Remains constant
+    qpp2Rate: 0.02, // Second additional rate
+    qpp2MaxEarnings: 86700, // 2026 upper limit (indexed)
   };
 
   function calculateSelfEmploymentTax(netSelfEmploymentIncome) {
@@ -174,12 +174,14 @@
   }
 
   const TAX_BRACKETS = [
-    { max: 51268, rate: 0.2885 },
-    { max: 57965, rate: 0.3325 },
-    { max: 110972, rate: 0.4375 },
-    { max: 165430, rate: 0.5125 },
-    { max: 235430, rate: 0.5825 },
-    { max: Infinity, rate: 0.6625 },
+    { max: 54345, rate: 0.28 },    // 14% Fed + 14% QC
+    { max: 58523, rate: 0.33 },    // 14% Fed + 19% QC
+    { max: 108680, rate: 0.395 },  // 20.5% Fed + 19% QC
+    { max: 117045, rate: 0.445 },  // 20.5% Fed + 24% QC
+    { max: 132245, rate: 0.50 },   // 26% Fed + 24% QC
+    { max: 181440, rate: 0.5175 }, // 26% Fed + 25.75% QC
+    { max: 258482, rate: 0.5475 }, // 29% Fed + 25.75% QC
+    { max: Infinity, rate: 0.5875 }, // 33% Fed + 25.75% QC
   ];
 
   const DriverCalculator = {

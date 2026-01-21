@@ -3,19 +3,21 @@
   'use strict';
 
   const MARGINAL_RATES = [
-    { max: 51268, rate: 0.2885 },
-    { max: 57965, rate: 0.3325 },
-    { max: 110972, rate: 0.4375 },
-    { max: 165430, rate: 0.5125 },
-    { max: 235430, rate: 0.5825 },
-    { max: Infinity, rate: 0.6625 },
+    { max: 54345, rate: 0.28 },    // 14% Fed + 14% QC
+    { max: 58523, rate: 0.33 },    // 14% Fed + 19% QC
+    { max: 108680, rate: 0.395 },  // 20.5% Fed + 19% QC
+    { max: 117045, rate: 0.445 },  // 20.5% Fed + 24% QC
+    { max: 132245, rate: 0.50 },   // 26% Fed + 24% QC
+    { max: 181440, rate: 0.5175 }, // 26% Fed + 25.75% QC
+    { max: 258482, rate: 0.5475 }, // 29% Fed + 25.75% QC
+    { max: Infinity, rate: 0.5875 }, // 33% Fed + 25.75% QC
   ];
 
   function calculateRrspImpact(income, contribution = 0) {
-    const limit = Math.min(income, 31560);
+    const limit = Math.min(income, 32490); // 2026 RRSP limit
     const rrsp = Math.min(contribution, limit);
     const newIncome = Math.max(0, income - rrsp);
-    const rate = MARGINAL_RATES.find((b) => income <= b.max)?.rate || 0.6625;
+    const rate = MARGINAL_RATES.find((b) => income <= b.max)?.rate || 0.5875;
     const taxSaved = rrsp * rate;
     return {
       contribution: rrsp,
@@ -51,13 +53,15 @@
   }
 
   function calculateCWB(income, hasDependents = false) {
-    const MAX_SINGLE = 1519;
-    const MAX_FAMILY = 2528;
-    const PHASEOUT_START_SINGLE = 25539;
-    const PHASEOUT_START_FAMILY = 38325;
+    // 2026 Canada Workers Benefit (indexed ~2%)
+    const MAX_SINGLE = 1549;
+    const MAX_FAMILY = 2578;
+    const PHASEOUT_START_SINGLE = 26050;
+    const PHASEOUT_START_FAMILY = 39092;
+    const BASE_THRESHOLD = 17928;
     const max = hasDependents ? MAX_FAMILY : MAX_SINGLE;
     const phaseoutStart = hasDependents ? PHASEOUT_START_FAMILY : PHASEOUT_START_SINGLE;
-    if (income <= 17576) {
+    if (income <= BASE_THRESHOLD) {
       return Math.min(income * 0.27, max);
     } else if (income <= phaseoutStart) {
       return max;
@@ -69,8 +73,24 @@
   }
 
   function calculateBPA(income) {
-    const bpa = Math.max(0, 15705 - (Math.max(0, income - 165430) * 15705) / 70000);
-    return Math.round(bpa * 0.15 * 100) / 100;
+    // 2026 Federal BPA: $14,829 minimum, $16,452 maximum
+    const MIN_BPA = 14829;
+    const MAX_BPA = 16452;
+    const PHASEOUT_START = 181440;
+    const PHASEOUT_END = 251440;
+    
+    let bpa = MAX_BPA;
+    
+    if (income > PHASEOUT_START) {
+      if (income >= PHASEOUT_END) {
+        bpa = MIN_BPA;
+      } else {
+        const reduction = ((income - PHASEOUT_START) / (PHASEOUT_END - PHASEOUT_START)) * (MAX_BPA - MIN_BPA);
+        bpa = MAX_BPA - reduction;
+      }
+    }
+    
+    return Math.round(bpa * 0.14 * 100) / 100; // 14% lowest bracket rate
   }
 
   const TaxCalculator = {
