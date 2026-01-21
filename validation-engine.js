@@ -173,6 +173,21 @@ export function validateRL1(data) {
 }
 
 /**
+ * Check if a period represents an annual time frame
+ * @param {string|number} period - Period string or year number
+ * @returns {boolean} - Whether this is an annual period
+ */
+export function isAnnualPeriod(period) {
+  if (!period) return false;
+  const periodStr = period.toString().toLowerCase();
+  return (
+    periodStr.match(/^\d{4}$/) ||  // Just a year like "2023"
+    periodStr.includes('annual') ||
+    periodStr.includes('year')
+  );
+}
+
+/**
  * Validate Uber/Lyft summary data
  * @param {object} data - Extracted platform summary data
  * @returns {ValidationResult}
@@ -185,12 +200,8 @@ export function validatePlatformSummary(data) {
   // Required: gross fares/earnings
   const grossAmount = data.grossFares || data.grossEarnings || 0;
   
-  // Check if this is an annual period by looking at the period field
-  const isAnnual = data.period && (
-    data.period.toString().match(/^\d{4}$/) ||  // Just a year like "2023"
-    data.period.toString().toLowerCase().includes('annual') ||
-    data.period.toString().toLowerCase().includes('year')
-  );
+  // Check if this is an annual period
+  const isAnnual = isAnnualPeriod(data.period);
   
   // Allow zero amounts for inactive periods, but warn if ALL fields are zero
   const allFieldsZero = grossAmount === 0 && 
