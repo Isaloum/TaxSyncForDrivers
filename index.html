@@ -2188,7 +2188,7 @@
           <legend data-i18n="medical.addExpense">Add Medical Expense</legend>
           <div class="form-grid">
             <div class="form-group">
-              <label for="medicalCategory">Category</label>
+              <label for="medicalCategory" data-i18n="medical.category">Category</label>
               <select id="medicalCategory">
                 <option value="prescriptions">💊 Prescriptions</option>
                 <option value="dental">🦷 Dental</option>
@@ -2198,62 +2198,62 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="medicalAmount">Amount ($)</label>
+              <label for="medicalAmount" data-i18n="medical.amount">Amount ($)</label>
               <input type="number" id="medicalAmount" placeholder="100.00" min="0" step="0.01" />
             </div>
             <div class="form-group">
-              <label for="medicalDate">Date</label>
+              <label for="medicalDate" data-i18n="medical.date">Date</label>
               <input type="date" id="medicalDate" />
             </div>
           </div>
           <div class="form-group">
-            <label for="medicalDescription">Description</label>
+            <label for="medicalDescription" data-i18n="medical.description">Description</label>
             <input type="text" id="medicalDescription" placeholder="e.g., Dental cleaning, Glasses, Prescription medication" />
           </div>
           <div class="btn-group">
-            <button class="btn" onclick="addMedicalExpense()">Add Medical Expense</button>
+            <button class="btn" onclick="addMedicalExpense()" data-i18n="medical.addButton">Add Medical Expense</button>
           </div>
         </fieldset>
 
         <!-- Medical Expenses List -->
         <div id="medicalExpensesList" style="margin-top: 1rem;">
-          <h3>📝 Recorded Expenses</h3>
+          <h3><span data-i18n="medical.recordedExpenses">📝 Recorded Expenses</span></h3>
           <div id="medicalExpensesTable"></div>
         </div>
 
         <!-- Credit Calculation Results -->
         <div id="medicalResults" class="result-box" style="margin-top: 2rem;">
           <div class="result-title">
-            💰 <span>Medical Expense Tax Credit</span>
+            💰 <span data-i18n="medical.creditTitle">Medical Expense Tax Credit</span>
           </div>
           <div class="method-comparison">
             <div class="method-card">
-              <h4>Total Expenses</h4>
+              <h4 data-i18n="medical.totalExpenses">Total Expenses</h4>
               <div class="amount" id="medicalTotalExpenses">$0.00</div>
             </div>
             <div class="method-card">
-              <h4>Threshold (3% of income)</h4>
+              <h4 data-i18n="medical.threshold">Threshold (3% of income)</h4>
               <div class="amount" id="medicalThreshold">$0.00</div>
             </div>
             <div class="method-card">
-              <h4>Eligible Amount</h4>
+              <h4 data-i18n="medical.eligible">Eligible Amount</h4>
               <div class="amount" id="medicalEligible">$0.00</div>
             </div>
           </div>
           <div class="savings-box">
-            <div class="savings-label">Federal Credit (15%)</div>
+            <div class="savings-label" data-i18n="medical.federalCredit">Federal Credit (15%)</div>
             <div class="savings-amount" id="medicalFederalCredit">$0.00</div>
           </div>
           <div class="savings-box">
-            <div class="savings-label">Quebec Credit (20%)</div>
+            <div class="savings-label" data-i18n="medical.quebecCredit">Quebec Credit (20%)</div>
             <div class="savings-amount" id="medicalQuebecCredit">$0.00</div>
           </div>
           <div class="savings-box highlight">
-            <div class="savings-label">Total Tax Credit</div>
+            <div class="savings-label" data-i18n="medical.totalCredit">Total Tax Credit</div>
             <div class="savings-amount" id="medicalTotalCredit">$0.00</div>
           </div>
           <div class="btn-group">
-            <button class="btn" onclick="calculateMedicalCredit()">Calculate Credit</button>
+            <button class="btn" onclick="calculateMedicalCredit()" data-i18n="medical.calculate">Calculate Credit</button>
           </div>
         </div>
       </section>
@@ -2267,23 +2267,23 @@
 
         <!-- Earned Income Input -->
         <fieldset>
-          <legend>Earned Income</legend>
+          <legend data-i18n="childcare.earnedIncome">Earned Income</legend>
           <div class="form-group">
-            <label for="childcareEarnedIncome">Annual Earned Income ($)</label>
+            <label for="childcareEarnedIncome" data-i18n="childcare.earnedIncomeLabel">Annual Earned Income ($)</label>
             <input type="number" id="childcareEarnedIncome" placeholder="50000" min="0" step="1" />
           </div>
         </fieldset>
 
         <!-- Add Child Form -->
         <fieldset>
-          <legend>Add Child</legend>
+          <legend data-i18n="childcare.addChild">Add Child</legend>
           <div class="form-grid">
             <div class="form-group">
-              <label for="childAge">Child's Age</label>
+              <label for="childAge" data-i18n="childcare.childAge">Child's Age</label>
               <input type="number" id="childAge" placeholder="5" min="0" max="18" />
             </div>
             <div class="form-group">
-              <label for="childDisabled">Has Disability</label>
+              <label for="childDisabled" data-i18n="childcare.hasDisability">Has Disability</label>
               <select id="childDisabled">
                 <option value="false">No</option>
                 <option value="true">Yes</option>
@@ -2291,32 +2291,32 @@
             </div>
           </div>
           <div class="btn-group">
-            <button class="btn" onclick="addChild()">Add Child</button>
+            <button class="btn" onclick="addChild()" data-i18n="childcare.addChildButton">Add Child</button>
           </div>
         </fieldset>
 
         <!-- Children List -->
         <div id="childrenList" style="margin-top: 1rem;">
-          <h3>👨‍👩‍👧‍👦 Children</h3>
+          <h3><span data-i18n="childcare.children">👨‍👩‍👧‍👦 Children</span></h3>
           <div id="childrenTable"></div>
         </div>
 
         <!-- Add Childcare Expense -->
         <fieldset>
-          <legend>Childcare Expenses</legend>
+          <legend data-i18n="childcare.expenses">Childcare Expenses</legend>
           <div class="form-grid">
             <div class="form-group">
-              <label for="childcareExpenseAmount">Total Annual Expenses ($)</label>
+              <label for="childcareExpenseAmount" data-i18n="childcare.totalAnnualExpenses">Total Annual Expenses ($)</label>
               <input type="number" id="childcareExpenseAmount" placeholder="10000" min="0" step="0.01" />
             </div>
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label for="providerName">Provider Name</label>
+              <label for="providerName" data-i18n="childcare.providerName">Provider Name</label>
               <input type="text" id="providerName" placeholder="ABC Daycare or Jane Doe" />
             </div>
             <div class="form-group">
-              <label for="providerSinBn">Provider SIN or Business Number</label>
+              <label for="providerSinBn" data-i18n="childcare.providerSinBn">Provider SIN or Business Number</label>
               <input type="text" id="providerSinBn" placeholder="123456789 or 123456789RC0001" />
             </div>
           </div>
@@ -2325,31 +2325,31 @@
         <!-- Deduction Calculation Results -->
         <div id="childcareResults" class="result-box" style="margin-top: 2rem;">
           <div class="result-title">
-            💰 <span>Childcare Expense Deduction</span>
+            💰 <span data-i18n="childcare.deductionTitle">Childcare Expense Deduction</span>
           </div>
           <div class="method-comparison">
             <div class="method-card">
-              <h4>Total Expenses</h4>
+              <h4 data-i18n="childcare.totalExpenses">Total Expenses</h4>
               <div class="amount" id="childcareTotalExpenses">$0.00</div>
             </div>
             <div class="method-card">
-              <h4>Per-Child Limit</h4>
+              <h4 data-i18n="childcare.perChildLimit">Per-Child Limit</h4>
               <div class="amount" id="childcarePerChildLimit">$0.00</div>
             </div>
             <div class="method-card">
-              <h4>2/3 Earned Income Limit</h4>
+              <h4 data-i18n="childcare.incomeLimit">2/3 Earned Income Limit</h4>
               <div class="amount" id="childcareIncomeLimit">$0.00</div>
             </div>
           </div>
           <div class="savings-box highlight">
-            <div class="savings-label">Eligible Deduction</div>
+            <div class="savings-label" data-i18n="childcare.deduction">Eligible Deduction</div>
             <div class="savings-amount" id="childcareDeduction">$0.00</div>
           </div>
           <div style="margin-top: 1rem; padding: 1rem; background: var(--accent-light); border-radius: 8px;">
             <small id="childcareLimitMessage">Enter expenses and earned income to see which limit applies.</small>
           </div>
           <div class="btn-group">
-            <button class="btn" onclick="calculateChildcareDeduction()">Calculate Deduction</button>
+            <button class="btn" onclick="calculateChildcareDeduction()" data-i18n="childcare.calculate">Calculate Deduction</button>
           </div>
         </div>
       </section>
@@ -2363,67 +2363,67 @@
 
         <!-- Add Donation Form -->
         <fieldset>
-          <legend>Add Donation</legend>
+          <legend data-i18n="donations.addDonation">Add Donation</legend>
           <div class="form-grid">
             <div class="form-group">
-              <label for="charityName">Charity Name</label>
+              <label for="charityName" data-i18n="donations.charityName">Charity Name</label>
               <input type="text" id="charityName" placeholder="e.g., Red Cross Canada" />
             </div>
             <div class="form-group">
-              <label for="donationAmount">Amount ($)</label>
+              <label for="donationAmount" data-i18n="donations.amount">Amount ($)</label>
               <input type="number" id="donationAmount" placeholder="100.00" min="0" step="0.01" />
             </div>
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label for="registrationNumber">Charity Registration Number (Optional)</label>
+              <label for="registrationNumber" data-i18n="donations.registrationNumber">Charity Registration Number (Optional)</label>
               <input type="text" id="registrationNumber" placeholder="123456789RR0001" />
             </div>
             <div class="form-group">
-              <label for="donationDate">Date</label>
+              <label for="donationDate" data-i18n="donations.date">Date</label>
               <input type="date" id="donationDate" />
             </div>
           </div>
           <div class="btn-group">
-            <button class="btn" onclick="addDonation()">Add Donation</button>
+            <button class="btn" onclick="addDonation()" data-i18n="donations.addButton">Add Donation</button>
           </div>
         </fieldset>
 
         <!-- Donations List -->
         <div id="donationsList" style="margin-top: 1rem;">
-          <h3>📝 Recorded Donations</h3>
+          <h3><span data-i18n="donations.recordedDonations">📝 Recorded Donations</span></h3>
           <div id="donationsTable"></div>
         </div>
 
         <!-- Credit Calculation Results -->
         <div id="donationResults" class="result-box" style="margin-top: 2rem;">
           <div class="result-title">
-            💰 <span>Charitable Donation Tax Credit</span>
+            💰 <span data-i18n="donations.creditTitle">Charitable Donation Tax Credit</span>
           </div>
           <div class="method-comparison">
             <div class="method-card">
-              <h4>Total Donations</h4>
+              <h4 data-i18n="donations.totalDonations">Total Donations</h4>
               <div class="amount" id="donationTotal">$0.00</div>
             </div>
             <div class="method-card">
-              <h4>First $200 (15%)</h4>
+              <h4 data-i18n="donations.firstTier">First $200 (15%)</h4>
               <div class="amount" id="donationFirstTier">$0.00</div>
             </div>
             <div class="method-card">
-              <h4>Remainder (29%)</h4>
+              <h4 data-i18n="donations.secondTier">Remainder (29%)</h4>
               <div class="amount" id="donationSecondTier">$0.00</div>
             </div>
           </div>
           <div class="savings-box">
-            <div class="savings-label">Federal Credit</div>
+            <div class="savings-label" data-i18n="donations.federalCredit">Federal Credit</div>
             <div class="savings-amount" id="donationFederalCredit">$0.00</div>
           </div>
           <div class="savings-box">
-            <div class="savings-label">Quebec Credit (25%)</div>
+            <div class="savings-label" data-i18n="donations.quebecCredit">Quebec Credit (25%)</div>
             <div class="savings-amount" id="donationQuebecCredit">$0.00</div>
           </div>
           <div class="savings-box highlight">
-            <div class="savings-label">Total Tax Credit</div>
+            <div class="savings-label" data-i18n="donations.totalCredit">Total Tax Credit</div>
             <div class="savings-amount" id="donationTotalCredit">$0.00</div>
           </div>
           <div style="margin-top: 1rem; padding: 1rem; background: var(--accent-light); border-radius: 8px;">
@@ -2437,7 +2437,7 @@
             </div>
           </div>
           <div class="btn-group">
-            <button class="btn" onclick="calculateDonationCredit()">Calculate Credit</button>
+            <button class="btn" onclick="calculateDonationCredit()" data-i18n="donations.calculate">Calculate Credit</button>
           </div>
         </div>
       </section>
