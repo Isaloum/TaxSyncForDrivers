@@ -175,6 +175,11 @@ function calculateOntarioSalesTaxCredit({ netIncome, numberOfChildren, maritalSt
  * Check if address is in Northern Ontario
  */
 export function isNorthernOntario(postalCode) {
+  // Validate input
+  if (!postalCode || typeof postalCode !== 'string' || postalCode.length < 2) {
+    return false;
+  }
+  
   // Northern Ontario postal code prefixes
   const northernPrefixes = ['P0', 'P1', 'P2', 'P3', 'P5', 'P6', 'P7', 'P8', 'P9'];
   const prefix = postalCode.substring(0, 2).toUpperCase();

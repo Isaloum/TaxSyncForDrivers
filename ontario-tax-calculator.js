@@ -100,11 +100,17 @@ function calculateOntarioHealthPremium(taxableIncome) {
         const range = nextTier.income - tier.income;
         const position = taxableIncome - tier.income;
         const premiumDiff = nextTier.premium - tier.premium;
-        return tier.premium + (position / range) * premiumDiff;
+        
+        // Avoid division by zero
+        if (range > 0) {
+          return tier.premium + (position / range) * premiumDiff;
+        }
       }
       return tier.premium;
     }
   }
   
-  return 900; // Maximum premium
+  // Return maximum premium from the last tier
+  const lastTier = ONTARIO_TAX_RATES_2026.healthPremium[ONTARIO_TAX_RATES_2026.healthPremium.length - 1];
+  return lastTier.premium;
 }
