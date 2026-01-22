@@ -1266,6 +1266,121 @@
           flex: auto;
         }
       }
+      
+      /* Province Selector Styles */
+      .province-selector-bar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+        color: white;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+
+      .province-dropdown {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: 2px solid white;
+        border-radius: 6px;
+        background: white;
+        color: #0f766e;
+        cursor: pointer;
+        font-weight: 600;
+        min-width: 200px;
+      }
+
+      .province-dropdown:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+      }
+
+      .province-flag {
+        font-size: 2rem;
+      }
+      
+      .province-specific {
+        display: none;
+      }
+      
+      .province-specific.qc-only {
+        display: block;
+      }
+      
+      /* Ontario Trillium specific styles */
+      .info-banner {
+        background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border: 1px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      
+      .info-banner strong {
+        color: var(--accent);
+      }
+      
+      .info-banner ul {
+        margin: 0.5rem 0 0.5rem 1.5rem;
+      }
+      
+      .form-section {
+        margin-bottom: 2rem;
+      }
+      
+      .form-section h4 {
+        margin-bottom: 1rem;
+        color: var(--accent);
+      }
+      
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      
+      .summary-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        text-align: center;
+        border: 2px solid var(--border);
+      }
+      
+      .summary-card.highlight {
+        border-color: var(--accent);
+        background: linear-gradient(135deg, var(--accent-light) 0%, rgba(20, 184, 166, 0.05) 100%);
+      }
+      
+      .summary-card.payment-info {
+        border-color: var(--success);
+      }
+      
+      .summary-card h5 {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+      }
+      
+      .big-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        margin: 0.5rem 0;
+      }
+      
+      .summary-card small {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      
+      .results-section {
+        margin-top: 2rem;
+      }
     </style>
     
     <!-- PDF.js Library for PDF text extraction -->
@@ -1314,6 +1429,31 @@
           </div>
         </div>
       </section>
+      
+      <!-- Province Selector Bar -->
+      <div class="province-selector-bar">
+        <label for="provinceSelect">
+          <span data-i18n="province.label">Votre province:</span>
+        </label>
+        <select id="provinceSelect" class="province-dropdown">
+          <option value="QC" data-i18n="province.qc">Québec</option>
+          <option value="ON" data-i18n="province.on">Ontario</option>
+          <option value="BC" data-i18n="province.bc">Colombie-Britannique</option>
+          <option value="AB" data-i18n="province.ab">Alberta</option>
+          <option value="MB" data-i18n="province.mb">Manitoba</option>
+          <option value="SK" data-i18n="province.sk">Saskatchewan</option>
+          <option value="NS" data-i18n="province.ns">Nouvelle-Écosse</option>
+          <option value="NB" data-i18n="province.nb">Nouveau-Brunswick</option>
+          <option value="PE" data-i18n="province.pe">Île-du-Prince-Édouard</option>
+          <option value="NL" data-i18n="province.nl">Terre-Neuve-et-Labrador</option>
+          <option value="YT" data-i18n="province.yt">Yukon</option>
+          <option value="NT" data-i18n="province.nt">Territoires du Nord-Ouest</option>
+          <option value="NU" data-i18n="province.nu">Nunavut</option>
+        </select>
+        
+        <span class="province-flag" id="provinceFlagIcon">🇨🇦</span>
+      </div>
+      
       <nav class="tabs">
         <button class="tab-btn active" data-tab="vehicle">
           <span class="tab-icon">🚙</span
@@ -1350,6 +1490,10 @@
         <button class="tab-btn" data-tab="donations">
           <span class="tab-icon">❤️</span
           ><span class="tab-label" data-i18n="tabs.donations">Charitable Donations</span>
+        </button>
+        <button class="tab-btn province-specific on-only" data-tab="ontarioTrillium" style="display:none;">
+          <span class="tab-icon">💰</span
+          ><span class="tab-label" data-i18n="tabs.ontarioTrillium">Ontario Trillium</span>
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -2441,6 +2585,121 @@
           </div>
         </div>
       </section>
+      
+      <!-- Ontario Trillium Benefit Calculator -->
+      <section id="ontarioTrillium" class="tab-content province-specific on-only" style="display:none;">
+        <h2>💰 <span data-i18n="ontarioTrillium.title">Calculateur du crédit Trillium de l'Ontario</span></h2>
+        <p data-i18n="ontarioTrillium.description">Calculez vos crédits combinés pour l'énergie, l'impôt foncier et la taxe de vente</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="ontarioTrillium.combinedCredits">💡 Le crédit Trillium de l'Ontario combine:</strong>
+          <ul>
+            <li data-i18n="ontarioTrillium.oeptc">Crédit de l'Ontario pour l'énergie et l'impôt foncier (COEIF)</li>
+            <li data-i18n="ontarioTrillium.noec">Crédit d'énergie du Nord de l'Ontario (CENO) - si dans le Nord de l'Ontario</li>
+            <li data-i18n="ontarioTrillium.ostc">Crédit de taxe de vente de l'Ontario (CTVO)</li>
+          </ul>
+          <p data-i18n="ontarioTrillium.benefitInfo">Payé mensuellement, jusqu'à ~1 400 $/année pour les familles!</p>
+        </div>
+        
+        <!-- Household Information -->
+        <div class="form-section">
+          <h4 data-i18n="ontarioTrillium.householdInfo">Information du ménage</h4>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.maritalStatus">État matrimonial:</label>
+              <select id="ontarioMaritalStatus">
+                <option value="single" data-i18n="ontarioTrillium.single">Célibataire</option>
+                <option value="married" data-i18n="ontarioTrillium.married">Marié(e)</option>
+                <option value="common-law" data-i18n="ontarioTrillium.commonLaw">Conjoint de fait</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.netIncome">Votre revenu net:</label>
+              <input type="number" id="ontarioNetIncome" step="0.01" placeholder="e.g., 45000">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.familyIncome">Revenu net familial (si en couple):</label>
+              <input type="number" id="ontarioFamilyIncome" step="0.01" placeholder="Revenu combiné">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.numberOfChildren">Nombre d'enfants:</label>
+              <input type="number" id="ontarioChildren" min="0" value="0">
+            </div>
+            
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="ontarioSenior">
+                <span data-i18n="ontarioTrillium.senior">Âgé de 64 ans ou plus</span>
+              </label>
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.postalCode">Code postal:</label>
+              <input type="text" id="ontarioPostalCode" placeholder="e.g., M5H 2N2" maxlength="7">
+              <small data-i18n="ontarioTrillium.postalCodeHint">Utilisé pour détecter le Nord de l'Ontario</small>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Housing Costs -->
+        <div class="form-section">
+          <h4 data-i18n="ontarioTrillium.housingCosts">Coûts de logement (annuel)</h4>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.propertyTax">Impôt foncier payé (si propriétaire):</label>
+              <input type="number" id="ontarioPropertyTax" step="0.01" placeholder="0.00">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="ontarioTrillium.rent">Loyer payé (si locataire):</label>
+              <input type="number" id="ontarioRent" step="0.01" placeholder="0.00">
+              <small data-i18n="ontarioTrillium.rentHint">Montant de loyer annuel</small>
+            </div>
+          </div>
+        </div>
+        
+        <button id="calculateOntarioTrilliumBtn" class="btn btn-primary" data-i18n="ontarioTrillium.calculate">Calculer le crédit Trillium</button>
+        
+        <!-- Results -->
+        <div id="ontarioTrilliumResults" style="display:none;" class="results-section">
+          <h4 data-i18n="ontarioTrillium.results">📊 Votre crédit Trillium de l'Ontario</h4>
+          
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h5 data-i18n="ontarioTrillium.energyPropertyCredit">Crédit pour l'énergie et l'impôt foncier</h5>
+              <p class="big-number" id="ontarioEPTC">$0.00</p>
+            </div>
+            
+            <div class="summary-card" id="northernCreditCard" style="display:none;">
+              <h5 data-i18n="ontarioTrillium.northernCredit">Crédit d'énergie du Nord de l'Ontario</h5>
+              <p class="big-number" id="ontarioNorthern">$0.00</p>
+              <span class="badge">Northern ON</span>
+            </div>
+            
+            <div class="summary-card">
+              <h5 data-i18n="ontarioTrillium.salesTaxCredit">Crédit de taxe de vente de l'Ontario</h5>
+              <p class="big-number" id="ontarioSTC">$0.00</p>
+            </div>
+            
+            <div class="summary-card highlight">
+              <h5 data-i18n="ontarioTrillium.totalBenefit">Prestation annuelle totale</h5>
+              <p class="big-number" id="ontarioTrilliumTotal">$0.00</p>
+            </div>
+            
+            <div class="summary-card payment-info">
+              <h5 data-i18n="ontarioTrillium.monthlyPayment">Paiement mensuel</h5>
+              <p class="big-number" id="ontarioTrilliumMonthly">$0.00</p>
+              <small data-i18n="ontarioTrillium.monthlyHint">Payé automatiquement chaque mois</small>
+            </div>
+          </div>
+        </div>
+      </section>
+      
     </main>
     <footer>
       <div class="footer-content">
@@ -2493,6 +2752,15 @@
       import { BusinessExpenseTracker, EXPENSE_CATEGORIES } from './business-expense-tracker.js';
       window.expenseTracker = new BusinessExpenseTracker();
       window.EXPENSE_CATEGORIES = EXPENSE_CATEGORIES;
+    </script>
+    <script type="module">
+      import { calculateOntarioTax } from './ontario-tax-calculator.js';
+      import { calculateOntarioTrilliumBenefit, isNorthernOntario } from './ontario-trillium-calculator.js';
+      
+      // Make functions available globally
+      window.calculateOntarioTax = calculateOntarioTax;
+      window.calculateOntarioTrilliumBenefit = calculateOntarioTrilliumBenefit;
+      window.isNorthernOntario = isNorthernOntario;
     </script>
     <script>
       // Auto-update year in header
@@ -4150,6 +4418,82 @@
         document.getElementById('donationEffectiveRate').textContent = result.effectiveRate.toFixed(1) + '%';
         document.getElementById('donationNetCost').textContent = '$' + result.netCost.toFixed(2);
       };
+    </script>
+    
+    <!-- Province Selector and Ontario Trillium Calculator -->
+    <script>
+      // Province selection handler
+      let selectedProvince = 'QC'; // Default to Quebec
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        const provinceSelect = document.getElementById('provinceSelect');
+        if (provinceSelect) {
+          provinceSelect.addEventListener('change', function(e) {
+            selectedProvince = e.target.value;
+            
+            // Hide all province-specific sections and tabs
+            document.querySelectorAll('.province-specific').forEach(el => {
+              el.style.display = 'none';
+            });
+            
+            // Show sections for selected province
+            const provinceClass = selectedProvince.toLowerCase() + '-only';
+            document.querySelectorAll('.' + provinceClass).forEach(el => {
+              el.style.display = 'block';
+            });
+            
+            // If a province-specific tab is currently active, switch to vehicle tab
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab && activeTab.classList.contains('province-specific') && 
+                !activeTab.classList.contains(provinceClass)) {
+              document.querySelector('.tab-btn[data-tab="vehicle"]').click();
+            }
+          });
+        }
+        
+        // Ontario Trillium calculator
+        const calculateBtn = document.getElementById('calculateOntarioTrilliumBtn');
+        if (calculateBtn) {
+          calculateBtn.addEventListener('click', function() {
+            const postalCode = document.getElementById('ontarioPostalCode').value || '';
+            const isNorthern = window.isNorthernOntario && window.isNorthernOntario(postalCode);
+            
+            const household = {
+              netIncome: parseFloat(document.getElementById('ontarioNetIncome').value) || 0,
+              familyNetIncome: parseFloat(document.getElementById('ontarioFamilyIncome').value) || null,
+              numberOfChildren: parseInt(document.getElementById('ontarioChildren').value) || 0,
+              isSenior: document.getElementById('ontarioSenior').checked,
+              isNorthernOntario: isNorthern,
+              propertyTaxPaid: parseFloat(document.getElementById('ontarioPropertyTax').value) || 0,
+              rentPaid: parseFloat(document.getElementById('ontarioRent').value) || 0,
+              maritalStatus: document.getElementById('ontarioMaritalStatus').value,
+            };
+            
+            if (!window.calculateOntarioTrilliumBenefit) {
+              console.error('Ontario Trillium calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateOntarioTrilliumBenefit(household);
+            
+            // Display results
+            document.getElementById('ontarioTrilliumResults').style.display = 'block';
+            document.getElementById('ontarioEPTC').textContent = '$' + result.energyPropertyCredit.toFixed(2);
+            document.getElementById('ontarioSTC').textContent = '$' + result.salesTaxCredit.toFixed(2);
+            document.getElementById('ontarioTrilliumTotal').textContent = '$' + result.totalAnnualBenefit.toFixed(2);
+            document.getElementById('ontarioTrilliumMonthly').textContent = '$' + result.monthlyPayment.toFixed(2);
+            
+            // Show Northern credit if applicable
+            const northernCard = document.getElementById('northernCreditCard');
+            if (isNorthern && northernCard) {
+              northernCard.style.display = 'block';
+              document.getElementById('ontarioNorthern').textContent = '$' + result.northernCredit.toFixed(2);
+            } else if (northernCard) {
+              northernCard.style.display = 'none';
+            }
+          });
+        }
+      });
     </script>
   </body>
 </html>
