@@ -1,8 +1,105 @@
 // document-processor.js — Core OCR and extraction engine for tax documents
 // Note: OCR functionality requires Tesseract.js or cloud OCR service integration
 
-import { classifyDocument, extractFields, DOCUMENT_TYPES, T4A_PATTERNS } from './pattern-library.js';
+import { classifyDocument, extractFields, DOCUMENT_TYPES, T4A_PATTERNS, T5_PATTERNS, T3_PATTERNS, T5008_PATTERNS } from './pattern-library.js';
 import { validateData } from './validation-engine.js';
+
+/**
+ * Extract data from T5 slip
+ * @param {string} text - Text extracted from T5 slip
+ * @returns {object} - Extracted T5 data
+ */
+export function extractT5(text) {
+  const extractAmount = (pattern) => {
+    const match = text.match(pattern);
+    return match ? parseFloat(match[1].replace(/,/g, '')) : 0;
+  };
+  
+  const extractText = (pattern) => {
+    const match = text.match(pattern);
+    return match ? match[1].trim() : '';
+  };
+  
+  return {
+    documentType: 'T5',
+    interestIncome: extractAmount(T5_PATTERNS.interestIncome),
+    eligibleDividends: extractAmount(T5_PATTERNS.eligibleDividends),
+    eligibleDividendsGrossUp: extractAmount(T5_PATTERNS.eligibleDividendsGrossUp),
+    otherDividends: extractAmount(T5_PATTERNS.otherDividends),
+    otherDividendsGrossUp: extractAmount(T5_PATTERNS.otherDividendsGrossUp),
+    capitalGainsDividends: extractAmount(T5_PATTERNS.capitalGainsDividends),
+    foreignIncome: extractAmount(T5_PATTERNS.foreignIncome),
+    foreignTaxPaid: extractAmount(T5_PATTERNS.foreignTaxPaid),
+    payerName: extractText(T5_PATTERNS.payerName),
+    accountNumber: extractText(T5_PATTERNS.accountNumber),
+    year: extractText(T5_PATTERNS.year),
+  };
+}
+
+/**
+ * Extract data from T3 slip
+ * @param {string} text - Text extracted from T3 slip
+ * @returns {object} - Extracted T3 data
+ */
+export function extractT3(text) {
+  const extractAmount = (pattern) => {
+    const match = text.match(pattern);
+    return match ? parseFloat(match[1].replace(/,/g, '')) : 0;
+  };
+  
+  const extractText = (pattern) => {
+    const match = text.match(pattern);
+    return match ? match[1].trim() : '';
+  };
+  
+  return {
+    documentType: 'T3',
+    eligibleDividends: extractAmount(T3_PATTERNS.eligibleDividends),
+    eligibleDividendsGrossUp: extractAmount(T3_PATTERNS.eligibleDividendsGrossUp),
+    otherDividends: extractAmount(T3_PATTERNS.otherDividends),
+    otherDividendsGrossUp: extractAmount(T3_PATTERNS.otherDividendsGrossUp),
+    foreignIncome: extractAmount(T3_PATTERNS.foreignIncome),
+    foreignTaxPaid: extractAmount(T3_PATTERNS.foreignTaxPaid),
+    returnOfCapital: extractAmount(T3_PATTERNS.returnOfCapital),
+    trustName: extractText(T3_PATTERNS.trustName),
+    year: extractText(T3_PATTERNS.year),
+  };
+}
+
+/**
+ * Extract data from T5008 slip
+ * @param {string} text - Text extracted from T5008 slip
+ * @returns {object} - Extracted T5008 data
+ */
+export function extractT5008(text) {
+  const extractAmount = (pattern) => {
+    const match = text.match(pattern);
+    return match ? parseFloat(match[1].replace(/,/g, '')) : 0;
+  };
+  
+  const extractText = (pattern) => {
+    const match = text.match(pattern);
+    return match ? match[1].trim() : '';
+  };
+  
+  const proceeds = extractAmount(T5008_PATTERNS.proceeds);
+  const costBase = extractAmount(T5008_PATTERNS.costBase);
+  const capitalGain = proceeds - costBase;
+  
+  return {
+    documentType: 'T5008',
+    proceeds,
+    costBase,
+    capitalGain: Math.round(capitalGain * 100) / 100,
+    taxableCapitalGain: Math.round(capitalGain * 0.5 * 100) / 100,
+    securityDescription: extractText(T5008_PATTERNS.securityDescription),
+    quantity: extractText(T5008_PATTERNS.quantity),
+    settlementDate: extractText(T5008_PATTERNS.settlementDate),
+    brokerName: extractText(T5008_PATTERNS.brokerName),
+    accountNumber: extractText(T5008_PATTERNS.accountNumber),
+    year: extractText(T5008_PATTERNS.year),
+  };
+}
 
 /**
  * Extract data from T4A slip
