@@ -1,8 +1,43 @@
 // document-processor.js — Core OCR and extraction engine for tax documents
 // Note: OCR functionality requires Tesseract.js or cloud OCR service integration
 
-import { classifyDocument, extractFields, DOCUMENT_TYPES } from './pattern-library.js';
+import { classifyDocument, extractFields, DOCUMENT_TYPES, T4A_PATTERNS } from './pattern-library.js';
 import { validateData } from './validation-engine.js';
+
+/**
+ * Extract data from T4A slip
+ * @param {string} text - Text extracted from T4A slip
+ * @returns {object} - Extracted T4A data
+ */
+export function extractT4A(text) {
+  const extractAmount = (pattern) => {
+    const match = text.match(pattern);
+    return match ? parseFloat(match[1].replace(/,/g, '')) : 0;
+  };
+  
+  const extractText = (pattern) => {
+    const match = text.match(pattern);
+    return match ? match[1].trim() : '';
+  };
+  
+  return {
+    documentType: 'T4A',
+    feesForServices: extractAmount(T4A_PATTERNS.feesForServices),
+    commissions: extractAmount(T4A_PATTERNS.commissions),
+    pension: extractAmount(T4A_PATTERNS.pension),
+    lumpSum: extractAmount(T4A_PATTERNS.lumpSum),
+    otherIncome: extractAmount(T4A_PATTERNS.otherIncome),
+    incomeTaxDeducted: extractAmount(T4A_PATTERNS.incomeTaxDeducted),
+    payerName: extractText(T4A_PATTERNS.payerName),
+    payerBusinessNumber: extractText(T4A_PATTERNS.payerBusinessNumber),
+    recipientName: extractText(T4A_PATTERNS.recipientName),
+    recipientSIN: extractText(T4A_PATTERNS.recipientSIN),
+    year: extractText(T4A_PATTERNS.year),
+    totalIncome: extractAmount(T4A_PATTERNS.feesForServices) + 
+                 extractAmount(T4A_PATTERNS.commissions) + 
+                 extractAmount(T4A_PATTERNS.otherIncome),
+  };
+}
 
 /**
  * Document processing result
