@@ -1312,6 +1312,10 @@
         display: none; /* Shown when BC province selected */
       }
       
+      .province-specific.ab-only {
+        display: none; /* Shown when AB province selected */
+      }
+      
       /* Ontario Trillium specific styles */
       .info-banner {
         background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
@@ -1510,6 +1514,22 @@
         <button class="tab-btn province-specific bc-only" data-tab="bcHomeOwner" style="display:none;">
           <span class="tab-icon">🏠</span
           ><span class="tab-label" data-i18n="tabs.bcHomeOwner">BC Home Owner Grant</span>
+        </button>
+        <button class="tab-btn province-specific ab-only" data-tab="albertaChildBenefit" style="display:none;">
+          <span class="tab-icon">👶</span
+          ><span class="tab-label" data-i18n="tabs.albertaChildBenefit">AB Child Benefit</span>
+        </button>
+        <button class="tab-btn province-specific ab-only" data-tab="albertaSeniors" style="display:none;">
+          <span class="tab-icon">👴</span
+          ><span class="tab-label" data-i18n="tabs.albertaSeniors">AB Seniors Benefit</span>
+        </button>
+        <button class="tab-btn province-specific ab-only" data-tab="albertaEmploymentCredit" style="display:none;">
+          <span class="tab-icon">💼</span
+          ><span class="tab-label" data-i18n="tabs.albertaEmploymentCredit">AB Employment Credit</span>
+        </button>
+        <button class="tab-btn province-specific ab-only" data-tab="albertaTaxSummary" style="display:none;">
+          <span class="tab-icon">📊</span
+          ><span class="tab-label" data-i18n="tabs.albertaTaxSummary">AB Tax Advantage</span>
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -2897,6 +2917,201 @@
         </div>
       </section>
       
+      <!-- Alberta Child & Family Benefit Tab -->
+      <section id="albertaChildBenefit" class="tab-content province-specific ab-only" style="display:none;">
+        <h2>👶 <span data-i18n="albertaChildBenefit.title">Alberta Child & Family Benefit</span></h2>
+        <p data-i18n="albertaChildBenefit.subtitle">Monthly benefit for families with children under 18</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="albertaChildBenefit.amounts">💡 2026 Amounts:</strong>
+          <br>1st child: $1,330/year | 2nd child: $665/year | 3rd+ child: $665/year each
+          <br>Maximum: $2,660 for family with 3+ children
+        </div>
+        
+        <div class="form-section">
+          <h4 data-i18n="albertaChildBenefit.familyInfo">Family Information</h4>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="albertaChildBenefit.familyIncome">Family Net Income:</label>
+              <input type="number" id="albertaFamilyIncome" step="0.01" placeholder="e.g., 45000">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="albertaChildBenefit.numberOfChildren">Number of Children (under 18):</label>
+              <input type="number" id="albertaNumberOfChildren" min="0" max="6" value="0">
+            </div>
+          </div>
+          
+          <button id="calculateAlbertaChildBtn" class="btn btn-primary" data-i18n="albertaChildBenefit.calculate">Calculate Child Benefit</button>
+        </div>
+        
+        <!-- Results -->
+        <div id="albertaChildResults" style="display:none;" class="results-section">
+          <h4 data-i18n="albertaChildBenefit.yourBenefit">📊 Your Alberta Child & Family Benefit</h4>
+          
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h5 data-i18n="albertaChildBenefit.annualBenefit">Annual Benefit</h5>
+              <p class="big-number" id="albertaChildAnnual">$0.00</p>
+            </div>
+            
+            <div class="summary-card highlight">
+              <h5 data-i18n="albertaChildBenefit.monthlyPayment">Monthly Payment</h5>
+              <p class="big-number" id="albertaChildMonthly">$0.00</p>
+              <small data-i18n="albertaChildBenefit.paidMonthly">Paid automatically each month</small>
+            </div>
+          </div>
+          
+          <div class="breakdown">
+            <h5 data-i18n="albertaChildBenefit.breakdown">Breakdown by Child:</h5>
+            <ul id="albertaChildBreakdown"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alberta Seniors Benefit Tab -->
+      <section id="albertaSeniors" class="tab-content province-specific ab-only" style="display:none;">
+        <h2>👴 <span data-i18n="albertaSeniors.title">Alberta Seniors Benefit</span></h2>
+        <p data-i18n="albertaSeniors.subtitle">Monthly benefit for low-income seniors 65+</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="albertaSeniors.maxAmounts">💡 2026 Maximum Amounts:</strong>
+          <br>Single: $3,522/year | Couple: $5,283/year (combined)
+        </div>
+        
+        <div class="form-section">
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="albertaSeniors.yourAge">Your Age:</label>
+              <input type="number" id="albertaSeniorAge" min="0" placeholder="e.g., 67">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="albertaSeniors.yourIncome">Your Net Income:</label>
+              <input type="number" id="albertaSeniorIncome" step="0.01">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="albertaSeniors.maritalStatus">Marital Status:</label>
+              <select id="albertaSeniorMarital">
+                <option value="single" data-i18n="albertaSeniors.single">Single</option>
+                <option value="married" data-i18n="albertaSeniors.married">Married</option>
+                <option value="common-law" data-i18n="albertaSeniors.commonLaw">Common-law</option>
+              </select>
+            </div>
+            
+            <div class="form-group" id="albertaSpouseFields" style="display:none;">
+              <label data-i18n="albertaSeniors.spouseAge">Spouse Age:</label>
+              <input type="number" id="albertaSpouseAge" min="0">
+            </div>
+            
+            <div class="form-group" id="albertaSpouseIncome" style="display:none;">
+              <label data-i18n="albertaSeniors.spouseIncome">Spouse Net Income:</label>
+              <input type="number" id="albertaSpouseIncomeField" step="0.01">
+            </div>
+          </div>
+          
+          <button id="calculateAlbertaSeniorsBtn" class="btn btn-primary" data-i18n="albertaSeniors.calculate">Calculate Seniors Benefit</button>
+        </div>
+        
+        <div id="albertaSeniorsResults" style="display:none;" class="results-section">
+          <div class="summary-card highlight">
+            <h5 data-i18n="albertaSeniors.benefit">Alberta Seniors Benefit</h5>
+            <p class="big-number" id="albertaSeniorsAnnual">$0.00</p>
+            <p class="note">Monthly: <span id="albertaSeniorsMonthly">$0.00</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alberta Family Employment Credit Tab -->
+      <section id="albertaEmploymentCredit" class="tab-content province-specific ab-only" style="display:none;">
+        <h2>💼 <span data-i18n="albertaEmploymentCredit.title">Alberta Family Employment Tax Credit</span></h2>
+        <p data-i18n="albertaEmploymentCredit.subtitle">Refundable credit for working families with children</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="albertaEmploymentCredit.maxCredit">💡 Maximum Credit:</strong> $2,336 per family
+          <br><strong data-i18n="albertaEmploymentCredit.requirement">Requirement:</strong> Working income over $2,760
+        </div>
+        
+        <div class="form-section">
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="albertaEmploymentCredit.workingIncome">Working Income (employment/self-employment):</label>
+              <input type="number" id="albertaWorkingIncome" step="0.01" placeholder="e.g., 35000">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="albertaEmploymentCredit.familyIncome">Family Net Income:</label>
+              <input type="number" id="albertaEmploymentFamilyIncome" step="0.01">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="albertaEmploymentCredit.numberOfChildren">Number of Children:</label>
+              <input type="number" id="albertaEmploymentChildren" min="0" value="0">
+            </div>
+          </div>
+          
+          <button id="calculateAlbertaEmploymentBtn" class="btn btn-primary" data-i18n="albertaEmploymentCredit.calculate">Calculate Employment Credit</button>
+        </div>
+        
+        <div id="albertaEmploymentResults" style="display:none;" class="results-section">
+          <div class="summary-card highlight">
+            <h5 data-i18n="albertaEmploymentCredit.credit">Family Employment Tax Credit</h5>
+            <p class="big-number" id="albertaEmploymentCredit">$0.00</p>
+            <p class="note" id="albertaEmploymentNote"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alberta Tax Summary Tab -->
+      <section id="albertaTaxSummary" class="tab-content province-specific ab-only" style="display:none;">
+        <h2>📊 <span data-i18n="albertaTaxSummary.title">Alberta Tax Advantage Calculator</span></h2>
+        <p data-i18n="albertaTaxSummary.subtitle">Compare Alberta's low taxes to other provinces</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="albertaTaxSummary.advantages">🎉 Alberta Advantages:</strong>
+          <ul>
+            <li data-i18n="albertaTaxSummary.lowestRates">✅ Lowest provincial tax rates in Canada (10-15%)</li>
+            <li data-i18n="albertaTaxSummary.highestBasic">✅ Highest basic personal amount ($21,885)</li>
+            <li data-i18n="albertaTaxSummary.noPST">✅ No provincial sales tax (5% GST only)</li>
+            <li data-i18n="albertaTaxSummary.noHealthPremium">✅ No health premium</li>
+            <li data-i18n="albertaTaxSummary.noPayroll">✅ No payroll tax</li>
+          </ul>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <label data-i18n="albertaTaxSummary.taxableIncome">Your Taxable Income:</label>
+            <input type="number" id="albertaCompareIncome" step="0.01" placeholder="e.g., 75000">
+          </div>
+          
+          <button id="calculateAlbertaCompareBtn" class="btn btn-primary" data-i18n="albertaTaxSummary.compare">Compare to Other Provinces</button>
+        </div>
+        
+        <div id="albertaCompareResults" style="display:none;" class="results-section">
+          <h4 data-i18n="albertaTaxSummary.comparisonTitle">Provincial Tax Comparison (Same Income)</h4>
+          
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th data-i18n="albertaTaxSummary.province">Province</th>
+                <th data-i18n="albertaTaxSummary.provincialTax">Provincial Tax</th>
+                <th data-i18n="albertaTaxSummary.vsAlberta">vs Alberta</th>
+              </tr>
+            </thead>
+            <tbody id="albertaCompareTableBody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+          
+          <div class="savings-banner">
+            <h5 data-i18n="albertaTaxSummary.savings">💰 Your Alberta Tax Savings:</h5>
+            <p id="albertaSavingsAmount"></p>
+          </div>
+        </div>
+      </section>
+      
     </main>
     <footer>
       <div class="footer-content">
@@ -2970,6 +3185,22 @@
       window.calculateBCClimateAction = calculateBCClimateAction;
       window.calculateBCAffordability = calculateBCAffordability;
       window.calculateBCHomeOwnerGrant = calculateBCHomeOwnerGrant;
+    </script>
+    <script type="module">
+      import { calculateAlbertaTax, getAlbertaMarginalRate, getCombinedMarginalRate } from './alberta-tax-calculator.js';
+      import { 
+        calculateAlbertaChildBenefit, 
+        calculateAlbertaSeniorsBenefit,
+        calculateAlbertaFamilyEmploymentCredit 
+      } from './alberta-child-benefit-calculator.js';
+      
+      // Make Alberta functions available globally
+      window.calculateAlbertaTax = calculateAlbertaTax;
+      window.getAlbertaMarginalRate = getAlbertaMarginalRate;
+      window.getCombinedMarginalRate = getCombinedMarginalRate;
+      window.calculateAlbertaChildBenefit = calculateAlbertaChildBenefit;
+      window.calculateAlbertaSeniorsBenefit = calculateAlbertaSeniorsBenefit;
+      window.calculateAlbertaFamilyEmploymentCredit = calculateAlbertaFamilyEmploymentCredit;
     </script>
     <script>
       // Auto-update year in header
@@ -4784,6 +5015,167 @@
               note += ' + Senior/Disability bonus';
             }
             document.getElementById('bcHomeGrantNote').textContent = note;
+          });
+        }
+        
+        // Alberta Child & Family Benefit calculator
+        const albertaChildBtn = document.getElementById('calculateAlbertaChildBtn');
+        if (albertaChildBtn) {
+          albertaChildBtn.addEventListener('click', function() {
+            const household = {
+              familyNetIncome: parseFloat(document.getElementById('albertaFamilyIncome').value) || 0,
+              numberOfChildren: parseInt(document.getElementById('albertaNumberOfChildren').value) || 0,
+            };
+            
+            if (!window.calculateAlbertaChildBenefit) {
+              console.error('Alberta Child Benefit calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateAlbertaChildBenefit(household);
+            
+            document.getElementById('albertaChildResults').style.display = 'block';
+            document.getElementById('albertaChildAnnual').textContent = '$' + result.annualBenefit.toFixed(2);
+            document.getElementById('albertaChildMonthly').textContent = '$' + result.monthlyPayment.toFixed(2);
+            
+            // Show breakdown
+            const breakdown = document.getElementById('albertaChildBreakdown');
+            breakdown.innerHTML = '';
+            
+            if (result.breakdown.firstChild > 0) {
+              breakdown.innerHTML += '<li>1st child: $' + result.breakdown.firstChild.toFixed(2) + '</li>';
+            }
+            if (result.breakdown.secondChild > 0) {
+              breakdown.innerHTML += '<li>2nd child: $' + result.breakdown.secondChild.toFixed(2) + '</li>';
+            }
+            if (result.breakdown.thirdChild > 0) {
+              breakdown.innerHTML += '<li>3rd child: $' + result.breakdown.thirdChild.toFixed(2) + '</li>';
+            }
+            if (result.breakdown.additionalChildren > 0) {
+              breakdown.innerHTML += '<li>Additional children: $' + result.breakdown.additionalChildren.toFixed(2) + '</li>';
+            }
+          });
+        }
+        
+        // Alberta Seniors Benefit calculator
+        const albertaSeniorsBtn = document.getElementById('calculateAlbertaSeniorsBtn');
+        if (albertaSeniorsBtn) {
+          albertaSeniorsBtn.addEventListener('click', function() {
+            const senior = {
+              age: parseInt(document.getElementById('albertaSeniorAge').value) || 0,
+              netIncome: parseFloat(document.getElementById('albertaSeniorIncome').value) || 0,
+              maritalStatus: document.getElementById('albertaSeniorMarital').value,
+              spouseAge: parseInt(document.getElementById('albertaSpouseAge').value) || 0,
+              spouseIncome: parseFloat(document.getElementById('albertaSpouseIncomeField').value) || 0,
+            };
+            
+            if (!window.calculateAlbertaSeniorsBenefit) {
+              console.error('Alberta Seniors Benefit calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateAlbertaSeniorsBenefit(senior);
+            
+            document.getElementById('albertaSeniorsResults').style.display = 'block';
+            
+            if (result.eligible) {
+              document.getElementById('albertaSeniorsAnnual').textContent = '$' + result.annualBenefit.toFixed(2);
+              document.getElementById('albertaSeniorsMonthly').textContent = '$' + result.monthlyPayment.toFixed(2);
+            } else {
+              document.getElementById('albertaSeniorsAnnual').textContent = 'Not Eligible';
+              document.getElementById('albertaSeniorsMonthly').textContent = result.reason;
+            }
+          });
+        }
+        
+        // Show/hide spouse fields for Alberta Seniors
+        const albertaSeniorMarital = document.getElementById('albertaSeniorMarital');
+        if (albertaSeniorMarital) {
+          albertaSeniorMarital.addEventListener('change', function() {
+            const isMarried = this.value === 'married' || this.value === 'common-law';
+            document.getElementById('albertaSpouseFields').style.display = isMarried ? 'block' : 'none';
+            document.getElementById('albertaSpouseIncome').style.display = isMarried ? 'block' : 'none';
+          });
+        }
+        
+        // Alberta Family Employment Credit calculator
+        const albertaEmploymentBtn = document.getElementById('calculateAlbertaEmploymentBtn');
+        if (albertaEmploymentBtn) {
+          albertaEmploymentBtn.addEventListener('click', function() {
+            const household = {
+              workingIncome: parseFloat(document.getElementById('albertaWorkingIncome').value) || 0,
+              familyNetIncome: parseFloat(document.getElementById('albertaEmploymentFamilyIncome').value) || 0,
+              numberOfChildren: parseInt(document.getElementById('albertaEmploymentChildren').value) || 0,
+            };
+            
+            if (!window.calculateAlbertaFamilyEmploymentCredit) {
+              console.error('Alberta Family Employment Credit calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateAlbertaFamilyEmploymentCredit(household);
+            
+            document.getElementById('albertaEmploymentResults').style.display = 'block';
+            
+            if (result.eligible) {
+              document.getElementById('albertaEmploymentCredit').textContent = '$' + result.credit.toFixed(2);
+              document.getElementById('albertaEmploymentNote').textContent = 'Maximum: $' + result.maxCredit;
+            } else {
+              document.getElementById('albertaEmploymentCredit').textContent = '$0.00';
+              document.getElementById('albertaEmploymentNote').textContent = result.reason;
+            }
+          });
+        }
+        
+        // Alberta Tax Comparison calculator
+        const albertaCompareBtn = document.getElementById('calculateAlbertaCompareBtn');
+        if (albertaCompareBtn) {
+          albertaCompareBtn.addEventListener('click', function() {
+            const income = parseFloat(document.getElementById('albertaCompareIncome').value) || 0;
+            
+            if (!window.calculateAlbertaTax || !window.calculateBCTax || !window.calculateOntarioTax) {
+              console.error('Provincial tax calculators not loaded');
+              return;
+            }
+            
+            // Calculate taxes for different provinces
+            const albertaTax = window.calculateAlbertaTax(income).totalTax;
+            const bcTax = window.calculateBCTax(income).totalTax;
+            const ontarioTax = window.calculateOntarioTax(income).totalTax;
+            
+            // Create comparison table
+            const tableBody = document.getElementById('albertaCompareTableBody');
+            tableBody.innerHTML = '';
+            
+            const provinces = [
+              { name: 'Alberta', tax: albertaTax },
+              { name: 'British Columbia', tax: bcTax },
+              { name: 'Ontario', tax: ontarioTax },
+            ];
+            
+            provinces.forEach(province => {
+              const row = document.createElement('tr');
+              const diff = province.tax - albertaTax;
+              const diffText = diff === 0 ? '-' : (diff > 0 ? '+$' + diff.toFixed(2) : '-$' + Math.abs(diff).toFixed(2));
+              
+              row.innerHTML = `
+                <td>${province.name}</td>
+                <td>$${province.tax.toFixed(2)}</td>
+                <td>${diffText}</td>
+              `;
+              
+              tableBody.appendChild(row);
+            });
+            
+            // Calculate average savings
+            const avgOtherTax = (bcTax + ontarioTax) / 2;
+            const savings = avgOtherTax - albertaTax;
+            
+            document.getElementById('albertaCompareResults').style.display = 'block';
+            document.getElementById('albertaSavingsAmount').textContent = 
+              savings > 0 
+                ? `You save an average of $${savings.toFixed(2)} compared to BC and Ontario!` 
+                : 'Alberta offers competitive tax rates.';
           });
         }
       });
