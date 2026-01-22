@@ -1305,7 +1305,11 @@
       }
       
       .province-specific.qc-only {
-        display: block;
+        display: block; /* Quebec is default province */
+      }
+      
+      .province-specific.bc-only {
+        display: none; /* Shown when BC province selected */
       }
       
       /* Ontario Trillium specific styles */
@@ -1494,6 +1498,18 @@
         <button class="tab-btn province-specific on-only" data-tab="ontarioTrillium" style="display:none;">
           <span class="tab-icon">💰</span
           ><span class="tab-label" data-i18n="tabs.ontarioTrillium">Ontario Trillium</span>
+        </button>
+        <button class="tab-btn province-specific bc-only" data-tab="bcClimateAction" style="display:none;">
+          <span class="tab-icon">🌱</span
+          ><span class="tab-label" data-i18n="tabs.bcClimateAction">BC Climate Action</span>
+        </button>
+        <button class="tab-btn province-specific bc-only" data-tab="bcAffordability" style="display:none;">
+          <span class="tab-icon">💰</span
+          ><span class="tab-label" data-i18n="tabs.bcAffordability">BC Affordability</span>
+        </button>
+        <button class="tab-btn province-specific bc-only" data-tab="bcHomeOwner" style="display:none;">
+          <span class="tab-icon">🏠</span
+          ><span class="tab-label" data-i18n="tabs.bcHomeOwner">BC Home Owner Grant</span>
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -2700,6 +2716,187 @@
         </div>
       </section>
       
+      <!-- BC Climate Action Tax Credit Tab -->
+      <section id="bcClimateAction" class="tab-content province-specific bc-only" style="display:none;">
+        <h2>🌱 <span data-i18n="bcClimateAction.title">BC Climate Action Tax Credit</span></h2>
+        <p data-i18n="bcClimateAction.subtitle">Quarterly payment to offset carbon tax costs</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="bcClimateAction.amounts">💡 2026 Amounts:</strong>
+          <span data-i18n="bcClimateAction.amountsDetail">$193.50/adult + $56.50/child per quarter (4 payments/year)</span>
+          <br>
+          <strong data-i18n="bcClimateAction.paymentMonths">Payment Months:</strong>
+          <span data-i18n="bcClimateAction.months">July, October, January, April</span>
+        </div>
+        
+        <div class="form-section">
+          <h4 data-i18n="bcClimateAction.householdInfo">Household Information</h4>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="bcClimateAction.maritalStatus">Marital Status:</label>
+              <select id="bcMaritalStatus">
+                <option value="single" data-i18n="bcClimateAction.single">Single</option>
+                <option value="married" data-i18n="bcClimateAction.married">Married</option>
+                <option value="common-law" data-i18n="bcClimateAction.commonLaw">Common-law</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcClimateAction.numberOfAdults">Number of Adults:</label>
+              <input type="number" id="bcNumberOfAdults" min="1" max="2" value="1">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcClimateAction.numberOfChildren">Number of Children (under 19):</label>
+              <input type="number" id="bcNumberOfChildren" min="0" value="0">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcClimateAction.familyIncome">Net Family Income:</label>
+              <input type="number" id="bcFamilyIncome" step="0.01" placeholder="e.g., 45000">
+            </div>
+          </div>
+          
+          <button id="calculateBCClimateBtn" class="btn btn-primary" data-i18n="bcClimateAction.calculate">Calculate Climate Action Credit</button>
+        </div>
+        
+        <!-- Results -->
+        <div id="bcClimateResults" style="display:none;" class="results-section">
+          <h4 data-i18n="bcClimateAction.results">📊 Your BC Climate Action Tax Credit</h4>
+          
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h5 data-i18n="bcClimateAction.annualCredit">Annual Credit</h5>
+              <p class="big-number" id="bcClimateAnnual">$0.00</p>
+            </div>
+            
+            <div class="summary-card highlight">
+              <h5 data-i18n="bcClimateAction.quarterlyPayment">Quarterly Payment</h5>
+              <p class="big-number" id="bcClimateQuarterly">$0.00</p>
+              <small data-i18n="bcClimateAction.paymentFreq">Paid 4 times/year</small>
+            </div>
+          </div>
+          
+          <div class="payment-schedule">
+            <h5 data-i18n="bcClimateAction.paymentSchedule">Payment Schedule:</h5>
+            <ul>
+              <li>🗓️ <strong data-i18n="bcClimateAction.july">July 5:</strong> <span id="bcPayment1">$0.00</span></li>
+              <li>🗓️ <strong data-i18n="bcClimateAction.october">October 5:</strong> <span id="bcPayment2">$0.00</span></li>
+              <li>🗓️ <strong data-i18n="bcClimateAction.january">January 5:</strong> <span id="bcPayment3">$0.00</span></li>
+              <li>🗓️ <strong data-i18n="bcClimateAction.april">April 5:</strong> <span id="bcPayment4">$0.00</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- BC Affordability Credit Tab -->
+      <section id="bcAffordability" class="tab-content province-specific bc-only" style="display:none;">
+        <h2>💰 <span data-i18n="bcAffordability.title">BC Affordability Credit</span></h2>
+        <p data-i18n="bcAffordability.subtitle">Annual payment to help with cost of living</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="bcAffordability.amounts">💡 2026 Amounts:</strong>
+          <span data-i18n="bcAffordability.amountsDetail">$164 individual, $246 couple, +$41 per child</span>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="bcAffordability.maritalStatus">Marital Status:</label>
+              <select id="bcAffordMaritalStatus">
+                <option value="single" data-i18n="bcAffordability.single">Single</option>
+                <option value="married" data-i18n="bcAffordability.married">Married</option>
+                <option value="common-law" data-i18n="bcAffordability.commonLaw">Common-law</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcAffordability.numberOfChildren">Number of Children:</label>
+              <input type="number" id="bcAffordChildren" min="0" value="0">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcAffordability.familyIncome">Net Family Income:</label>
+              <input type="number" id="bcAffordIncome" step="0.01">
+            </div>
+          </div>
+          
+          <button id="calculateBCAffordBtn" class="btn btn-primary" data-i18n="bcAffordability.calculate">Calculate Affordability Credit</button>
+        </div>
+        
+        <div id="bcAffordResults" style="display:none;" class="results-section">
+          <div class="summary-card highlight">
+            <h5 data-i18n="bcAffordability.credit">BC Affordability Credit</h5>
+            <p class="big-number" id="bcAffordCredit">$0.00</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BC Home Owner Grant Tab -->
+      <section id="bcHomeOwner" class="tab-content province-specific bc-only" style="display:none;">
+        <h2>🏠 <span data-i18n="bcHomeOwner.title">BC Home Owner Grant</span></h2>
+        <p data-i18n="bcHomeOwner.subtitle">Property tax reduction for homeowners</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="bcHomeOwner.grants">💡 Grant Amounts (2026):</strong>
+          <br>
+          <span data-i18n="bcHomeOwner.regular">Regular: $570 basic, $845 senior (65+)</span>
+          <br>
+          <span data-i18n="bcHomeOwner.northern">Northern/Rural: $770 basic, $1,045 senior</span>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="bcHomeOwner.propertyValue">Property Assessed Value:</label>
+              <input type="number" id="bcPropertyValue" step="1000" placeholder="e.g., 850000">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcHomeOwner.ownerAge">Owner Age:</label>
+              <input type="number" id="bcOwnerAge" min="0" placeholder="e.g., 45">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="bcHomeOwner.municipality">Municipality:</label>
+              <input type="text" id="bcMunicipality" placeholder="e.g., Vancouver">
+            </div>
+            
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="bcIsDisabled">
+                <span data-i18n="bcHomeOwner.disabled">Person with disability</span>
+              </label>
+            </div>
+            
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="bcIsVeteran">
+                <span data-i18n="bcHomeOwner.veteran">Veteran</span>
+              </label>
+            </div>
+            
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="bcIsNorthern">
+                <span data-i18n="bcHomeOwner.northern">Northern/Rural area</span>
+              </label>
+            </div>
+          </div>
+          
+          <button id="calculateBCHomeGrantBtn" class="btn btn-primary" data-i18n="bcHomeOwner.calculate">Calculate Home Owner Grant</button>
+        </div>
+        
+        <div id="bcHomeGrantResults" style="display:none;" class="results-section">
+          <div class="summary-card highlight">
+            <h5 data-i18n="bcHomeOwner.grant">BC Home Owner Grant</h5>
+            <p class="big-number" id="bcHomeGrant">$0.00</p>
+            <p class="note" id="bcHomeGrantNote"></p>
+          </div>
+        </div>
+      </section>
+      
     </main>
     <footer>
       <div class="footer-content">
@@ -2761,6 +2958,18 @@
       window.calculateOntarioTax = calculateOntarioTax;
       window.calculateOntarioTrilliumBenefit = calculateOntarioTrilliumBenefit;
       window.isNorthernOntario = isNorthernOntario;
+    </script>
+    <script type="module">
+      import { calculateBCTax, getBCMarginalRate } from './bc-tax-calculator.js';
+      import { calculateBCClimateAction, calculateBCAffordability } from './bc-climate-action-calculator.js';
+      import { calculateBCHomeOwnerGrant } from './bc-home-owner-grant.js';
+      
+      // Make BC functions available globally
+      window.calculateBCTax = calculateBCTax;
+      window.getBCMarginalRate = getBCMarginalRate;
+      window.calculateBCClimateAction = calculateBCClimateAction;
+      window.calculateBCAffordability = calculateBCAffordability;
+      window.calculateBCHomeOwnerGrant = calculateBCHomeOwnerGrant;
     </script>
     <script>
       // Auto-update year in header
@@ -4491,6 +4700,90 @@
             } else if (northernCard) {
               northernCard.style.display = 'none';
             }
+          });
+        }
+        
+        // BC Climate Action Tax Credit calculator
+        const bcClimateBtn = document.getElementById('calculateBCClimateBtn');
+        if (bcClimateBtn) {
+          bcClimateBtn.addEventListener('click', function() {
+            const household = {
+              netIncome: parseFloat(document.getElementById('bcFamilyIncome').value) || 0,
+              familyNetIncome: parseFloat(document.getElementById('bcFamilyIncome').value) || 0,
+              numberOfAdults: parseInt(document.getElementById('bcNumberOfAdults').value) || 1,
+              numberOfChildren: parseInt(document.getElementById('bcNumberOfChildren').value) || 0,
+              maritalStatus: document.getElementById('bcMaritalStatus').value,
+            };
+            
+            if (!window.calculateBCClimateAction) {
+              console.error('BC Climate Action calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateBCClimateAction(household);
+            
+            document.getElementById('bcClimateResults').style.display = 'block';
+            document.getElementById('bcClimateAnnual').textContent = '$' + result.annualCredit.toFixed(2);
+            document.getElementById('bcClimateQuarterly').textContent = '$' + result.quarterlyPayment.toFixed(2);
+            
+            // Update payment schedule
+            ['bcPayment1', 'bcPayment2', 'bcPayment3', 'bcPayment4'].forEach(id => {
+              document.getElementById(id).textContent = '$' + result.quarterlyPayment.toFixed(2);
+            });
+          });
+        }
+        
+        // BC Affordability Credit calculator
+        const bcAffordBtn = document.getElementById('calculateBCAffordBtn');
+        if (bcAffordBtn) {
+          bcAffordBtn.addEventListener('click', function() {
+            const household = {
+              netIncome: parseFloat(document.getElementById('bcAffordIncome').value) || 0,
+              familyNetIncome: parseFloat(document.getElementById('bcAffordIncome').value) || 0,
+              numberOfChildren: parseInt(document.getElementById('bcAffordChildren').value) || 0,
+              maritalStatus: document.getElementById('bcAffordMaritalStatus').value,
+            };
+            
+            if (!window.calculateBCAffordability) {
+              console.error('BC Affordability calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateBCAffordability(household);
+            
+            document.getElementById('bcAffordResults').style.display = 'block';
+            document.getElementById('bcAffordCredit').textContent = '$' + result.annualCredit.toFixed(2);
+          });
+        }
+        
+        // BC Home Owner Grant calculator
+        const bcHomeGrantBtn = document.getElementById('calculateBCHomeGrantBtn');
+        if (bcHomeGrantBtn) {
+          bcHomeGrantBtn.addEventListener('click', function() {
+            const property = {
+              assessedValue: parseFloat(document.getElementById('bcPropertyValue').value) || 0,
+              ownerAge: parseInt(document.getElementById('bcOwnerAge').value) || 0,
+              municipality: document.getElementById('bcMunicipality').value,
+              isDisabled: document.getElementById('bcIsDisabled').checked,
+              isVeteran: document.getElementById('bcIsVeteran').checked,
+              isNorthern: document.getElementById('bcIsNorthern').checked,
+            };
+            
+            if (!window.calculateBCHomeOwnerGrant) {
+              console.error('BC Home Owner Grant calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateBCHomeOwnerGrant(property);
+            
+            document.getElementById('bcHomeGrantResults').style.display = 'block';
+            document.getElementById('bcHomeGrant').textContent = '$' + result.grant.toFixed(2);
+            
+            let note = result.qualifiesForNorthern ? 'Northern/Rural area grant' : 'Regular grant';
+            if (result.seniorBonus) {
+              note += ' + Senior/Disability bonus';
+            }
+            document.getElementById('bcHomeGrantNote').textContent = note;
           });
         }
       });
