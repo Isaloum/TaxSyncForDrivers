@@ -1339,6 +1339,18 @@
           <span class="tab-icon">📊</span
           ><span class="tab-label" data-i18n="tabs.businessExpenses">Business Expenses</span>
         </button>
+        <button class="tab-btn" data-tab="medical">
+          <span class="tab-icon">💊</span
+          ><span class="tab-label" data-i18n="tabs.medical">Medical Expenses</span>
+        </button>
+        <button class="tab-btn" data-tab="childcare">
+          <span class="tab-icon">👶</span
+          ><span class="tab-label" data-i18n="tabs.childcare">Childcare</span>
+        </button>
+        <button class="tab-btn" data-tab="donations">
+          <span class="tab-icon">❤️</span
+          ><span class="tab-label" data-i18n="tabs.donations">Charitable Donations</span>
+        </button>
       </nav>
       <section id="vehicle" class="tab-content active">
         <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
@@ -2151,6 +2163,281 @@
             <button class="btn btn-secondary" onclick="exportToCSV()" data-i18n="businessExpenses.exportCSV">
               Export to CSV
             </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Medical Expenses Tab -->
+      <section id="medical" class="tab-content">
+        <h2>💊 <span data-i18n="medical.title">Medical Expense Tax Credit</span></h2>
+        <p data-i18n="medical.description">
+          Track medical expenses and calculate your tax credits. Federal: 15% on expenses exceeding 3% of income. Quebec: 20%.
+        </p>
+
+        <!-- Income Input -->
+        <fieldset>
+          <legend data-i18n="medical.netIncome">Net Income</legend>
+          <div class="form-group">
+            <label for="medicalNetIncome">Annual Net Income ($)</label>
+            <input type="number" id="medicalNetIncome" placeholder="50000" min="0" step="1" />
+          </div>
+        </fieldset>
+
+        <!-- Add Medical Expense Form -->
+        <fieldset>
+          <legend data-i18n="medical.addExpense">Add Medical Expense</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="medicalCategory">Category</label>
+              <select id="medicalCategory">
+                <option value="prescriptions">💊 Prescriptions</option>
+                <option value="dental">🦷 Dental</option>
+                <option value="vision">👓 Vision/Optical</option>
+                <option value="practitioners">🩺 Medical Practitioners</option>
+                <option value="other">📋 Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="medicalAmount">Amount ($)</label>
+              <input type="number" id="medicalAmount" placeholder="100.00" min="0" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label for="medicalDate">Date</label>
+              <input type="date" id="medicalDate" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="medicalDescription">Description</label>
+            <input type="text" id="medicalDescription" placeholder="e.g., Dental cleaning, Glasses, Prescription medication" />
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="addMedicalExpense()">Add Medical Expense</button>
+          </div>
+        </fieldset>
+
+        <!-- Medical Expenses List -->
+        <div id="medicalExpensesList" style="margin-top: 1rem;">
+          <h3>📝 Recorded Expenses</h3>
+          <div id="medicalExpensesTable"></div>
+        </div>
+
+        <!-- Credit Calculation Results -->
+        <div id="medicalResults" class="result-box" style="margin-top: 2rem;">
+          <div class="result-title">
+            💰 <span>Medical Expense Tax Credit</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4>Total Expenses</h4>
+              <div class="amount" id="medicalTotalExpenses">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4>Threshold (3% of income)</h4>
+              <div class="amount" id="medicalThreshold">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4>Eligible Amount</h4>
+              <div class="amount" id="medicalEligible">$0.00</div>
+            </div>
+          </div>
+          <div class="savings-box">
+            <div class="savings-label">Federal Credit (15%)</div>
+            <div class="savings-amount" id="medicalFederalCredit">$0.00</div>
+          </div>
+          <div class="savings-box">
+            <div class="savings-label">Quebec Credit (20%)</div>
+            <div class="savings-amount" id="medicalQuebecCredit">$0.00</div>
+          </div>
+          <div class="savings-box highlight">
+            <div class="savings-label">Total Tax Credit</div>
+            <div class="savings-amount" id="medicalTotalCredit">$0.00</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="calculateMedicalCredit()">Calculate Credit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Childcare Expenses Tab -->
+      <section id="childcare" class="tab-content">
+        <h2>👶 <span data-i18n="childcare.title">Childcare Expense Deduction</span></h2>
+        <p data-i18n="childcare.description">
+          Track childcare expenses and calculate your deduction. 2026 limits: $8,000 (under 7), $5,000 (7-16), $11,000 (disabled).
+        </p>
+
+        <!-- Earned Income Input -->
+        <fieldset>
+          <legend>Earned Income</legend>
+          <div class="form-group">
+            <label for="childcareEarnedIncome">Annual Earned Income ($)</label>
+            <input type="number" id="childcareEarnedIncome" placeholder="50000" min="0" step="1" />
+          </div>
+        </fieldset>
+
+        <!-- Add Child Form -->
+        <fieldset>
+          <legend>Add Child</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="childAge">Child's Age</label>
+              <input type="number" id="childAge" placeholder="5" min="0" max="18" />
+            </div>
+            <div class="form-group">
+              <label for="childDisabled">Has Disability</label>
+              <select id="childDisabled">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="addChild()">Add Child</button>
+          </div>
+        </fieldset>
+
+        <!-- Children List -->
+        <div id="childrenList" style="margin-top: 1rem;">
+          <h3>👨‍👩‍👧‍👦 Children</h3>
+          <div id="childrenTable"></div>
+        </div>
+
+        <!-- Add Childcare Expense -->
+        <fieldset>
+          <legend>Childcare Expenses</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="childcareExpenseAmount">Total Annual Expenses ($)</label>
+              <input type="number" id="childcareExpenseAmount" placeholder="10000" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="providerName">Provider Name</label>
+              <input type="text" id="providerName" placeholder="ABC Daycare or Jane Doe" />
+            </div>
+            <div class="form-group">
+              <label for="providerSinBn">Provider SIN or Business Number</label>
+              <input type="text" id="providerSinBn" placeholder="123456789 or 123456789RC0001" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Deduction Calculation Results -->
+        <div id="childcareResults" class="result-box" style="margin-top: 2rem;">
+          <div class="result-title">
+            💰 <span>Childcare Expense Deduction</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4>Total Expenses</h4>
+              <div class="amount" id="childcareTotalExpenses">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4>Per-Child Limit</h4>
+              <div class="amount" id="childcarePerChildLimit">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4>2/3 Earned Income Limit</h4>
+              <div class="amount" id="childcareIncomeLimit">$0.00</div>
+            </div>
+          </div>
+          <div class="savings-box highlight">
+            <div class="savings-label">Eligible Deduction</div>
+            <div class="savings-amount" id="childcareDeduction">$0.00</div>
+          </div>
+          <div style="margin-top: 1rem; padding: 1rem; background: var(--accent-light); border-radius: 8px;">
+            <small id="childcareLimitMessage">Enter expenses and earned income to see which limit applies.</small>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="calculateChildcareDeduction()">Calculate Deduction</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charitable Donations Tab -->
+      <section id="donations" class="tab-content">
+        <h2>❤️ <span data-i18n="donations.title">Charitable Donation Tax Credit</span></h2>
+        <p data-i18n="donations.description">
+          Track charitable donations and calculate your tax credits. Federal: 15% on first $200, 29% on remainder. Quebec: flat 25%.
+        </p>
+
+        <!-- Add Donation Form -->
+        <fieldset>
+          <legend>Add Donation</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="charityName">Charity Name</label>
+              <input type="text" id="charityName" placeholder="e.g., Red Cross Canada" />
+            </div>
+            <div class="form-group">
+              <label for="donationAmount">Amount ($)</label>
+              <input type="number" id="donationAmount" placeholder="100.00" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="registrationNumber">Charity Registration Number (Optional)</label>
+              <input type="text" id="registrationNumber" placeholder="123456789RR0001" />
+            </div>
+            <div class="form-group">
+              <label for="donationDate">Date</label>
+              <input type="date" id="donationDate" />
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="addDonation()">Add Donation</button>
+          </div>
+        </fieldset>
+
+        <!-- Donations List -->
+        <div id="donationsList" style="margin-top: 1rem;">
+          <h3>📝 Recorded Donations</h3>
+          <div id="donationsTable"></div>
+        </div>
+
+        <!-- Credit Calculation Results -->
+        <div id="donationResults" class="result-box" style="margin-top: 2rem;">
+          <div class="result-title">
+            💰 <span>Charitable Donation Tax Credit</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4>Total Donations</h4>
+              <div class="amount" id="donationTotal">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4>First $200 (15%)</h4>
+              <div class="amount" id="donationFirstTier">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4>Remainder (29%)</h4>
+              <div class="amount" id="donationSecondTier">$0.00</div>
+            </div>
+          </div>
+          <div class="savings-box">
+            <div class="savings-label">Federal Credit</div>
+            <div class="savings-amount" id="donationFederalCredit">$0.00</div>
+          </div>
+          <div class="savings-box">
+            <div class="savings-label">Quebec Credit (25%)</div>
+            <div class="savings-amount" id="donationQuebecCredit">$0.00</div>
+          </div>
+          <div class="savings-box highlight">
+            <div class="savings-label">Total Tax Credit</div>
+            <div class="savings-amount" id="donationTotalCredit">$0.00</div>
+          </div>
+          <div style="margin-top: 1rem; padding: 1rem; background: var(--accent-light); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>Effective Rate:</strong> <span id="donationEffectiveRate">0%</span>
+              </div>
+              <div>
+                <strong>Net Cost:</strong> <span id="donationNetCost">$0.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="calculateDonationCredit()">Calculate Credit</button>
           </div>
         </div>
       </section>
@@ -3629,6 +3916,240 @@
           expenseDateField.value = new Date().toISOString().split('T')[0];
         }
       });
+    </script>
+
+    <!-- Medical Expenses Calculator -->
+    <script type="module">
+      import { calculateMedicalExpenseCredit, trackMedicalExpensesByCategory, validateMedicalExpense } from './medical-expense-calculator.js';
+
+      let medicalExpenses = [];
+
+      window.addMedicalExpense = function() {
+        const category = document.getElementById('medicalCategory').value;
+        const amount = parseFloat(document.getElementById('medicalAmount').value);
+        const date = document.getElementById('medicalDate').value;
+        const description = document.getElementById('medicalDescription').value;
+
+        const validation = validateMedicalExpense(amount, category, description);
+        if (!validation.isValid) {
+          alert('Error: ' + validation.errors.join(', '));
+          return;
+        }
+
+        medicalExpenses.push({ category, amount, date, description });
+        updateMedicalExpensesList();
+        
+        // Clear form
+        document.getElementById('medicalAmount').value = '';
+        document.getElementById('medicalDescription').value = '';
+      };
+
+      function updateMedicalExpensesList() {
+        const tracked = trackMedicalExpensesByCategory(medicalExpenses);
+        const tableDiv = document.getElementById('medicalExpensesTable');
+        
+        if (medicalExpenses.length === 0) {
+          tableDiv.innerHTML = '<p style="color: var(--muted);">No expenses recorded yet.</p>';
+          return;
+        }
+
+        let html = '<table style="width: 100%; border-collapse: collapse;">';
+        html += '<thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th></tr></thead><tbody>';
+        
+        medicalExpenses.forEach((exp, idx) => {
+          const icon = { prescriptions: '💊', dental: '🦷', vision: '👓', practitioners: '🩺', other: '📋' }[exp.category] || '📋';
+          html += `<tr>
+            <td>${exp.date || 'N/A'}</td>
+            <td>${icon} ${exp.category}</td>
+            <td>${exp.description}</td>
+            <td>$${exp.amount.toFixed(2)}</td>
+          </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        html += `<p style="margin-top: 1rem;"><strong>Total: $${tracked.grandTotal.toFixed(2)}</strong></p>`;
+        tableDiv.innerHTML = html;
+      }
+
+      window.calculateMedicalCredit = function() {
+        const netIncome = parseFloat(document.getElementById('medicalNetIncome').value) || 0;
+        const tracked = trackMedicalExpensesByCategory(medicalExpenses);
+        const totalExpenses = tracked.grandTotal;
+
+        const result = calculateMedicalExpenseCredit(totalExpenses, netIncome);
+
+        document.getElementById('medicalTotalExpenses').textContent = '$' + result.totalExpenses.toFixed(2);
+        document.getElementById('medicalThreshold').textContent = '$' + result.threshold.toFixed(2);
+        document.getElementById('medicalEligible').textContent = '$' + result.eligibleAmount.toFixed(2);
+        document.getElementById('medicalFederalCredit').textContent = '$' + result.federalCredit.toFixed(2);
+        document.getElementById('medicalQuebecCredit').textContent = '$' + result.quebecCredit.toFixed(2);
+        document.getElementById('medicalTotalCredit').textContent = '$' + result.totalCredit.toFixed(2);
+      };
+    </script>
+
+    <!-- Childcare Expenses Calculator -->
+    <script type="module">
+      import { calculateChildcareDeduction, validateChildcareProvider, validateChild } from './childcare-expense-calculator.js';
+
+      let children = [];
+
+      window.addChild = function() {
+        const age = parseInt(document.getElementById('childAge').value);
+        const disabled = document.getElementById('childDisabled').value === 'true';
+
+        const validation = validateChild(age, disabled);
+        if (!validation.isValid) {
+          alert('Error: ' + validation.errors.join(', '));
+          return;
+        }
+
+        children.push({ age, disabled });
+        updateChildrenList();
+        
+        // Clear form
+        document.getElementById('childAge').value = '';
+        document.getElementById('childDisabled').value = 'false';
+      };
+
+      function updateChildrenList() {
+        const tableDiv = document.getElementById('childrenTable');
+        
+        if (children.length === 0) {
+          tableDiv.innerHTML = '<p style="color: var(--muted);">No children added yet.</p>';
+          return;
+        }
+
+        let html = '<table style="width: 100%; border-collapse: collapse;">';
+        html += '<thead><tr><th>Age</th><th>Has Disability</th><th>Limit</th></tr></thead><tbody>';
+        
+        children.forEach((child, idx) => {
+          let limit = 0;
+          if (child.disabled) limit = 11000;
+          else if (child.age < 7) limit = 8000;
+          else if (child.age <= 16) limit = 5000;
+          
+          html += `<tr>
+            <td>${child.age} years</td>
+            <td>${child.disabled ? 'Yes' : 'No'}</td>
+            <td>$${limit.toFixed(2)}</td>
+          </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        tableDiv.innerHTML = html;
+      }
+
+      window.calculateChildcareDeduction = function() {
+        const totalExpenses = parseFloat(document.getElementById('childcareExpenseAmount').value) || 0;
+        const earnedIncome = parseFloat(document.getElementById('childcareEarnedIncome').value) || 0;
+        const providerName = document.getElementById('providerName').value;
+        const providerSinBn = document.getElementById('providerSinBn').value;
+
+        if (children.length === 0) {
+          alert('Please add at least one child first.');
+          return;
+        }
+
+        // Validate provider
+        const providerValidation = validateChildcareProvider(providerSinBn, providerName);
+        if (!providerValidation.isValid) {
+          alert('Provider validation: ' + providerValidation.errors.join(', '));
+          return;
+        }
+
+        const result = calculateChildcareDeduction(children, totalExpenses, earnedIncome);
+
+        document.getElementById('childcareTotalExpenses').textContent = '$' + result.totalExpenses.toFixed(2);
+        document.getElementById('childcarePerChildLimit').textContent = '$' + result.perChildLimit.toFixed(2);
+        document.getElementById('childcareIncomeLimit').textContent = '$' + result.earnedIncomeLimit.toFixed(2);
+        document.getElementById('childcareDeduction').textContent = '$' + result.eligibleDeduction.toFixed(2);
+
+        const limitMessages = {
+          'earned_income': 'Limited by 2/3 of earned income',
+          'per_child': 'Limited by per-child maximum',
+          'expenses': 'All expenses are deductible (within limits)'
+        };
+        document.getElementById('childcareLimitMessage').textContent = limitMessages[result.limitingFactor];
+      };
+    </script>
+
+    <!-- Charitable Donations Calculator -->
+    <script type="module">
+      import { calculateCharitableCredit, verifyCharityRegistration, trackDonationsByCharity, calculateDonationTaxSavings } from './charitable-donation-calculator.js';
+
+      let donations = [];
+
+      window.addDonation = function() {
+        const charityName = document.getElementById('charityName').value;
+        const amount = parseFloat(document.getElementById('donationAmount').value);
+        const registrationNumber = document.getElementById('registrationNumber').value;
+        const date = document.getElementById('donationDate').value;
+
+        if (!charityName || amount <= 0) {
+          alert('Please enter charity name and amount.');
+          return;
+        }
+
+        // Validate registration number if provided
+        if (registrationNumber && registrationNumber.trim().length > 0) {
+          const validation = verifyCharityRegistration(registrationNumber);
+          if (!validation.isValid) {
+            const proceed = confirm('Registration number appears invalid: ' + validation.errors.join(', ') + '. Add anyway?');
+            if (!proceed) return;
+          }
+        }
+
+        donations.push({ charityName, amount, registrationNumber, date });
+        updateDonationsList();
+        
+        // Clear form
+        document.getElementById('charityName').value = '';
+        document.getElementById('donationAmount').value = '';
+        document.getElementById('registrationNumber').value = '';
+      };
+
+      function updateDonationsList() {
+        const tableDiv = document.getElementById('donationsTable');
+        
+        if (donations.length === 0) {
+          tableDiv.innerHTML = '<p style="color: var(--muted);">No donations recorded yet.</p>';
+          return;
+        }
+
+        const tracked = trackDonationsByCharity(donations);
+
+        let html = '<table style="width: 100%; border-collapse: collapse;">';
+        html += '<thead><tr><th>Date</th><th>Charity</th><th>Registration #</th><th>Amount</th></tr></thead><tbody>';
+        
+        donations.forEach((don, idx) => {
+          html += `<tr>
+            <td>${don.date || 'N/A'}</td>
+            <td>${don.charityName}</td>
+            <td style="font-family: monospace; font-size: 0.85em;">${don.registrationNumber || 'N/A'}</td>
+            <td>$${don.amount.toFixed(2)}</td>
+          </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        html += `<p style="margin-top: 1rem;"><strong>Total: $${tracked.grandTotal.toFixed(2)}</strong></p>`;
+        tableDiv.innerHTML = html;
+      }
+
+      window.calculateDonationCredit = function() {
+        const tracked = trackDonationsByCharity(donations);
+        const totalDonations = tracked.grandTotal;
+
+        const result = calculateDonationTaxSavings(totalDonations);
+
+        document.getElementById('donationTotal').textContent = '$' + result.totalDonations.toFixed(2);
+        document.getElementById('donationFirstTier').textContent = '$' + result.firstTierAmount.toFixed(2);
+        document.getElementById('donationSecondTier').textContent = '$' + result.secondTierAmount.toFixed(2);
+        document.getElementById('donationFederalCredit').textContent = '$' + result.federalCredit.toFixed(2);
+        document.getElementById('donationQuebecCredit').textContent = '$' + result.quebecCredit.toFixed(2);
+        document.getElementById('donationTotalCredit').textContent = '$' + result.totalCredit.toFixed(2);
+        document.getElementById('donationEffectiveRate').textContent = result.effectiveRate.toFixed(1) + '%';
+        document.getElementById('donationNetCost').textContent = '$' + result.netCost.toFixed(2);
+      };
     </script>
   </body>
 </html>
