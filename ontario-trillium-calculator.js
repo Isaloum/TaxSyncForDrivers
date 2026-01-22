@@ -91,7 +91,7 @@ export function calculateOntarioTrilliumBenefit(household) {
 /**
  * Calculate Energy and Property Tax Credit
  */
-function calculateEnergyPropertyTaxCredit({ netIncome, propertyTaxPaid, rentPaid, isSenior, maritalStatus }) {
+function calculateEnergyPropertyTaxCredit({ netIncome, propertyTaxPaid, rentPaid, isSenior }) {
   let credit = 0;
   
   // Base energy component
