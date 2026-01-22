@@ -353,6 +353,7 @@ const translations = {
     'ontarioTrillium.noec': 'Northern Ontario Energy Credit (NOEC) - if in Northern Ontario',
     'ontarioTrillium.ostc': 'Ontario Sales Tax Credit (OSTC)',
     'ontarioTrillium.benefitInfo': 'Paid monthly, up to ~$1,400/year for families!',
+    'ontarioTrillium.northernBadge': 'Northern ON',
   },
   fr: {
     'hero.title': 'Planification fiscale pour chauffeurs',
@@ -708,5 +709,6 @@ const translations = {
     'ontarioTrillium.noec': 'Crédit d\'énergie du Nord de l\'Ontario (CENO) - si dans le Nord de l\'Ontario',
     'ontarioTrillium.ostc': 'Crédit de taxe de vente de l\'Ontario (CTVO)',
     'ontarioTrillium.benefitInfo': 'Payé mensuellement, jusqu\'à ~1 400 $/année pour les familles!',
+    'ontarioTrillium.northernBadge': 'Nord de l\'Ontario',
   },
 };
