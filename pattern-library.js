@@ -21,6 +21,11 @@ export const DOCUMENT_TYPES = {
   PHONE_BILL: 'PHONE_BILL',
   MEAL_RECEIPT: 'MEAL_RECEIPT',
   BUSINESS_RECEIPT: 'BUSINESS_RECEIPT',
+  MEDICAL_RECEIPT: 'MEDICAL_RECEIPT',
+  PHARMACY_RECEIPT: 'PHARMACY_RECEIPT',
+  DENTAL_RECEIPT: 'DENTAL_RECEIPT',
+  OPTICAL_RECEIPT: 'OPTICAL_RECEIPT',
+  CHARITABLE_RECEIPT: 'CHARITABLE_RECEIPT',
   UNKNOWN: 'UNKNOWN',
 };
 
@@ -312,6 +317,48 @@ export const MEAL_RECEIPT_PATTERNS = {
   restaurant: /^([A-Za-z0-9\s&'-]+?)(?:\n|Date|Total)/im,
 };
 
+// Medical/Pharmacy Receipt Patterns
+export const PHARMACY_RECEIPT_PATTERNS = {
+  total: /(?:Total|Amount|Balance)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  prescriptionNumber: /(?:Rx|Prescription|Script)[:\s#]*(\d{6,10})/i,
+  din: /(?:DIN)[:\s]*(\d{8})/i,
+  pharmacyName: /^(Shoppers|Jean Coutu|Pharmaprix|Uniprix|Brunet|Lawtons|Rexall|Costco Pharmacy).*$/im,
+  date: /(?:Date|Sold)[:\s]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
+};
+
+// Dental Receipt Patterns
+export const DENTAL_RECEIPT_PATTERNS = {
+  total: /(?:Total|Amount|Balance Due|Patient Portion)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  service: /(?:Service|Treatment|Procedure)[:\s]*([A-Za-z\s,]+?)(?:\n|Total|Amount)/i,
+  dentistName: /(?:Dr\.|Doctor|Dentist)[:\s]*([A-Za-z\s'-]+?)(?:\n|DDS|DMD)/i,
+  date: /(?:Date of Service|Service Date|Date)[:\s]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
+};
+
+// Optical/Vision Receipt Patterns
+export const OPTICAL_RECEIPT_PATTERNS = {
+  total: /(?:Total|Amount|Balance)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  service: /(?:Frames|Lenses|Contact Lenses|Eye Exam|Vision Test)/i,
+  provider: /^([A-Za-z\s&'-]+?)(?:Optical|Optometry|Vision|Eye Care).*$/im,
+  date: /(?:Date|Service Date)[:\s]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
+};
+
+// General Medical Receipt Patterns
+export const MEDICAL_RECEIPT_PATTERNS = {
+  total: /(?:Total|Amount|Fee|Balance)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  service: /(?:Service|Treatment|Consultation|Visit|Therapy)[:\s]*([A-Za-z\s,]+?)(?:\n|Total|Amount)/i,
+  practitioner: /(?:Dr\.|Doctor|Physician|Therapist|Chiropractor|Physiotherapist)[:\s]*([A-Za-z\s'-]+?)(?:\n|MD|DO)/i,
+  date: /(?:Date of Service|Service Date|Date)[:\s]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
+};
+
+// Charitable Donation Receipt Patterns
+export const CHARITABLE_RECEIPT_PATTERNS = {
+  amount: /(?:Amount|Donation|Gift)[:\s]*\$?\s*([\d,]+\.?\d*)/i,
+  charityName: /(?:Charity|Organization|Organisme)[:\s]*([A-Za-z0-9\s&',-]+?)(?:\n|Registration|Address)/i,
+  registrationNumber: /(?:Registration Number|Numéro d'enregistrement|BN\/RR)[:\s#]*(\d{9}[A-Z]{2}\d{4})/i,
+  date: /(?:Date)[:\s]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
+  receiptNumber: /(?:Receipt Number|Official Receipt|Reçu)[:\s#]*([A-Z0-9-]+)/i,
+};
+
 // Business Expense Receipt Patterns
 export const BUSINESS_EXPENSE_PATTERNS = {
   // Office supplies
@@ -393,6 +440,11 @@ export const CLASSIFICATION_PATTERNS = {
   PHONE_BILL:
     /(?:Wireless|Mobile|Cell|Phone|Rogers|Bell|Telus|Fido).*(?:Billing\s+Period|Data\s+Usage)/is,
   MEAL_RECEIPT: /(?:Restaurant|Café|Coffee|Food|Tim\s+Hortons|McDonald's).*(?:Subtotal|Tip)/is,
+  PHARMACY_RECEIPT: /(?:Pharmacy|Pharmacie|Shoppers|Jean Coutu|Pharmaprix|Uniprix|Brunet).*(?:Prescription|Rx|DIN|Médicament)/is,
+  DENTAL_RECEIPT: /(?:Dental|Dentiste|Dentistry|Orthodontic).*(?:Service|Treatment|Cleaning|Filling|Crown|Root Canal)/is,
+  OPTICAL_RECEIPT: /(?:Optical|Optometry|Vision|Lunetterie|Eye\s+Care|Eyewear).*(?:Glasses|Lentilles|Contact|Exam|Examination)/is,
+  MEDICAL_RECEIPT: /(?:Medical|Médical|Clinic|Clinique|Doctor|Médecin|Physician|Physiotherapy|Chiropractor).*(?:Service|Treatment|Consultation|Fee)/is,
+  CHARITABLE_RECEIPT: /(?:Donation|Don|Charity|Organisme\s+de\s+bienfaisance|Official\s+Receipt|Reçu\s+officiel).*(?:Registration\s+Number|Numéro\s+d'enregistrement|RR\d{4}|\d{9}RR)/is,
   BUSINESS_RECEIPT: /(?:receipt|reçu|invoice|facture).*(?:total|montant|amount|subtotal)/is,
 };
 
@@ -496,6 +548,21 @@ export function extractFields(text, docType) {
     case DOCUMENT_TYPES.MEAL_RECEIPT:
       patterns = MEAL_RECEIPT_PATTERNS;
       break;
+    case DOCUMENT_TYPES.PHARMACY_RECEIPT:
+      patterns = PHARMACY_RECEIPT_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.DENTAL_RECEIPT:
+      patterns = DENTAL_RECEIPT_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.OPTICAL_RECEIPT:
+      patterns = OPTICAL_RECEIPT_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.MEDICAL_RECEIPT:
+      patterns = MEDICAL_RECEIPT_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.CHARITABLE_RECEIPT:
+      patterns = CHARITABLE_RECEIPT_PATTERNS;
+      break;
     case DOCUMENT_TYPES.BUSINESS_RECEIPT:
       // For business receipts, extract general receipt patterns
       patterns = {
@@ -595,6 +662,31 @@ export function classifyDocument(text, filename = '') {
     INSURANCE_RECEIPT: {
       keywords: ['insurance', 'assurance', 'intact', 'desjardins', 'belair', 'bélairdirect', 'td insurance', 'aviva', 'la capitale', 'premium', 'prime'],
       patterns: [/(intact|desjardins|bélairdirect|td insurance|aviva|la capitale)/i, /prime|premium|monthly payment/i, /coverage period|période/i],
+      confidence: 0,
+    },
+    PHARMACY_RECEIPT: {
+      keywords: ['pharmacy', 'pharmacie', 'shoppers', 'jean coutu', 'pharmaprix', 'uniprix', 'brunet', 'prescription', 'rx', 'din', 'médicament'],
+      patterns: [/(shoppers|jean coutu|pharmaprix|uniprix|brunet)/i, /prescription|rx/i, /din\s*\d{8}/i],
+      confidence: 0,
+    },
+    DENTAL_RECEIPT: {
+      keywords: ['dental', 'dentiste', 'dentistry', 'orthodontic', 'cleaning', 'filling', 'crown', 'root canal'],
+      patterns: [/dental|dentiste/i, /service|treatment|cleaning|filling/i, /dr\.|doctor/i],
+      confidence: 0,
+    },
+    OPTICAL_RECEIPT: {
+      keywords: ['optical', 'optometry', 'vision', 'lunetterie', 'eye care', 'eyewear', 'glasses', 'lentilles', 'contact', 'exam'],
+      patterns: [/optical|optometry|vision/i, /glasses|lentilles|contact/i, /exam|examination/i],
+      confidence: 0,
+    },
+    MEDICAL_RECEIPT: {
+      keywords: ['medical', 'médical', 'clinic', 'clinique', 'doctor', 'médecin', 'physician', 'physiotherapy', 'chiropractor'],
+      patterns: [/clinic|clinique/i, /doctor|médecin|physician/i, /treatment|consultation|therapy/i],
+      confidence: 0,
+    },
+    CHARITABLE_RECEIPT: {
+      keywords: ['donation', 'don', 'charity', 'organisme de bienfaisance', 'official receipt', 'reçu officiel', 'registration number'],
+      patterns: [/donation|don/i, /charity|organisme.*bienfaisance/i, /\d{9}RR\d{4}/i, /registration.*number/i],
       confidence: 0,
     },
   };
@@ -714,6 +806,31 @@ export function classifyDocumentWithConfidence(text, filename = '') {
     INSURANCE_RECEIPT: {
       keywords: ['insurance', 'assurance', 'intact', 'desjardins', 'belair', 'bélairdirect', 'td insurance', 'aviva', 'la capitale', 'premium', 'prime'],
       patterns: [/(intact|desjardins|bélairdirect|td insurance|aviva|la capitale)/i, /prime|premium|monthly payment/i, /coverage period|période/i],
+      confidence: 0,
+    },
+    PHARMACY_RECEIPT: {
+      keywords: ['pharmacy', 'pharmacie', 'shoppers', 'jean coutu', 'pharmaprix', 'uniprix', 'brunet', 'prescription', 'rx', 'din', 'médicament'],
+      patterns: [/(shoppers|jean coutu|pharmaprix|uniprix|brunet)/i, /prescription|rx/i, /din\s*\d{8}/i],
+      confidence: 0,
+    },
+    DENTAL_RECEIPT: {
+      keywords: ['dental', 'dentiste', 'dentistry', 'orthodontic', 'cleaning', 'filling', 'crown', 'root canal'],
+      patterns: [/dental|dentiste/i, /service|treatment|cleaning|filling/i, /dr\.|doctor/i],
+      confidence: 0,
+    },
+    OPTICAL_RECEIPT: {
+      keywords: ['optical', 'optometry', 'vision', 'lunetterie', 'eye care', 'eyewear', 'glasses', 'lentilles', 'contact', 'exam'],
+      patterns: [/optical|optometry|vision/i, /glasses|lentilles|contact/i, /exam|examination/i],
+      confidence: 0,
+    },
+    MEDICAL_RECEIPT: {
+      keywords: ['medical', 'médical', 'clinic', 'clinique', 'doctor', 'médecin', 'physician', 'physiotherapy', 'chiropractor'],
+      patterns: [/clinic|clinique/i, /doctor|médecin|physician/i, /treatment|consultation|therapy/i],
+      confidence: 0,
+    },
+    CHARITABLE_RECEIPT: {
+      keywords: ['donation', 'don', 'charity', 'organisme de bienfaisance', 'official receipt', 'reçu officiel', 'registration number'],
+      patterns: [/donation|don/i, /charity|organisme.*bienfaisance/i, /\d{9}RR\d{4}/i, /registration.*number/i],
       confidence: 0,
     },
   };
