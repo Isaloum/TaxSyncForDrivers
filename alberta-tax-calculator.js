@@ -2,6 +2,9 @@
  * Alberta Provincial Tax Calculator
  * 2026 tax year
  * Alberta has the lowest provincial tax rates in Canada
+ * 
+ * Tax brackets and rates source: Government of Alberta
+ * https://www.alberta.ca/personal-income-tax
  */
 
 export const ALBERTA_TAX_RATES_2026 = {

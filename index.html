@@ -5133,8 +5133,20 @@
           albertaCompareBtn.addEventListener('click', function() {
             const income = parseFloat(document.getElementById('albertaCompareIncome').value) || 0;
             
-            if (!window.calculateAlbertaTax || !window.calculateBCTax || !window.calculateOntarioTax) {
-              console.error('Provincial tax calculators not loaded');
+            // Check calculator availability
+            if (!window.calculateAlbertaTax) {
+              console.error('Alberta tax calculator not loaded');
+              alert('Error: Alberta tax calculator not available');
+              return;
+            }
+            if (!window.calculateBCTax) {
+              console.error('BC tax calculator not loaded');
+              alert('Error: BC tax calculator not available');
+              return;
+            }
+            if (!window.calculateOntarioTax) {
+              console.error('Ontario tax calculator not loaded');
+              alert('Error: Ontario tax calculator not available');
               return;
             }
             
