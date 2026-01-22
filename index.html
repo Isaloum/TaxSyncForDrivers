@@ -5025,7 +5025,7 @@
         }
         
         // Update basic personal amount when province changes
-        const provinceSelect = document.getElementById('provinceSelect');
+        // Reuse existing provinceSelect reference
         if (provinceSelect) {
           provinceSelect.addEventListener('change', function() {
             const selectedProvince = provinceSelect.value;
