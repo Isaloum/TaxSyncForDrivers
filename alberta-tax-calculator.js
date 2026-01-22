@@ -45,6 +45,15 @@ export const ALBERTA_TAX_RATES_2026 = {
 
 /**
  * Calculate Alberta provincial tax
+ * @param {number} taxableIncome - The taxable income amount
+ * @param {Object} credits - Optional tax credit parameters
+ * @param {boolean} credits.hasSpouse - Whether taxpayer has a spouse
+ * @param {number} credits.spouseIncome - Spouse's income (if applicable)
+ * @param {number} credits.numberOfDependents - Number of eligible dependents
+ * @param {number} credits.age - Taxpayer's age (for age credit if 65+)
+ * @param {number} credits.pensionIncome - Pension income amount
+ * @param {boolean} credits.hasDisability - Whether taxpayer has a disability
+ * @returns {Object} Tax calculation with provincialTax, totalCredits, totalTax, effectiveRate, bracketBreakdown
  */
 export function calculateAlbertaTax(taxableIncome, credits = {}) {
   if (taxableIncome <= 0) return { 
