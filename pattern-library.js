@@ -4,6 +4,9 @@
 export const DOCUMENT_TYPES = {
   T4: 'T4',
   T4A: 'T4A',
+  T5: 'T5',
+  T3: 'T3',
+  T5008: 'T5008',
   RL1: 'RL-1',
   RL2: 'RL-2',
   UBER_SUMMARY: 'UBER_SUMMARY',
@@ -32,6 +35,91 @@ export const T4_PATTERNS = {
   unionDues: /(?:Box|Case)\s+44[:\s]*([\d,]+\.?\d*)/i,
   employerName: /(?:Employer|Employeur)[:\s]*([A-Za-z0-9\s&.-]+?)(?:\n|Box|Case)/i,
   year: /(?:Year|Année|Tax Year)[:\s]*(\d{4})/i,
+};
+
+// T5 Pattern Extractors (Investment Income)
+export const T5_PATTERNS = {
+  // Box 13 - Interest from Canadian sources
+  interestIncome: /(?:Box|Case)\s+13[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 24 - Eligible dividends (from Canadian public corporations)
+  eligibleDividends: /(?:Box|Case)\s+24[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 25 - Taxable amount of eligible dividends (grossed up)
+  eligibleDividendsGrossUp: /(?:Box|Case)\s+25[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 10 - Other than eligible dividends (small business)
+  otherDividends: /(?:Box|Case)\s+10[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 11 - Taxable amount of other dividends (grossed up)
+  otherDividendsGrossUp: /(?:Box|Case)\s+11[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 14 - Capital gains dividends
+  capitalGainsDividends: /(?:Box|Case)\s+14[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 18 - Foreign income
+  foreignIncome: /(?:Box|Case)\s+18[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 19 - Foreign tax paid
+  foreignTaxPaid: /(?:Box|Case)\s+19[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Payer information
+  payerName: /(?:Payer|Investment Company|Financial Institution)[:\s]*([A-Za-z0-9\s&.,'-]+?)(?:\n|Box|Case|Account)/i,
+  accountNumber: /(?:Account|Compte)[:\s#]*(\d{4,12})/i,
+  
+  // Tax year
+  year: /(?:Tax Year|Année d'imposition|Year|Année)[:\s]*(\d{4})/i,
+};
+
+// T3 Pattern Extractors (Trust Income - RRSP/RRIF distributions)
+export const T3_PATTERNS = {
+  // Box 21 - Actual amount of eligible dividends
+  eligibleDividends: /(?:Box|Case)\s+21[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 23 - Taxable amount of eligible dividends
+  eligibleDividendsGrossUp: /(?:Box|Case)\s+23[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 49 - Actual amount of other than eligible dividends
+  otherDividends: /(?:Box|Case)\s+49[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 51 - Taxable amount of other dividends
+  otherDividendsGrossUp: /(?:Box|Case)\s+51[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 26 - Foreign investment income
+  foreignIncome: /(?:Box|Case)\s+26[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 34 - Foreign tax paid
+  foreignTaxPaid: /(?:Box|Case)\s+34[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 42 - Return of capital
+  returnOfCapital: /(?:Box|Case)\s+42[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  trustName: /(?:Trust|Fiducie)[:\s]*([A-Za-z0-9\s&.,'-]+?)(?:\n|Box|Case)/i,
+  year: /(?:Tax Year|Année d'imposition)[:\s]*(\d{4})/i,
+};
+
+// T5008 Pattern Extractors (Capital Gains/Losses)
+export const T5008_PATTERNS = {
+  // Box 20 - Proceeds of disposition
+  proceeds: /(?:Box|Case)\s+20[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Box 21 - Adjusted cost base
+  costBase: /(?:Box|Case)\s+21[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Security description
+  securityDescription: /(?:Description|Security|Titre)[:\s]*([A-Za-z0-9\s&.,'-]+?)(?:\n|Quantity|Shares)/i,
+  
+  // Quantity
+  quantity: /(?:Quantity|Nombre|Shares|Actions)[:\s]*([0-9,]+\.?\d{0,4})/i,
+  
+  // Settlement date
+  settlementDate: /(?:Settlement|Règlement|Date)[:\s]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
+  
+  // Broker
+  brokerName: /(?:Brokerage|Courtier|Institution)[:\s]*([A-Za-z\s&.,'-]+?)(?:\n|Account)/i,
+  accountNumber: /(?:Account|Compte)[:\s#]*(\d{4,12})/i,
+  
+  year: /(?:Tax Year|Année)[:\s]*(\d{4})/i,
 };
 
 // T4A Pattern Extractors (Contractor/Freelancer Income)
@@ -289,6 +377,9 @@ export const BUSINESS_EXPENSE_PATTERNS = {
 export const CLASSIFICATION_PATTERNS = {
   T4: /(?:T4|Statement\s+of\s+Remuneration).*(?:Box\s+14|Employment\s+Income)/is,
   T4A: /(?:T4A|Statement\s+of\s+Pension).*(?:Box\s+(?:016|020|024|028|048|16|18|20|22|24|28|48)|Fees\s+for\s+services|Commissions?)/is,
+  T5: /(?:T5|Statement\s+of\s+Investment\s+Income).*(?:Box\s+(?:10|11|13|14|18|19|24|25)|Interest|Dividend)/is,
+  T3: /(?:T3|Statement\s+of\s+Trust\s+Income).*(?:Box\s+(?:21|23|26|34|42|49|51)|Trust|Fiducie)/is,
+  T5008: /(?:T5008|Securities\s+Transactions?).*(?:Box\s+(?:20|21)|Proceeds|Disposition|Cost\s+Base)/is,
   RL1: /(?:RL-1|Relevé\s+1).*(?:Case\s+A|Box\s+A)/is,
   RL2: /(?:RL-2|Relevé\s+2).*(?:Case\s+A|Pension)/is,
   UBER_SUMMARY: /(?:Uber|uber\.com).*(?:Gross\s+Fares?|Weekly\s+Summary|Driver\s+Summary|Tax\s+summary\s+for\s+the\s+period|GROSS\s+FARES\s+BREAKDOWN|FEES\s+BREAKDOWN)/is,
@@ -361,6 +452,15 @@ export function extractFields(text, docType) {
       break;
     case DOCUMENT_TYPES.T4A:
       patterns = T4A_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.T5:
+      patterns = T5_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.T3:
+      patterns = T3_PATTERNS;
+      break;
+    case DOCUMENT_TYPES.T5008:
+      patterns = T5008_PATTERNS;
       break;
     case DOCUMENT_TYPES.RL1:
       patterns = RL1_PATTERNS;
@@ -450,6 +550,21 @@ export function classifyDocument(text, filename = '') {
     T4A: {
       keywords: ['t4a', 'statement of pension', 'fees for services', 'commissions', 'box 048', 'box 020', 'box 028', 'box 024', 'other income'],
       patterns: [/T4A/i, /Statement\s+of\s+Pension/i, /Box\s+(?:048|020|028|024)/i, /Fees\s+for\s+services/i],
+      confidence: 0,
+    },
+    T5: {
+      keywords: ['t5', 'statement of investment income', 'interest', 'dividends', 'box 13', 'box 24', 'box 10'],
+      patterns: [/T5/i, /Statement\s+of\s+Investment\s+Income/i, /Box\s+(?:10|11|13|24|25)/i],
+      confidence: 0,
+    },
+    T3: {
+      keywords: ['t3', 'statement of trust income', 'trust', 'fiducie', 'box 21', 'box 23', 'box 49'],
+      patterns: [/T3/i, /Trust\s+Income/i, /Box\s+(?:21|23|26|34|42|49|51)/i, /Fiducie/i],
+      confidence: 0,
+    },
+    T5008: {
+      keywords: ['t5008', 'securities transactions', 'proceeds', 'disposition', 'cost base', 'box 20', 'box 21'],
+      patterns: [/T5008/i, /Securities\s+Transactions?/i, /Box\s+(?:20|21)/i, /Proceeds.*Disposition/i],
       confidence: 0,
     },
     RL1: {
@@ -554,6 +669,21 @@ export function classifyDocumentWithConfidence(text, filename = '') {
     T4A: {
       keywords: ['t4a', 'statement of pension', 'fees for services', 'commissions', 'box 048', 'box 020', 'box 028', 'box 024', 'other income'],
       patterns: [/T4A/i, /Statement\s+of\s+Pension/i, /Box\s+(?:048|020|028|024)/i, /Fees\s+for\s+services/i],
+      confidence: 0,
+    },
+    T5: {
+      keywords: ['t5', 'statement of investment income', 'interest', 'dividends', 'box 13', 'box 24', 'box 10'],
+      patterns: [/T5/i, /Statement\s+of\s+Investment\s+Income/i, /Box\s+(?:10|11|13|24|25)/i],
+      confidence: 0,
+    },
+    T3: {
+      keywords: ['t3', 'statement of trust income', 'trust', 'fiducie', 'box 21', 'box 23', 'box 49'],
+      patterns: [/T3/i, /Trust\s+Income/i, /Box\s+(?:21|23|26|34|42|49|51)/i, /Fiducie/i],
+      confidence: 0,
+    },
+    T5008: {
+      keywords: ['t5008', 'securities transactions', 'proceeds', 'disposition', 'cost base', 'box 20', 'box 21'],
+      patterns: [/T5008/i, /Securities\s+Transactions?/i, /Box\s+(?:20|21)/i, /Proceeds.*Disposition/i],
       confidence: 0,
     },
     RL1: {

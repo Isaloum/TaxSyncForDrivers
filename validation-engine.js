@@ -411,6 +411,161 @@ export function validateExpenseReceipt(data, expenseType) {
 }
 
 /**
+ * Validate T5 slip data (Investment Income)
+ * @param {object} data - Extracted T5 data
+ * @returns {ValidationResult}
+ */
+export function validateT5(data) {
+  const errors = [];
+  const warnings = [];
+  let confidenceScore = 100;
+
+  // At least one income field should be present
+  const hasIncome =
+    (data.interestIncome && data.interestIncome > 0) ||
+    (data.eligibleDividends && data.eligibleDividends > 0) ||
+    (data.otherDividends && data.otherDividends > 0) ||
+    (data.capitalGainsDividends && data.capitalGainsDividends > 0);
+
+  if (!hasIncome) {
+    errors.push('No investment income found in T5 slip');
+    confidenceScore -= 50;
+  }
+
+  // Validate amounts are reasonable
+  if (data.interestIncome && !isValidAmount(data.interestIncome, 0, 1000000)) {
+    warnings.push('Interest income seems unusually high');
+    confidenceScore -= 10;
+  }
+
+  if (data.eligibleDividends && !isValidAmount(data.eligibleDividends, 0, 1000000)) {
+    warnings.push('Eligible dividends amount seems unusually high');
+    confidenceScore -= 10;
+  }
+
+  // Check for foreign tax credit logic
+  if (data.foreignTaxPaid && data.foreignTaxPaid > 0 && (!data.foreignIncome || data.foreignIncome <= 0)) {
+    warnings.push('Foreign tax paid but no foreign income reported');
+    confidenceScore -= 15;
+  }
+
+  // Validate year if present
+  if (data.year && (parseInt(data.year) < CURRENT_TAX_YEAR - 5 || parseInt(data.year) > CURRENT_TAX_YEAR)) {
+    warnings.push('Tax year is outside expected range');
+    confidenceScore -= 10;
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidenceScore: Math.max(0, confidenceScore),
+  };
+}
+
+/**
+ * Validate T3 slip data (Trust Income)
+ * @param {object} data - Extracted T3 data
+ * @returns {ValidationResult}
+ */
+export function validateT3(data) {
+  const errors = [];
+  const warnings = [];
+  let confidenceScore = 100;
+
+  // At least one income field should be present
+  const hasIncome =
+    (data.eligibleDividends && data.eligibleDividends > 0) ||
+    (data.otherDividends && data.otherDividends > 0) ||
+    (data.foreignIncome && data.foreignIncome > 0);
+
+  if (!hasIncome) {
+    errors.push('No trust income found in T3 slip');
+    confidenceScore -= 50;
+  }
+
+  // Validate amounts are reasonable
+  if (data.eligibleDividends && !isValidAmount(data.eligibleDividends, 0, 1000000)) {
+    warnings.push('Eligible dividends amount seems unusually high');
+    confidenceScore -= 10;
+  }
+
+  // Check for foreign tax credit logic
+  if (data.foreignTaxPaid && data.foreignTaxPaid > 0 && (!data.foreignIncome || data.foreignIncome <= 0)) {
+    warnings.push('Foreign tax paid but no foreign income reported');
+    confidenceScore -= 15;
+  }
+
+  // Validate year if present
+  if (data.year && (parseInt(data.year) < CURRENT_TAX_YEAR - 5 || parseInt(data.year) > CURRENT_TAX_YEAR)) {
+    warnings.push('Tax year is outside expected range');
+    confidenceScore -= 10;
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidenceScore: Math.max(0, confidenceScore),
+  };
+}
+
+/**
+ * Validate T5008 slip data (Securities Transactions)
+ * @param {object} data - Extracted T5008 data
+ * @returns {ValidationResult}
+ */
+export function validateT5008(data) {
+  const errors = [];
+  const warnings = [];
+  let confidenceScore = 100;
+
+  // Required fields: proceeds and cost base
+  if (!data.proceeds || data.proceeds <= 0) {
+    errors.push('Proceeds of disposition (Box 20) is required');
+    confidenceScore -= 40;
+  }
+
+  if (!data.costBase || data.costBase < 0) {
+    errors.push('Adjusted cost base (Box 21) is required');
+    confidenceScore -= 40;
+  }
+
+  // Validate amounts are reasonable
+  if (data.proceeds && !isValidAmount(data.proceeds, 0, 10000000)) {
+    warnings.push('Proceeds amount seems unusually high');
+    confidenceScore -= 10;
+  }
+
+  if (data.costBase && !isValidAmount(data.costBase, 0, 10000000)) {
+    warnings.push('Cost base amount seems unusually high');
+    confidenceScore -= 10;
+  }
+
+  // Check if capital gain is calculated correctly
+  if (data.proceeds && data.costBase) {
+    const expectedGain = Math.round((data.proceeds - data.costBase) * 100) / 100;
+    if (data.capitalGain && Math.abs(data.capitalGain - expectedGain) > 0.01) {
+      warnings.push('Capital gain calculation may be incorrect');
+      confidenceScore -= 15;
+    }
+  }
+
+  // Validate year if present
+  if (data.year && (parseInt(data.year) < CURRENT_TAX_YEAR - 5 || parseInt(data.year) > CURRENT_TAX_YEAR)) {
+    warnings.push('Tax year is outside expected range');
+    confidenceScore -= 10;
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidenceScore: Math.max(0, confidenceScore),
+  };
+}
+
+/**
  * Validate extracted data based on document type
  * @param {object} data - Extracted data
  * @param {string} docType - Document type
@@ -423,6 +578,15 @@ export function validateData(data, docType) {
 
     case DOCUMENT_TYPES.T4A:
       return validateT4A(data);
+
+    case DOCUMENT_TYPES.T5:
+      return validateT5(data);
+
+    case DOCUMENT_TYPES.T3:
+      return validateT3(data);
+
+    case DOCUMENT_TYPES.T5008:
+      return validateT5008(data);
 
     case DOCUMENT_TYPES.RL1:
     case DOCUMENT_TYPES.RL2:
