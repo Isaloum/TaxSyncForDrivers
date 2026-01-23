@@ -1515,7 +1515,6 @@
           <span class="tab-icon">🏠</span
           ><span class="tab-label" data-i18n="tabs.bcHomeOwner">BC Home Owner Grant</span>
         </button>
-       copilot/add-manitoba-tax-support
         <button class="tab-btn province-specific mb-only sk-only ns-only nb-only pe-only nl-only yt-only nt-only nu-only" data-tab="universalProvincial" style="display:none;">
           <span class="tab-icon">📊</span
           ><span class="tab-label" data-i18n="tabs.universalProvincial">Provincial Tax</span>
@@ -1539,7 +1538,6 @@
         <button class="tab-btn province-specific ab-only" data-tab="albertaTaxSummary" style="display:none;">
           <span class="tab-icon">📊</span
           ><span class="tab-label" data-i18n="tabs.albertaTaxSummary">AB Tax Advantage</span>
-        main
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -2927,7 +2925,6 @@
         </div>
       </section>
       
-        copilot/add-manitoba-tax-support
       <!-- Universal Provincial Tax Calculator (for all remaining provinces) -->
       <section id="universalProvincial" class="tab-content province-specific mb-only sk-only ns-only nb-only pe-only nl-only yt-only nt-only nu-only" style="display:none;">
         <h2>📊 <span id="provinceName">Provincial</span> <span data-i18n="universalProvincial.title">Tax Calculator</span></h2>
@@ -3022,12 +3019,10 @@
           <div class="breakdown">
             <h5 data-i18n="albertaChildBenefit.breakdown">Breakdown by Child:</h5>
             <ul id="albertaChildBreakdown"></ul>
-        main
           </div>
         </div>
       </section>
 
-        copilot/add-manitoba-tax-support
       <!-- Northern Residents Deduction (Territories only) -->
       <section id="northernResidents" class="tab-content province-specific yt-only nt-only nu-only" style="display:none;">
         <h2>🏔️ <span data-i18n="northernResidents.title">Northern Residents Deduction</span></h2>
@@ -3050,13 +3045,11 @@
         <div class="info-banner">
           <strong data-i18n="albertaSeniors.maxAmounts">💡 2026 Maximum Amounts:</strong>
           <br>Single: $3,522/year | Couple: $5,283/year (combined)
-        main
         </div>
         
         <div class="form-section">
           <div class="form-grid">
             <div class="form-group">
-        copilot/add-manitoba-tax-support
               <label data-i18n="northernResidents.daysInZone">Days lived in northern zone:</label>
               <input type="number" id="northernDays" min="0" max="365" value="365">
             </div>
@@ -3220,7 +3213,6 @@
             <h5 data-i18n="albertaTaxSummary.savings">💰 Your Alberta Tax Savings:</h5>
             <p id="albertaSavingsAmount"></p>
           </div>
-        main
         </div>
       </section>
       
@@ -3299,7 +3291,6 @@
       window.calculateBCHomeOwnerGrant = calculateBCHomeOwnerGrant;
     </script>
     <script type="module">
-        copilot/add-manitoba-tax-support
       import { calculateManitobaTax } from './manitoba-tax-calculator.js';
       import { calculateSaskatchewanTax } from './saskatchewan-tax-calculator.js';
       import { 
@@ -3343,7 +3334,6 @@
       window.calculateAlbertaChildBenefit = calculateAlbertaChildBenefit;
       window.calculateAlbertaSeniorsBenefit = calculateAlbertaSeniorsBenefit;
       window.calculateAlbertaFamilyEmploymentCredit = calculateAlbertaFamilyEmploymentCredit;
-        main
     </script>
     <script>
       // Auto-update year in header
@@ -5161,7 +5151,6 @@
           });
         }
         
-        copilot/add-manitoba-tax-support
         // Universal Provincial Tax Calculator
         const calculateUniversalBtn = document.getElementById('calculateUniversalBtn');
         if (calculateUniversalBtn) {
@@ -5453,7 +5442,6 @@
                 ? `You save an average of $${savings.toFixed(2)} compared to BC and Ontario!` 
                 : 'Alberta offers competitive tax rates.';
           });
-        main
         }
       });
     </script>
