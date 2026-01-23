@@ -1515,6 +1515,15 @@
           <span class="tab-icon">🏠</span
           ><span class="tab-label" data-i18n="tabs.bcHomeOwner">BC Home Owner Grant</span>
         </button>
+       copilot/add-manitoba-tax-support
+        <button class="tab-btn province-specific mb-only sk-only ns-only nb-only pe-only nl-only yt-only nt-only nu-only" data-tab="universalProvincial" style="display:none;">
+          <span class="tab-icon">📊</span
+          ><span class="tab-label" data-i18n="tabs.universalProvincial">Provincial Tax</span>
+        </button>
+        <button class="tab-btn province-specific yt-only nt-only nu-only" data-tab="northernResidents" style="display:none;">
+          <span class="tab-icon">🏔️</span
+          ><span class="tab-label" data-i18n="tabs.northernResidents">Northern Residents</span>
+
         <button class="tab-btn province-specific ab-only" data-tab="albertaChildBenefit" style="display:none;">
           <span class="tab-icon">👶</span
           ><span class="tab-label" data-i18n="tabs.albertaChildBenefit">AB Child Benefit</span>
@@ -1530,6 +1539,7 @@
         <button class="tab-btn province-specific ab-only" data-tab="albertaTaxSummary" style="display:none;">
           <span class="tab-icon">📊</span
           ><span class="tab-label" data-i18n="tabs.albertaTaxSummary">AB Tax Advantage</span>
+        main
         </button>
       </nav>
       <section id="vehicle" class="tab-content active">
@@ -2917,6 +2927,52 @@
         </div>
       </section>
       
+        copilot/add-manitoba-tax-support
+      <!-- Universal Provincial Tax Calculator (for all remaining provinces) -->
+      <section id="universalProvincial" class="tab-content province-specific mb-only sk-only ns-only nb-only pe-only nl-only yt-only nt-only nu-only" style="display:none;">
+        <h2>📊 <span id="provinceName">Provincial</span> <span data-i18n="universalProvincial.title">Tax Calculator</span></h2>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <label data-i18n="universalProvincial.taxableIncome">Taxable Income:</label>
+            <input type="number" id="universalTaxableIncome" step="0.01" placeholder="e.g., 50000">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="universalProvincial.basicAmount">Basic Personal Amount:</label>
+            <input type="number" id="universalBasicAmount" readonly>
+            <small data-i18n="universalProvincial.basicAmountHint">Automatically set for your province</small>
+          </div>
+          
+          <button id="calculateUniversalBtn" class="btn btn-primary" data-i18n="universalProvincial.calculate">Calculate Provincial Tax</button>
+        </div>
+        
+        <div id="universalResults" style="display:none;" class="results-section">
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h5 data-i18n="universalProvincial.provincialTax">Provincial Tax</h5>
+              <p class="big-number" id="universalProvincialTax">$0.00</p>
+            </div>
+            
+            <div class="summary-card">
+              <h5 data-i18n="universalProvincial.effectiveRate">Effective Rate</h5>
+              <p class="big-number" id="universalEffectiveRate">0%</p>
+            </div>
+          </div>
+          
+          <div class="tax-breakdown">
+            <h5 data-i18n="universalProvincial.bracketBreakdown">Tax Bracket Breakdown:</h5>
+            <table id="universalBracketTable">
+              <thead>
+                <tr>
+                  <th data-i18n="universalProvincial.incomeRange">Income Range</th>
+                  <th data-i18n="universalProvincial.rate">Rate</th>
+                  <th data-i18n="universalProvincial.taxAmount">Tax Amount</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+
       <!-- Alberta Child & Family Benefit Tab -->
       <section id="albertaChildBenefit" class="tab-content province-specific ab-only" style="display:none;">
         <h2>👶 <span data-i18n="albertaChildBenefit.title">Alberta Child & Family Benefit</span></h2>
@@ -2966,9 +3022,25 @@
           <div class="breakdown">
             <h5 data-i18n="albertaChildBenefit.breakdown">Breakdown by Child:</h5>
             <ul id="albertaChildBreakdown"></ul>
+        main
           </div>
         </div>
       </section>
+
+        copilot/add-manitoba-tax-support
+      <!-- Northern Residents Deduction (Territories only) -->
+      <section id="northernResidents" class="tab-content province-specific yt-only nt-only nu-only" style="display:none;">
+        <h2>🏔️ <span data-i18n="northernResidents.title">Northern Residents Deduction</span></h2>
+        <p data-i18n="northernResidents.subtitle">Federal deduction for living in prescribed northern zones</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="northernResidents.amounts">💡 2026 Amounts:</strong>
+          <br>
+          <span data-i18n="northernResidents.zoneA">Zone A: $22/day (Yukon, NWT, Nunavut) = $8,030/year</span>
+          <br>
+          <span data-i18n="northernResidents.zoneB">Zone B: $11/day (Northern parts of provinces) = $4,015/year</span>
+          <br>
+          <span data-i18n="northernResidents.travel">Travel: Up to $2,400 for 2 trips south</span>
 
       <!-- Alberta Seniors Benefit Tab -->
       <section id="albertaSeniors" class="tab-content province-specific ab-only" style="display:none;">
@@ -2978,11 +3050,50 @@
         <div class="info-banner">
           <strong data-i18n="albertaSeniors.maxAmounts">💡 2026 Maximum Amounts:</strong>
           <br>Single: $3,522/year | Couple: $5,283/year (combined)
+        main
         </div>
         
         <div class="form-section">
           <div class="form-grid">
             <div class="form-group">
+        copilot/add-manitoba-tax-support
+              <label data-i18n="northernResidents.daysInZone">Days lived in northern zone:</label>
+              <input type="number" id="northernDays" min="0" max="365" value="365">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="northernResidents.numberOfTrips">Number of trips outside zone:</label>
+              <input type="number" id="northernTrips" min="0" max="2" value="0">
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="northernResidents.travelCosts">Total travel costs:</label>
+              <input type="number" id="northernTravelCosts" step="0.01" value="0">
+              <small data-i18n="northernResidents.maxPerTrip">Max $1,200 per trip</small>
+            </div>
+          </div>
+          
+          <button id="calculateNorthernBtn" class="btn btn-primary" data-i18n="northernResidents.calculate">Calculate Deduction</button>
+        </div>
+        
+        <div id="northernResults" style="display:none;" class="results-section">
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h5 data-i18n="northernResidents.residencyDeduction">Residency Deduction</h5>
+              <p class="big-number" id="northernResidency">$0.00</p>
+            </div>
+            
+            <div class="summary-card">
+              <h5 data-i18n="northernResidents.travelDeduction">Travel Deduction</h5>
+              <p class="big-number" id="northernTravel">$0.00</p>
+            </div>
+            
+            <div class="summary-card highlight">
+              <h5 data-i18n="northernResidents.totalDeduction">Total Deduction</h5>
+              <p class="big-number" id="northernTotal">$0.00</p>
+            </div>
+          </div>
+
               <label data-i18n="albertaSeniors.yourAge">Your Age:</label>
               <input type="number" id="albertaSeniorAge" min="0" placeholder="e.g., 67">
             </div>
@@ -3109,6 +3220,7 @@
             <h5 data-i18n="albertaTaxSummary.savings">💰 Your Alberta Tax Savings:</h5>
             <p id="albertaSavingsAmount"></p>
           </div>
+        main
         </div>
       </section>
       
@@ -3187,6 +3299,36 @@
       window.calculateBCHomeOwnerGrant = calculateBCHomeOwnerGrant;
     </script>
     <script type="module">
+        copilot/add-manitoba-tax-support
+      import { calculateManitobaTax } from './manitoba-tax-calculator.js';
+      import { calculateSaskatchewanTax } from './saskatchewan-tax-calculator.js';
+      import { 
+        calculateNovaScotiaTax, 
+        calculateNewBrunswickTax, 
+        calculatePEITax, 
+        calculateNewfoundlandTax 
+      } from './atlantic-provinces-tax-calculator.js';
+      import { 
+        calculateYukonTax, 
+        calculateNWTTax, 
+        calculateNunavutTax,
+        calculateNorthernResidentsDeduction,
+        getNorthernZone
+      } from './territories-tax-calculator.js';
+      
+      // Make provincial tax functions available globally
+      window.calculateManitobaTax = calculateManitobaTax;
+      window.calculateSaskatchewanTax = calculateSaskatchewanTax;
+      window.calculateNovaScotiaTax = calculateNovaScotiaTax;
+      window.calculateNewBrunswickTax = calculateNewBrunswickTax;
+      window.calculatePEITax = calculatePEITax;
+      window.calculateNewfoundlandTax = calculateNewfoundlandTax;
+      window.calculateYukonTax = calculateYukonTax;
+      window.calculateNWTTax = calculateNWTTax;
+      window.calculateNunavutTax = calculateNunavutTax;
+      window.calculateNorthernResidentsDeduction = calculateNorthernResidentsDeduction;
+      window.getNorthernZone = getNorthernZone;
+
       import { calculateAlbertaTax, getAlbertaMarginalRate, getCombinedMarginalRate } from './alberta-tax-calculator.js';
       import { 
         calculateAlbertaChildBenefit, 
@@ -3201,6 +3343,7 @@
       window.calculateAlbertaChildBenefit = calculateAlbertaChildBenefit;
       window.calculateAlbertaSeniorsBenefit = calculateAlbertaSeniorsBenefit;
       window.calculateAlbertaFamilyEmploymentCredit = calculateAlbertaFamilyEmploymentCredit;
+        main
     </script>
     <script>
       // Auto-update year in header
@@ -5018,6 +5161,127 @@
           });
         }
         
+        copilot/add-manitoba-tax-support
+        // Universal Provincial Tax Calculator
+        const calculateUniversalBtn = document.getElementById('calculateUniversalBtn');
+        if (calculateUniversalBtn) {
+          calculateUniversalBtn.addEventListener('click', function() {
+            const taxableIncome = parseFloat(document.getElementById('universalTaxableIncome').value) || 0;
+            const selectedProvince = document.getElementById('provinceSelect').value;
+            
+            let result;
+            let provinceName;
+            
+            // Calculate tax based on province
+            switch(selectedProvince) {
+              case 'MB':
+                result = window.calculateManitobaTax(taxableIncome);
+                provinceName = 'Manitoba';
+                break;
+              case 'SK':
+                result = window.calculateSaskatchewanTax(taxableIncome);
+                provinceName = 'Saskatchewan';
+                break;
+              case 'NS':
+                result = window.calculateNovaScotiaTax(taxableIncome);
+                provinceName = 'Nova Scotia';
+                break;
+              case 'NB':
+                result = window.calculateNewBrunswickTax(taxableIncome);
+                provinceName = 'New Brunswick';
+                break;
+              case 'PE':
+                result = window.calculatePEITax(taxableIncome);
+                provinceName = 'Prince Edward Island';
+                break;
+              case 'NL':
+                result = window.calculateNewfoundlandTax(taxableIncome);
+                provinceName = 'Newfoundland and Labrador';
+                break;
+              case 'YT':
+                result = window.calculateYukonTax(taxableIncome);
+                provinceName = 'Yukon';
+                break;
+              case 'NT':
+                result = window.calculateNWTTax(taxableIncome);
+                provinceName = 'Northwest Territories';
+                break;
+              case 'NU':
+                result = window.calculateNunavutTax(taxableIncome);
+                provinceName = 'Nunavut';
+                break;
+              default:
+                alert('Please select a valid province/territory');
+                return;
+            }
+            
+            // Display results
+            document.getElementById('universalResults').style.display = 'block';
+            document.getElementById('universalProvincialTax').textContent = '$' + result.provincialTax.toFixed(2);
+            
+            const effectiveRate = taxableIncome > 0 ? (result.totalTax / taxableIncome * 100).toFixed(2) : '0.00';
+            document.getElementById('universalEffectiveRate').textContent = effectiveRate + '%';
+            
+            // Update province name in heading
+            document.getElementById('provinceName').textContent = provinceName;
+          });
+        }
+        
+        // Northern Residents Deduction Calculator
+        const calculateNorthernBtn = document.getElementById('calculateNorthernBtn');
+        if (calculateNorthernBtn) {
+          calculateNorthernBtn.addEventListener('click', function() {
+            const selectedProvince = document.getElementById('provinceSelect').value;
+            const zone = window.getNorthernZone(selectedProvince);
+            
+            const residency = {
+              zone: zone,
+              daysInZone: parseInt(document.getElementById('northernDays').value) || 365,
+              numberOfTrips: parseInt(document.getElementById('northernTrips').value) || 0,
+              travelCosts: parseFloat(document.getElementById('northernTravelCosts').value) || 0,
+            };
+            
+            if (!window.calculateNorthernResidentsDeduction) {
+              console.error('Northern Residents Deduction calculator not loaded');
+              return;
+            }
+            
+            const result = window.calculateNorthernResidentsDeduction(residency);
+            
+            // Display results
+            document.getElementById('northernResults').style.display = 'block';
+            document.getElementById('northernResidency').textContent = '$' + result.residencyDeduction.toFixed(2);
+            document.getElementById('northernTravel').textContent = '$' + result.travelDeduction.toFixed(2);
+            document.getElementById('northernTotal').textContent = '$' + result.totalDeduction.toFixed(2);
+          });
+        }
+        
+        // Update basic personal amount when province changes
+        // Reuse existing provinceSelect reference
+        if (provinceSelect) {
+          provinceSelect.addEventListener('change', function() {
+            const selectedProvince = provinceSelect.value;
+            const basicAmountField = document.getElementById('universalBasicAmount');
+            
+            if (!basicAmountField) return;
+            
+            const basicAmounts = {
+              'MB': 15780,
+              'SK': 17661,
+              'NS': 11481,
+              'NB': 13044,
+              'PE': 13500,
+              'NL': 10382,
+              'YT': 15705,
+              'NT': 16593,
+              'NU': 17925,
+            };
+            
+            basicAmountField.value = basicAmounts[selectedProvince] || '';
+          });
+          
+          // Trigger change on load to set initial value
+          provinceSelect.dispatchEvent(new Event('change'));
         // Alberta Child & Family Benefit calculator
         const albertaChildBtn = document.getElementById('calculateAlbertaChildBtn');
         if (albertaChildBtn) {
@@ -5189,6 +5453,7 @@
                 ? `You save an average of $${savings.toFixed(2)} compared to BC and Ontario!` 
                 : 'Alberta offers competitive tax rates.';
           });
+        main
         }
       });
     </script>
