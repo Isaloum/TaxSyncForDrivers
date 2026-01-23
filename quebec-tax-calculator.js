@@ -6,6 +6,13 @@
  * https://www.revenuquebec.ca/en/citizens/income-tax-return/
  */
 
+// Import credit calculation functions to avoid duplication
+import { 
+  calculateWorkPremium as workPremiumCalc,
+  calculateSolidarityCredit as solidarityCreditCalc,
+  calculateQuebecBPA as quebecBPACalc
+} from './credit-calculator.js';
+
 export const QUEBEC_TAX_RATES_2026 = {
   brackets: [
     { limit: 54345, rate: 0.14 },     // 14% up to $54,345
@@ -114,50 +121,35 @@ export function getQuebecMarginalRate(taxableIncome) {
 
 /**
  * Calculate Quebec Work Premium (Prime au travail)
- * Encourages low-income workers to remain in the workforce
+ * Re-exports from credit-calculator.js to avoid duplication
  *
  * @param {number} income - Annual work income in CAD
  * @param {boolean} [isSingle=true] - Whether the person is single or has dependents
  * @returns {number} Credit amount in CAD (max $728 single, $1,456 with dependents)
  */
 export function calculateWorkPremium(income, isSingle = true) {
-  const { workPremium } = QUEBEC_TAX_RATES_2026;
-  
-  if (income < workPremium.minIncome) return 0;
-  if (income > workPremium.maxIncome) return 0;
-  
-  const base = Math.min(income - workPremium.minIncome, 33100);
-  const raw = base * workPremium.rate;
-  
-  // Statutory cap: $728 (single), $1,456 (with dependents)
-  const maxCredit = isSingle ? workPremium.maxCreditSingle : workPremium.maxCreditFamily;
-  return Math.min(Math.round(raw * 100) / 100, maxCredit);
+  return workPremiumCalc(income, isSingle);
 }
 
 /**
  * Calculate the Quebec Solidarity Tax Credit (Crédit pour la solidarité)
- * Based on Revenu Québec official guide
+ * Re-exports from credit-calculator.js to avoid duplication
  *
  * @param {number} income - Annual net income in CAD
  * @param {boolean} [isSingle=true] - Whether the person is single (true) or has a spouse (false)
  * @returns {number} Credit amount in CAD (rounded to 2 decimal places)
  */
 export function calculateSolidarityCredit(income, isSingle = true) {
-  const { solidarityCredit } = QUEBEC_TAX_RATES_2026;
-  
-  let amount = isSingle ? solidarityCredit.baseSingle : solidarityCredit.baseCouple;
-  
-  if (income > solidarityCredit.phaseoutStart) {
-    if (income >= solidarityCredit.phaseoutEnd) {
-      amount = 0;
-    } else {
-      // Linear reduction over $6,160
-      const reduction = (income - solidarityCredit.phaseoutStart) / 
-                       (solidarityCredit.phaseoutEnd - solidarityCredit.phaseoutStart);
-      amount *= 1 - reduction;
-    }
-  }
-  return Math.round(amount * 100) / 100;
+  return solidarityCreditCalc(income, isSingle);
+}
+
+/**
+ * Calculate basic personal amount credit for Quebec
+ * Re-exports from credit-calculator.js to avoid duplication
+ * @returns {number} Tax credit value
+ */
+export function calculateQuebecBPA() {
+  return quebecBPACalc();
 }
 
 /**
@@ -203,14 +195,6 @@ export function calculateQPPContributions(selfEmploymentIncome) {
     maxContribution: Math.round(((qpp.maxPensionableEarnings - qpp.basicExemption) * qpp.baseRate + 
                                 (qpp.qpp2MaxEarnings - qpp.maxPensionableEarnings) * qpp.qpp2Rate) * 100) / 100,
   };
-}
-
-/**
- * Calculate basic personal amount credit for Quebec
- * @returns {number} Tax credit value
- */
-export function calculateQuebecBPA() {
-  return Math.round(QUEBEC_TAX_RATES_2026.basicPersonalAmount * 0.14 * 100) / 100; // $2,653.28
 }
 
 /**

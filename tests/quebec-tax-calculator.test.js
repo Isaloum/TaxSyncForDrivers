@@ -48,8 +48,8 @@ test('Quebec: $80,000 income tax calculation (second bracket)', () => {
 test('Quebec: $120,000 income tax calculation (third bracket)', () => {
   const result = calculateQuebecTax(120000);
   // First bracket: $54,345 * 14% = $7,608.30
-  // Second bracket: $54,335 * 19% = $10,323.65
-  // Third bracket: $11,320 * 24% = $2,716.80
+  // Second bracket: ($108,680 - $54,345) * 19% = $54,335 * 19% = $10,323.65
+  // Third bracket: ($120,000 - $108,680) * 24% = $11,320 * 24% = $2,716.80
   // Total: $20,648.75
   // Basic credit: $2,653.28
   // Net tax: $20,648.75 - $2,653.28 = $17,995.47
