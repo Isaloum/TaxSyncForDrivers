@@ -1,13 +1,17 @@
 # 🚗 TaxSyncForDrivers
 
-**Smart Tax Planning for Quebec Rideshare & Taxi Drivers**
+**Smart Tax Planning for Canadian Rideshare & Taxi Drivers**
 
 > Maximize deductions • Track expenses • Plan quarterly taxes • **NEW: Automated document processing**
 
-[![Tests](https://img.shields.io/badge/tests-229%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
+[![Tests](https://img.shields.io/badge/tests-477%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
 [![Coverage](https://img.shields.io/badge/coverage-83%25-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
+[![Provinces](https://img.shields.io/badge/provinces-10%2F10%20%E2%9C%93-success)](PROVINCE_COVERAGE.md)
+[![Territories](https://img.shields.io/badge/territories-3%2F3%20%E2%9C%93-success)](PROVINCE_COVERAGE.md)
 
-**✨ 2026 Tax Rates:** Now updated with official CRA and Revenu Québec 2026 rates, including the federal tax rate reduction to 14%. See [TAX_RATES_2026.md](TAX_RATES_2026.md) for details.
+**✨ 2026 Tax Rates:** Now updated with official CRA and provincial 2026 rates, including the federal tax rate reduction to 14%. See [TAX_RATES_2026.md](TAX_RATES_2026.md) for details.
+
+**🍁 Complete Canada Coverage:** All 10 provinces and 3 territories supported! See [PROVINCE_COVERAGE.md](PROVINCE_COVERAGE.md) for full details.
 
 ## 💡 Why TaxSyncForDrivers?
 
