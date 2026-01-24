@@ -1462,6 +1462,18 @@
         <span class="province-flag" id="provinceFlagIcon">🇨🇦</span>
       </div>
       
+      <!-- GST/HST Registration Warning Banner -->
+      <div id="gstHstWarning" class="alert alert-warning" style="display:none; margin: 1rem 0; padding: 1.5rem; background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 12px;">
+        <h4 style="margin-top: 0; color: #856404;">⚠️ GST/HST Registration Alert</h4>
+        <p id="gstWarningMessage" style="margin-bottom: 1rem;"></p>
+        <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/register.html" 
+           target="_blank" 
+           class="btn" 
+           style="display: inline-block; background: var(--accent); color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 8px;">
+          Learn About GST/HST Registration
+        </a>
+      </div>
+      
       <nav class="tabs">
         <button class="tab-btn active" data-tab="vehicle">
           <span class="tab-icon">🚙</span
@@ -1557,6 +1569,46 @@
             >
           </div>
         </fieldset>
+        
+        <!-- Odometer Tracking Section -->
+        <fieldset style="margin-bottom: 2rem;">
+          <legend>🚗 Vehicle Odometer Tracking (CRA Required)</legend>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            CRA requires odometer readings to support vehicle expense deductions.
+          </p>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="odometerStart">Start of Year Odometer (km)</label>
+              <input type="number" id="odometerStart" placeholder="e.g., 45000" min="0" />
+              <small>Odometer reading on January 1, 2026</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="odometerEnd">Current/End of Year Odometer (km)</label>
+              <input type="number" id="odometerEnd" placeholder="e.g., 72000" min="0" />
+              <small>Current or December 31, 2026 reading</small>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="businessKmInput">Business Kilometers (km)</label>
+            <input type="number" id="businessKmInput" placeholder="Calculated from trips or manual entry" min="0" />
+            <small>Total km driven for business purposes this year</small>
+          </div>
+          
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="calculateOdometer()">Calculate Total KM</button>
+          </div>
+          
+          <div id="odometerSummary" class="result-box" style="display:none; margin-top: 1rem; padding: 1rem; background: var(--accent-light); border-radius: 8px;">
+            <strong>📊 Odometer Summary:</strong>
+            <p style="margin: 0.5rem 0;">Total KM Driven: <strong><span id="totalKmDriven">0</span> km</strong></p>
+            <p style="margin: 0.5rem 0;">Business KM: <strong><span id="businessKmPercent">0</span> km</strong> (<span id="businessPercent">0</span>%)</p>
+            <p style="margin: 0.5rem 0;">Personal KM: <strong><span id="personalKm">0</span> km</strong></p>
+          </div>
+        </fieldset>
+        
         <div class="toggle-container">
           <label class="toggle"
             ><input type="checkbox" id="showDetailed" aria-labelledby="vehicleShowDetailedLabel" /><span class="toggle-slider"></span
@@ -2345,11 +2397,14 @@
 
           <!-- Export Buttons -->
           <div class="btn-group" style="margin-top: 1.5rem;">
-            <button class="btn" onclick="exportToT2125JSON()" data-i18n="businessExpenses.exportJSON">
+            <button class="btn btn-primary" onclick="exportForAccountant()">
+              📊 Export for Accountant (T2125)
+            </button>
+            <button class="btn btn-secondary" onclick="exportToT2125JSON()" data-i18n="businessExpenses.exportJSON">
               Export to T2125 JSON
             </button>
             <button class="btn btn-secondary" onclick="exportToCSV()" data-i18n="businessExpenses.exportCSV">
-              Export to CSV
+              📄 Export to CSV
             </button>
           </div>
         </div>
@@ -4561,6 +4616,116 @@
             maximumFractionDigits: 2 
           });
         }
+        
+        // Check GST/HST threshold
+        checkGSTHSTThreshold();
+      }
+
+      const GST_HST_THRESHOLD = 30000;
+
+      function checkGSTHSTThreshold() {
+        let ytdIncome = 0;
+        
+        // Aggregate income from all processed documents
+        if (window.processedDocuments) {
+          processedDocuments.forEach(doc => {
+            if (!doc.success || !doc.extractedData) return;
+            
+            const data = doc.extractedData;
+            ytdIncome += data.grossFares || 0;
+            ytdIncome += data.tips || 0;
+            ytdIncome += data.employmentIncome || 0;
+            ytdIncome += data.grossIncome || 0;
+          });
+        }
+        
+        const warningBanner = document.getElementById('gstHstWarning');
+        const warningMessage = document.getElementById('gstWarningMessage');
+        
+        if (!warningBanner || !warningMessage) return;
+        
+        if (ytdIncome >= GST_HST_THRESHOLD * 0.8) {
+          warningBanner.style.display = 'block';
+          const percentOfThreshold = (ytdIncome / GST_HST_THRESHOLD * 100).toFixed(1);
+          
+          if (ytdIncome >= GST_HST_THRESHOLD) {
+            warningMessage.innerHTML = `
+              <strong>🚨 You've exceeded the $30,000 GST/HST threshold!</strong><br>
+              Your YTD gross income: <strong>$${ytdIncome.toLocaleString()}</strong> (${percentOfThreshold}% of threshold)<br>
+              <em>You are required to register for GST/HST. Failure to register may result in penalties.</em>
+            `;
+            warningBanner.style.backgroundColor = '#f8d7da';
+            warningBanner.style.borderColor = '#dc3545';
+          } else if (ytdIncome >= GST_HST_THRESHOLD * 0.9) {
+            warningMessage.innerHTML = `
+              <strong>⚠️ Approaching GST/HST threshold</strong><br>
+              Your YTD gross income: <strong>$${ytdIncome.toLocaleString()}</strong> (${percentOfThreshold}% of $30,000)<br>
+              <em>Prepare to register for GST/HST soon. Registration required after $30,000.</em>
+            `;
+          } else {
+            warningMessage.innerHTML = `
+              <strong>ℹ️ Heads up!</strong><br>
+              Your YTD gross income: <strong>$${ytdIncome.toLocaleString()}</strong> (${percentOfThreshold}% of $30,000 threshold)<br>
+              <em>You're getting close to the GST/HST registration threshold.</em>
+            `;
+          }
+        } else {
+          warningBanner.style.display = 'none';
+        }
+      }
+
+      function calculateOdometer() {
+        const start = parseFloat(document.getElementById('odometerStart').value) || 0;
+        const end = parseFloat(document.getElementById('odometerEnd').value) || 0;
+        const businessKm = parseFloat(document.getElementById('businessKmInput').value) || 0;
+        
+        if (start === 0 || end === 0) {
+          alert('Please enter both start and end odometer readings');
+          return;
+        }
+        
+        if (end <= start) {
+          alert('End odometer must be greater than start odometer');
+          return;
+        }
+        
+        const totalKm = end - start;
+        const personalKm = totalKm - businessKm;
+        const businessPercent = ((businessKm / totalKm) * 100).toFixed(1);
+        
+        // Display summary
+        document.getElementById('odometerSummary').style.display = 'block';
+        document.getElementById('totalKmDriven').textContent = totalKm.toLocaleString();
+        document.getElementById('businessKmPercent').textContent = businessKm.toLocaleString();
+        document.getElementById('businessPercent').textContent = businessPercent;
+        document.getElementById('personalKm').textContent = personalKm.toLocaleString();
+        
+        // Auto-populate the simplified method calculation
+        const totalKmField = document.getElementById('totalKm');
+        if (totalKmField) {
+          totalKmField.value = businessKm;
+        }
+        
+        // CRA audit warning for high business use
+        if (businessPercent > 90) {
+          alert(
+            `⚠️ Warning: ${businessPercent}% business use may trigger CRA review.\n\n` +
+            `The CRA typically scrutinizes business use claims above 90%.\n\n` +
+            `Ensure you have detailed trip logs to support this claim.`
+          );
+        }
+        
+        // Save odometer data for export
+        if (!window.odometerData) window.odometerData = {};
+        window.odometerData = {
+          startReading: start,
+          endReading: end,
+          totalKm: totalKm,
+          businessKm: businessKm,
+          personalKm: personalKm,
+          businessPercent: parseFloat(businessPercent),
+          recordedDate: new Date().toISOString()
+        };
       }
 
       // T4A Display Handler
@@ -4602,14 +4767,31 @@
           return;
         }
 
+        // CRA REQUIREMENT: Receipt mandatory for expenses >$75
+        if (amount > 75) {
+          const hasReceipt = confirm(
+            `⚠️ CRA Requirement: Expenses over $75 require a receipt.\n\n` +
+            `Amount: $${amount.toFixed(2)}\n\n` +
+            `Do you have a receipt attached or will you upload one now?\n\n` +
+            `Click OK to proceed (you'll need to attach receipt), or Cancel to go back.`
+          );
+          
+          if (!hasReceipt) {
+            alert('❌ Please attach a receipt before adding this expense.\n\nExpenses >$75 without receipts may be rejected during a CRA audit.');
+            return;
+          }
+        }
+
         // Add expense using the tracker
         if (window.expenseTracker) {
-          window.expenseTracker.addExpense({
+          const expense = window.expenseTracker.addExpense({
             date,
             vendor,
             category,
             amount,
             description,
+            requiresReceipt: amount > 75,
+            hasReceipt: false // Mark as false until receipt is uploaded
           });
 
           // Clear form
@@ -4622,8 +4804,11 @@
           // Update summary
           updateExpenseSummary();
 
-          // Show success message
-          alert('Expense added successfully!');
+          if (amount > 75) {
+            alert('✅ Expense added!\n\n⚠️ Remember to upload receipt for CRA audit compliance.');
+          } else {
+            alert('✅ Expense added successfully!');
+          }
         }
       }
 
@@ -4682,6 +4867,26 @@
           `;
           categoryBreakdownBody.appendChild(row);
         });
+        
+        // Add missing receipts warning
+        const missingReceipts = tracker.expenses.filter(e => e.amount > 75 && !e.hasReceipt && !e.receiptImage);
+
+        if (missingReceipts.length > 0) {
+          const warningHtml = `
+            <div class="alert alert-warning" style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px;">
+              <h4 style="margin-top: 0; color: #856404;">📋 Missing Receipts</h4>
+              <p><strong>${missingReceipts.length}</strong> expense(s) over $75 are missing receipts:</p>
+              <ul style="margin: 0.5rem 0;">
+                ${missingReceipts.map(e => `
+                  <li>$${e.amount.toFixed(2)} - ${e.vendor} (${e.date})</li>
+                `).join('')}
+              </ul>
+              <p style="margin-bottom: 0;"><em>⚠️ CRA requires receipts for expenses over $75. Missing receipts may be rejected in an audit.</em></p>
+            </div>
+          `;
+          
+          document.getElementById('expenseSummary').insertAdjacentHTML('beforeend', warningHtml);
+        }
       }
 
       function exportToT2125JSON() {
@@ -4745,6 +4950,82 @@
         link.click();
         
         URL.revokeObjectURL(url);
+      }
+
+      function exportForAccountant() {
+        if (!window.expenseTracker) {
+          alert('No expense data to export');
+          return;
+        }
+        const tracker = window.expenseTracker;
+        const expenses = tracker.expenses;
+        
+        // Aggregate YTD income from processed documents
+        let ytdIncome = 0;
+        if (window.processedDocuments) {
+          processedDocuments.forEach(doc => {
+            if (doc.success && doc.extractedData) {
+              ytdIncome += doc.extractedData.grossFares || 0;
+              ytdIncome += doc.extractedData.tips || 0;
+              ytdIncome += doc.extractedData.employmentIncome || 0;
+            }
+          });
+        }
+        
+        const t2125Data = {
+          exportDate: new Date().toISOString(),
+          taxYear: new Date().getFullYear(),
+          businessInfo: {
+            businessName: "Rideshare Driver",
+            businessActivity: "Taxi/Rideshare Services",
+            businessCode: "485310"
+          },
+          income: {
+            grossIncome: ytdIncome,
+            otherIncome: 0,
+            totalIncome: ytdIncome
+          },
+          expenses: mapExpensesToT2125(tracker),
+          summary: {
+            totalExpenses: tracker.getTotalDeductions(),
+            netIncome: ytdIncome - tracker.getTotalDeductions()
+          },
+          transactions: expenses.map(exp => ({
+            date: exp.date,
+            vendor: exp.vendor,
+            category: exp.category,
+            t2125Line: window.EXPENSE_CATEGORIES[exp.category]?.code || 'N/A',
+            amount: exp.amount,
+            deductibleAmount: exp.deductibleAmount,
+            description: exp.description,
+            receiptAttached: !!exp.receiptImage
+          })),
+          warnings: {
+            missingReceipts: expenses.filter(e => e.amount > 75 && !e.receiptImage).length
+          }
+        };
+        
+        const blob = new Blob([JSON.stringify(t2125Data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `T2125-Export-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        alert('✅ T2125 export complete! Share this file with your accountant.');
+      }
+
+      function mapExpensesToT2125(tracker) {
+        const breakdown = tracker.getCategoryBreakdown();
+        return {
+          line9270_Maintenance: breakdown.find(c => c.category === 'Repairs & Maintenance')?.total || 0,
+          line9281_VehicleExpenses: breakdown.find(c => c.category === 'Vehicle Expenses')?.total || 0,
+          line8810_OfficeExpenses: breakdown.find(c => c.category === 'Office Expenses')?.total || 0,
+          line9220_PhoneUtilities: breakdown.find(c => c.category === 'Phone & Utilities')?.total || 0,
+          line8960_Rent: breakdown.find(c => c.category === 'Rent')?.total || 0,
+          line8523_Insurance: breakdown.find(c => c.category === 'Insurance')?.total || 0
+        };
       }
 
       // Initialize expense summary on page load
