@@ -4622,8 +4622,9 @@
       }
 
       const GST_HST_THRESHOLD = 30000;
+      const CRA_AUDIT_RISK_THRESHOLD = 90;
 
-      function checkGSTHSTThreshold() {
+      function calculateYTDIncome() {
         let ytdIncome = 0;
         
         // Aggregate income from all processed documents
@@ -4638,6 +4639,12 @@
             ytdIncome += data.grossIncome || 0;
           });
         }
+        
+        return ytdIncome;
+      }
+
+      function checkGSTHSTThreshold() {
+        const ytdIncome = calculateYTDIncome();
         
         const warningBanner = document.getElementById('gstHstWarning');
         const warningMessage = document.getElementById('gstWarningMessage');
@@ -4690,6 +4697,13 @@
         }
         
         const totalKm = end - start;
+        
+        // Validate business km doesn't exceed total km
+        if (businessKm > totalKm) {
+          alert(`Business kilometers (${businessKm}) cannot exceed total kilometers (${totalKm})`);
+          return;
+        }
+        
         const personalKm = totalKm - businessKm;
         const businessPercent = ((businessKm / totalKm) * 100).toFixed(1);
         
@@ -4707,10 +4721,10 @@
         }
         
         // CRA audit warning for high business use
-        if (businessPercent > 90) {
+        if (businessPercent > CRA_AUDIT_RISK_THRESHOLD) {
           alert(
             `⚠️ Warning: ${businessPercent}% business use may trigger CRA review.\n\n` +
-            `The CRA typically scrutinizes business use claims above 90%.\n\n` +
+            `The CRA typically scrutinizes business use claims above ${CRA_AUDIT_RISK_THRESHOLD}%.\n\n` +
             `Ensure you have detailed trip logs to support this claim.`
           );
         }
@@ -4960,17 +4974,8 @@
         const tracker = window.expenseTracker;
         const expenses = tracker.expenses;
         
-        // Aggregate YTD income from processed documents
-        let ytdIncome = 0;
-        if (window.processedDocuments) {
-          processedDocuments.forEach(doc => {
-            if (doc.success && doc.extractedData) {
-              ytdIncome += doc.extractedData.grossFares || 0;
-              ytdIncome += doc.extractedData.tips || 0;
-              ytdIncome += doc.extractedData.employmentIncome || 0;
-            }
-          });
-        }
+        // Use shared income calculation
+        const ytdIncome = calculateYTDIncome();
         
         const t2125Data = {
           exportDate: new Date().toISOString(),
