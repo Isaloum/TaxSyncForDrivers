@@ -8,44 +8,33 @@
  */
 
 export class QuebecFSSQPPCalculator {
-  // FSS Rates (2026)
-  static FSS_RATES = {
-    tier1: { threshold: 100000, rate: 0.0100 },
-    tier2: { threshold: 1000000, rate: 0.0165 },
-    tier3: { rate: 0.0200 }
-  };
-
-  // QPP Rates (2026)
-  static QPP_RATES = {
-    exemption: 3500,
-    maxBase: 68500,
-    maxAdditional: 73200,
-    baseRate: 0.1280,
-    additionalRate: 0.0200,
-    maxContribution: 8244.60
-  };
-
   /**
    * Calculate FSS (Health Services Fund)
    * @param {number} netBusinessIncome - Self-employment income
    * @returns {Object} FSS breakdown
    */
   static calculateFSS(netBusinessIncome) {
+    const FSS_RATES = {
+      tier1: { threshold: 100000, rate: 0.0100 },
+      tier2: { threshold: 1000000, rate: 0.0165 },
+      tier3: { rate: 0.0200 }
+    };
+
     let fss = 0;
     let tier = 1;
 
-    if (netBusinessIncome <= this.FSS_RATES.tier1.threshold) {
-      fss = netBusinessIncome * this.FSS_RATES.tier1.rate;
+    if (netBusinessIncome <= FSS_RATES.tier1.threshold) {
+      fss = netBusinessIncome * FSS_RATES.tier1.rate;
       tier = 1;
-    } else if (netBusinessIncome <= this.FSS_RATES.tier2.threshold) {
-      const tier1Amount = this.FSS_RATES.tier1.threshold * this.FSS_RATES.tier1.rate;
-      const tier2Amount = (netBusinessIncome - this.FSS_RATES.tier1.threshold) * this.FSS_RATES.tier2.rate;
+    } else if (netBusinessIncome <= FSS_RATES.tier2.threshold) {
+      const tier1Amount = FSS_RATES.tier1.threshold * FSS_RATES.tier1.rate;
+      const tier2Amount = (netBusinessIncome - FSS_RATES.tier1.threshold) * FSS_RATES.tier2.rate;
       fss = tier1Amount + tier2Amount;
       tier = 2;
     } else {
-      const tier1Amount = this.FSS_RATES.tier1.threshold * this.FSS_RATES.tier1.rate;
-      const tier2Amount = (this.FSS_RATES.tier2.threshold - this.FSS_RATES.tier1.threshold) * this.FSS_RATES.tier2.rate;
-      const tier3Amount = (netBusinessIncome - this.FSS_RATES.tier2.threshold) * this.FSS_RATES.tier3.rate;
+      const tier1Amount = FSS_RATES.tier1.threshold * FSS_RATES.tier1.rate;
+      const tier2Amount = (FSS_RATES.tier2.threshold - FSS_RATES.tier1.threshold) * FSS_RATES.tier2.rate;
+      const tier3Amount = (netBusinessIncome - FSS_RATES.tier2.threshold) * FSS_RATES.tier3.rate;
       fss = tier1Amount + tier2Amount + tier3Amount;
       tier = 3;
     }
@@ -63,11 +52,17 @@ export class QuebecFSSQPPCalculator {
    * @private
    */
   static _getFSSRate(tier) {
+    const FSS_RATES = {
+      tier1: { rate: 0.0100 },
+      tier2: { rate: 0.0165 },
+      tier3: { rate: 0.0200 }
+    };
+
     switch (tier) {
-      case 1: return this.FSS_RATES.tier1.rate;
-      case 2: return this.FSS_RATES.tier2.rate;
-      case 3: return this.FSS_RATES.tier3.rate;
-      default: return this.FSS_RATES.tier1.rate;
+      case 1: return FSS_RATES.tier1.rate;
+      case 2: return FSS_RATES.tier2.rate;
+      case 3: return FSS_RATES.tier3.rate;
+      default: return FSS_RATES.tier1.rate;
     }
   }
 
@@ -90,7 +85,16 @@ export class QuebecFSSQPPCalculator {
    * @returns {Object} QPP breakdown
    */
   static calculateQPP(netBusinessIncome) {
-    const { exemption, maxBase, maxAdditional, baseRate, additionalRate, maxContribution } = this.QPP_RATES;
+    const QPP_RATES = {
+      exemption: 3500,
+      maxBase: 68500,
+      maxAdditional: 73200,
+      baseRate: 0.1280,
+      additionalRate: 0.0200,
+      maxContribution: 8244.60
+    };
+
+    const { exemption, maxBase, maxAdditional, baseRate, additionalRate, maxContribution } = QPP_RATES;
 
     // Base contribution calculation
     const baseIncome = Math.min(
