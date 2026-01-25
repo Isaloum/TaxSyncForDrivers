@@ -109,6 +109,31 @@
         color: #fff;
         border-color: var(--accent);
       }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .btn-quick-start {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        border: none;
+        padding: 0.625rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: var(--shadow);
+      }
+      .btn-quick-start:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
       .hero {
         background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
         color: #fff;
@@ -1389,6 +1414,539 @@
       .results-section {
         margin-top: 2rem;
       }
+      
+      /* Getting Started Section */
+      .getting-started {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 2.5rem;
+        margin: 2rem 0;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+      }
+      
+      .getting-started h2 {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        text-align: center;
+      }
+      
+      .getting-started-subtitle {
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+      }
+      
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      
+      .step-card {
+        background: var(--bg);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+      }
+      
+      .step-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow);
+      }
+      
+      .step-number {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0 auto 1rem;
+      }
+      
+      .step-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+      
+      .step-card p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      
+      .btn-step {
+        background: transparent;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      
+      .btn-step:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+      
+      .quick-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .btn-secondary {
+        background: #fff;
+        border: 2px solid var(--accent);
+        color: var(--accent);
+      }
+      
+      .btn-secondary:hover {
+        background: var(--accent-light);
+      }
+      
+      /* Tooltip System */
+      .tooltip-trigger {
+        position: relative;
+        display: inline-block;
+        cursor: help;
+        margin-left: 0.25rem;
+        vertical-align: middle;
+      }
+      
+      .info-icon {
+        vertical-align: middle;
+      }
+      
+      .tooltip-content {
+        display: none;
+        position: absolute;
+        z-index: 1000;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        min-width: 280px;
+        max-width: 400px;
+        box-shadow: var(--shadow-lg);
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: calc(100% + 8px);
+      }
+      
+      .tooltip-content.active {
+        display: block;
+      }
+      
+      .tooltip-content h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--accent);
+        font-size: 0.95rem;
+      }
+      
+      .tooltip-content p {
+        margin: 0 0 0.75rem 0;
+        color: var(--text);
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+      
+      .tooltip-content a {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      
+      .tooltip-content a:hover {
+        text-decoration: underline;
+      }
+      
+      /* Quick Start Modal */
+      .quick-start-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      
+      .quick-start-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+      }
+      
+      .quick-start-content {
+        position: relative;
+        background: var(--card);
+        border-radius: var(--radius);
+        max-width: 700px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      
+      .quick-start-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        background: var(--card);
+        z-index: 10;
+      }
+      
+      .quick-start-progress {
+        flex: 1;
+      }
+      
+      .progress-bar {
+        height: 8px;
+        background: var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+      }
+      
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        transition: width 0.3s ease;
+      }
+      
+      .progress-text {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      
+      .close-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.5rem;
+        margin-left: 1rem;
+        border-radius: 4px;
+        transition: all 0.2s;
+      }
+      
+      .close-btn:hover {
+        background: var(--border);
+        color: var(--text);
+      }
+      
+      .quick-start-body {
+        padding: 2rem;
+        text-align: center;
+      }
+      
+      .step-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+      
+      .quick-start-body h2 {
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .step-description {
+        color: var(--muted);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .step-duration {
+        display: inline-block;
+        background: var(--accent-light);
+        color: var(--accent-dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .step-content {
+        margin-top: 1.5rem;
+        text-align: left;
+      }
+      
+      .quick-start-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        position: sticky;
+        bottom: 0;
+        background: var(--card);
+      }
+      
+      .nav-buttons {
+        display: flex;
+        gap: 0.75rem;
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+      
+      /* Step-specific styles */
+      .welcome-step, .document-step, .vehicle-step, .income-step, .tax-forms-step {
+        text-align: left;
+      }
+      
+      .welcome-step h3, .document-step p, .vehicle-step p, .income-step p, .tax-forms-step p {
+        margin-bottom: 1rem;
+      }
+      
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      
+      .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      
+      .sample-receipt, .sample-vehicle, .sample-income {
+        background: var(--bg);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+      
+      .receipt-preview, .vehicle-data, .income-summary {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .receipt-icon {
+        font-size: 3rem;
+      }
+      
+      .receipt-details, .income-breakdown {
+        flex: 1;
+      }
+      
+      .receipt-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      
+      .data-row, .income-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+      
+      .data-row:last-child, .income-row:last-child {
+        border-bottom: none;
+      }
+      
+      .income-row.negative strong {
+        color: var(--danger);
+      }
+      
+      .income-row.total {
+        font-weight: 700;
+        border-top: 2px solid var(--accent);
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+      }
+      
+      .platform-badge {
+        display: inline-block;
+        background: var(--accent);
+        color: #fff;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .period {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      
+      .hint {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-style: italic;
+      }
+      
+      .btn-demo {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 1rem;
+        transition: all 0.2s;
+      }
+      
+      .btn-demo:hover {
+        background: var(--accent-dark);
+      }
+      
+      .forms-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+      
+      .form-card {
+        background: var(--bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 2px solid var(--border);
+        transition: all 0.2s;
+      }
+      
+      .form-card:hover {
+        border-color: var(--accent);
+      }
+      
+      .form-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .form-card strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--accent);
+      }
+      
+      .form-card span {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      
+      .completion-message {
+        text-align: center;
+        padding: 2rem;
+      }
+      
+      .completion-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .completion-checklist {
+        text-align: left;
+        max-width: 400px;
+        margin: 2rem auto;
+        background: var(--bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+      }
+      
+      .completion-checklist div {
+        padding: 0.5rem 0;
+        font-size: 0.95rem;
+      }
+      
+      @media (max-width: 768px) {
+        .steps-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .quick-actions {
+          flex-direction: column;
+        }
+        
+        .btn-large {
+          width: 100%;
+          justify-content: center;
+        }
+        
+        .quick-start-footer {
+          flex-direction: column;
+        }
+        
+        .nav-buttons {
+          width: 100%;
+          justify-content: space-between;
+        }
+        
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
     </style>
     
     <!-- PDF.js Library for PDF text extraction -->
@@ -1408,9 +1966,15 @@
             ><span>🚗</span><span>TaxSyncForDrivers</span
             ><span class="badge" id="current-year"></span
           ></a>
-          <div class="lang-toggle">
-            <button class="lang-btn active" onclick="setLang('fr')">FR</button
-            ><button class="lang-btn" onclick="setLang('en')">EN</button>
+          <div class="header-actions">
+            <button class="btn-quick-start" onclick="startQuickGuide()">
+              <span>🚀</span>
+              <span data-i18n="quickStart.button">Guide de démarrage rapide</span>
+            </button>
+            <div class="lang-toggle">
+              <button class="lang-btn active" onclick="setLang('fr')">FR</button
+              ><button class="lang-btn" onclick="setLang('en')">EN</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1438,6 +2002,55 @@
         </div>
       </section>
       
+      <!-- Getting Started Section -->
+      <section class="getting-started" id="gettingStarted">
+        <h2 data-i18n="gettingStarted.title">🚀 Pour commencer</h2>
+        <p class="getting-started-subtitle" data-i18n="gettingStarted.subtitle">
+          Nouveau sur TaxSyncForDrivers? Suivez ces étapes pour maximiser vos déductions fiscales.
+        </p>
+        
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3 data-i18n="gettingStarted.step1.title">Configurez votre profil</h3>
+            <p data-i18n="gettingStarted.step1.description">Choisissez votre province et type de chauffeur</p>
+            <button class="btn-step" onclick="scrollToSection('provinceSelect')">Commencer →</button>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3 data-i18n="gettingStarted.step2.title">Téléversez des documents</h3>
+            <p data-i18n="gettingStarted.step2.description">L'IA extrait automatiquement les revenus et dépenses</p>
+            <button class="btn-step" onclick="scrollToSection('documentAI')">Téléverser →</button>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3 data-i18n="gettingStarted.step3.title">Suivez les dépenses de véhicule</h3>
+            <p data-i18n="gettingStarted.step3.description">Entrez le kilométrage et calculez les déductions</p>
+            <button class="btn-step" onclick="scrollToSection('vehicleExpenses')">Suivre →</button>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <h3 data-i18n="gettingStarted.step4.title">Générez les formulaires fiscaux</h3>
+            <p data-i18n="gettingStarted.step4.description">Exportez T2125, TP-80-V et annexes DPA</p>
+            <button class="btn-step" onclick="scrollToSection('businessExpenses')">Exporter →</button>
+          </div>
+        </div>
+        
+        <div class="quick-actions">
+          <button class="btn-primary btn-large" onclick="startQuickGuide()">
+            <span>🎯</span>
+            <span data-i18n="quickStart.launchGuide">Lancer le guide interactif (5 min)</span>
+          </button>
+          <button class="btn-secondary btn-large" onclick="loadSampleScenario('fulltime-uber-qc', currentLang)">
+            <span>📊</span>
+            <span data-i18n="quickStart.loadSample">Charger des données d'exemple</span>
+          </button>
+        </div>
+      </section>
+      
       <!-- Province Selector Bar -->
       <div class="province-selector-bar">
         <label for="provinceSelect">
@@ -1452,7 +2065,10 @@
       
       <!-- GST/HST Registration Warning Banner -->
       <div id="gstHstWarning" class="alert alert-warning" style="display:none; margin: 1rem 0; padding: 1.5rem; background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 12px;">
-        <h4 style="margin-top: 0; color: #856404;">⚠️ GST/HST Registration Alert</h4>
+        <h4 style="margin-top: 0; color: #856404;">
+          ⚠️ GST/HST Registration Alert
+          <span id="gstTooltip"></span>
+        </h4>
         <p id="gstWarningMessage" style="margin-bottom: 1rem;"></p>
         <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/register.html" 
            target="_blank" 
@@ -6018,6 +6634,37 @@
       document.addEventListener('DOMContentLoaded', function() {
         const browserLang = detectLanguage();
         setLang(browserLang);
+      });
+    </script>
+    
+    <!-- Quick Start Guide -->
+    <script type="module">
+      import { QuickStartGuide } from './quick-start-guide.js';
+      import { createTooltip, initializeTooltips } from './tooltip-helper.js';
+      import { loadSampleScenario, getAvailableScenarios } from './sample-scenarios.js';
+      
+      // Initialize Quick Start Guide
+      window.quickStartGuide = new QuickStartGuide();
+      
+      // Make functions globally available
+      window.startQuickGuide = function() {
+        window.quickStartGuide.start(currentLang);
+      };
+      
+      window.createTooltip = createTooltip;
+      window.loadSampleScenario = loadSampleScenario;
+      window.getAvailableScenarios = getAvailableScenarios;
+      
+      // Initialize tooltips
+      initializeTooltips();
+      
+      // Add tooltips to UI elements
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add GST tooltip
+        const gstTooltipEl = document.getElementById('gstTooltip');
+        if (gstTooltipEl) {
+          gstTooltipEl.innerHTML = createTooltip('gst-threshold', 'right');
+        }
       });
     </script>
   </body>
