@@ -53,9 +53,35 @@ export class QuebecFSSQPPCalculator {
     return {
       amount: fss,
       tier,
-      rate: tier === 1 ? this.FSS_RATES.tier1.rate : (tier === 2 ? this.FSS_RATES.tier2.rate : this.FSS_RATES.tier3.rate),
-      ratePercentage: tier === 1 ? '1.00%' : (tier === 2 ? '1.65%' : '2.00%')
+      rate: this._getFSSRate(tier),
+      ratePercentage: this._getFSSRatePercentage(tier)
     };
+  }
+
+  /**
+   * Get FSS rate for a tier
+   * @private
+   */
+  static _getFSSRate(tier) {
+    switch (tier) {
+      case 1: return this.FSS_RATES.tier1.rate;
+      case 2: return this.FSS_RATES.tier2.rate;
+      case 3: return this.FSS_RATES.tier3.rate;
+      default: return this.FSS_RATES.tier1.rate;
+    }
+  }
+
+  /**
+   * Get FSS rate percentage string for a tier
+   * @private
+   */
+  static _getFSSRatePercentage(tier) {
+    switch (tier) {
+      case 1: return '1.00%';
+      case 2: return '1.65%';
+      case 3: return '2.00%';
+      default: return '1.00%';
+    }
   }
 
   /**

@@ -859,7 +859,7 @@ const translations = {
     'fss.payment': 'Paiement :',
     'fss.paymentInfo': 'La FSS et le RRQ sont payés avec votre déclaration d\'impôt du Québec TP-1. Date limite : 30 avril (ou 15 juin si travailleur autonome).',
     'fss.fssGuide': 'Guide FSS (Revenu Québec)',
-    'fss.qppRates': 'Taux RRQ (RRQ)',
+    'fss.qppRates': 'Taux RRQ',
     'fss.quebecInfo': 'Cotisations spécifiques au Québec : Celles-ci s\'appliquent en plus des impôts fédéraux et de l\'impôt du Québec.',
     'fss.incomeHint': 'Votre revenu total de travail autonome après les dépenses d\'entreprise',
   }
