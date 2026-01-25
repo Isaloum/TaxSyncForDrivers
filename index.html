@@ -4935,7 +4935,8 @@
         }
 
         // CRA REQUIREMENT: Receipt mandatory for expenses >$75
-        if (window.ReceiptManager && window.ReceiptManager.validateReceiptRequired(amount) && !file) {
+        const receiptRequired = window.ReceiptManager && window.ReceiptManager.validateReceiptRequired(amount);
+        if (receiptRequired && !file) {
           alert(
             `⚠️ CRA Requirement: Expenses over $75 require a receipt.\n\n` +
             `Amount: $${amount.toFixed(2)}\n\n` +

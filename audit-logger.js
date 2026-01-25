@@ -17,7 +17,7 @@ export class AuditLogger {
   static getOrCreateSessionId() {
     let sessionId = sessionStorage.getItem(SESSION_KEY);
     if (!sessionId) {
-      sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
       sessionStorage.setItem(SESSION_KEY, sessionId);
     }
     return sessionId;
@@ -92,7 +92,7 @@ ${exportData}`;
     logs.push(logEntry);
     
     // Keep only last MAX_LOG_ENTRIES to prevent storage bloat
-    if (logs.length > MAX_LOG_ENTRIES) {
+    while (logs.length > MAX_LOG_ENTRIES) {
       logs.shift();
     }
     

@@ -56,7 +56,7 @@ export class ReceiptManager {
     }
     
     const receipt = {
-      id: `receipt-${Date.now()}`,
+      id: `receipt-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       timestamp: new Date().toISOString(),
       expense: {
         date: expense.date,
