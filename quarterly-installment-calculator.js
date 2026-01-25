@@ -9,6 +9,9 @@
   const QuarterlyInstallmentCalculator = {
     THRESHOLD: 3000, // CRA minimum threshold
     PENALTY_RATE: 0.05, // 5% annual interest on late/underpayments
+    PROVINCIAL_TAX_RATE: 0.10, // Simplified 10% provincial tax rate
+    CPP_RATE: 0.1180, // 2026 CPP self-employed rate (both employer + employee portions)
+    CPP_MAX_2026: 7735, // 2026 maximum CPP contribution
 
     DEADLINES: {
       Q1: { month: 2, day: 15, label: 'March 15' },    // month 2 = March (0-indexed)
@@ -76,11 +79,11 @@
       // Federal tax (2026 rates)
       const federalTax = this.calculateFederalTax(income);
 
-      // Provincial tax (simplified - use average 10% rate)
-      const provincialTax = income * 0.10;
+      // Provincial tax (simplified - using average rate)
+      const provincialTax = income * this.PROVINCIAL_TAX_RATE;
 
       // CPP/QPP + EI (self-employed)
-      const cpp = Math.min(income * 0.1180, 7735); // 2026 max
+      const cpp = Math.min(income * this.CPP_RATE, this.CPP_MAX_2026);
 
       return federalTax + provincialTax + cpp;
     },
