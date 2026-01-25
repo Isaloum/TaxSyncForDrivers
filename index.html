@@ -3404,8 +3404,8 @@
         });
         
         // Update province dropdown with translated names
-        if (typeof updateProvinceDropdown === 'function') {
-          updateProvinceDropdown(l);
+        if (typeof window.updateProvinceDropdown === 'function') {
+          window.updateProvinceDropdown(l);
         }
         
         // Update HTML lang attribute for accessibility
@@ -5738,6 +5738,12 @@
         const select = document.getElementById('provinceSelect');
         if (!select) return;
         
+        // Check if province options function is available
+        if (!window.getProvinceOptions) {
+          console.error('Province options function not available');
+          return;
+        }
+        
         const currentValue = select.value || 'QC';
         const options = window.getProvinceOptions(language);
         
@@ -5755,6 +5761,9 @@
           select.appendChild(option);
         });
       }
+      
+      // Make function available globally
+      window.updateProvinceDropdown = updateProvinceDropdown;
     </script>
     
     <script type="module">
