@@ -408,6 +408,10 @@ const translations = {
     'gettingStarted.step3.description': 'Enter mileage and calculate deductions',
     'gettingStarted.step4.title': 'Generate Tax Forms',
     'gettingStarted.step4.description': 'Export T2125, TP-80-V, and CCA schedules',
+    'gettingStarted.step1.button': 'Get Started →',
+    'gettingStarted.step2.button': 'Upload →',
+    'gettingStarted.step3.button': 'Track →',
+    'gettingStarted.step4.button': 'Export →',
   },
   fr: {
     'albertaChildBenefit.amounts': '💡 Montants 2026 :',
@@ -816,5 +820,9 @@ const translations = {
     'gettingStarted.step3.description': 'Entrez le kilométrage et calculez les déductions',
     'gettingStarted.step4.title': 'Générez les formulaires fiscaux',
     'gettingStarted.step4.description': 'Exportez T2125, TP-80-V et annexes DPA',
+    'gettingStarted.step1.button': 'Commencer →',
+    'gettingStarted.step2.button': 'Téléverser →',
+    'gettingStarted.step3.button': 'Suivre →',
+    'gettingStarted.step4.button': 'Exporter →',
   }
 };
