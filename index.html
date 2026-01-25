@@ -2057,6 +2057,48 @@
           justify-content: space-between;
         }
       }
+
+      /* Quebec-specific FSS/QPP Calculator Styles */
+      .quebec-only {
+        border-left: 4px solid #003f87; /* Quebec flag blue */
+      }
+
+      .breakdown-section {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--bg);
+        border-radius: 8px;
+      }
+
+      .breakdown-grid {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .breakdown-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .breakdown-row:last-child {
+        border-bottom: none;
+      }
+
+      .total-row {
+        border-top: 2px solid var(--accent);
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .reference-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
     </style>
     
     <!-- PDF.js Library for PDF text extraction -->
@@ -2228,6 +2270,10 @@
         <button class="tab-btn" data-tab="donations">
           <span class="tab-icon">❤️</span
           ><span class="tab-label" data-i18n="tabs.donations">Charitable Donations</span>
+        </button>
+        <button class="tab-btn province-specific qc-only" data-tab="fssQppCalculator" style="display:none;">
+          <span class="tab-icon">🏥</span
+          ><span class="tab-label" data-i18n="tabs.fssQpp">FSS & QPP (QC)</span>
         </button>
         <button class="tab-btn province-specific on-only" data-tab="ontarioTrillium" style="display:none;">
           <span class="tab-icon">💰</span
@@ -3316,6 +3362,91 @@
           </div>
           <div class="btn-group">
             <button class="btn" onclick="calculateMedicalCredit()" data-i18n="medical.calculate">Calculate Credit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FSS/QPP Calculator (Quebec Only) -->
+      <section id="fssQppCalculator" class="tab-content province-specific qc-only quebec-only" style="display: none;">
+        <h2>🏥 <span data-i18n="fss.title">FSS & QPP Calculator (Quebec)</span></h2>
+        <p data-i18n="fss.subtitle">
+          Calculate your Health Services Fund (FSS) and Quebec Pension Plan (QPP) contributions as a self-employed worker.
+        </p>
+
+        <div class="alert alert-info" style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+          ℹ️ <strong data-i18n="fss.quebecInfo">Quebec-specific contributions:</strong> These apply in addition to federal taxes and Quebec income tax.
+        </div>
+
+        <fieldset>
+          <legend data-i18n="fss.income">Net Business Income ($)</legend>
+          <div class="form-group">
+            <label for="fssQppIncome">
+              <span data-i18n="fss.income">Net Business Income ($)</span>
+            </label>
+            <input
+              type="number"
+              id="fssQppIncome"
+              placeholder="65000"
+              min="0"
+              step="1000"
+            />
+            <small class="hint" data-i18n="fss.incomeHint">Your total self-employment income after business expenses</small>
+          </div>
+        </fieldset>
+
+        <div class="btn-group">
+          <button class="btn" onclick="calculateFSSQPP()" data-i18n="fss.calculate">
+            Calculate FSS & QPP
+          </button>
+        </div>
+
+        <div id="fssQppResults" class="result-box" style="display: none; margin-top: 2rem;">
+          <div class="result-title">
+            💰 <span data-i18n="fss.title">Your Quebec Contributions</span>
+          </div>
+
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4 data-i18n="fss.healthFund">FSS (Health Services Fund)</h4>
+              <div class="amount" id="fssAmount">$0</div>
+              <small id="fssRate">Rate: 0%</small>
+            </div>
+
+            <div class="method-card">
+              <h4 data-i18n="fss.qppBase">QPP Base</h4>
+              <div class="amount" id="qppBaseAmount">$0</div>
+              <small>12.80% contribution</small>
+            </div>
+
+            <div class="method-card" id="qppAdditionalCard" style="display: none;">
+              <h4 data-i18n="fss.qppAdditional">QPP Additional</h4>
+              <div class="amount" id="qppAdditionalAmount">$0</div>
+              <small>2.00% contribution</small>
+            </div>
+
+            <div class="method-card highlight">
+              <h4 data-i18n="fss.total">Total FSS + QPP</h4>
+              <div class="amount" id="fssQppTotal">$0</div>
+              <small id="effectiveRate" data-i18n="fss.effectiveRate">Effective rate: 0%</small>
+            </div>
+          </div>
+
+          <div class="breakdown-section" style="margin-top: 2rem; padding: 1.5rem; background: var(--bg); border-radius: 8px;">
+            <h4 data-i18n="fss.breakdown">Contribution Breakdown</h4>
+            <div class="breakdown-grid" id="fssQppBreakdown" style="display: grid; gap: 0.75rem; margin-top: 1rem;"></div>
+          </div>
+
+          <div class="alert alert-warning" style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
+            📅 <strong data-i18n="fss.payment">Payment:</strong> <span data-i18n="fss.paymentInfo">FSS and QPP are paid with your TP-1 Quebec income tax return. Deadline: April 30 (or June 15 if self-employed).</span>
+          </div>
+
+          <div class="reference-links" style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+            <a href="https://www.revenuquebec.ca/en/businesses/source-deductions-and-employer-contributions/paying-the-contribution-to-the-health-services-fund/" target="_blank" class="btn btn-secondary">
+              📖 <span data-i18n="fss.fssGuide">FSS Guide (Revenu Québec)</span>
+            </a>
+            <a href="https://www.rrq.gouv.qc.ca/en/programmes/regime_rentes/regime_chiffres/Pages/regime_chiffres.aspx" target="_blank" class="btn btn-secondary">
+              📖 <span data-i18n="fss.qppRates">QPP Rates (RRQ)</span>
+            </a>
           </div>
         </div>
       </section>
@@ -6386,6 +6517,93 @@
         document.getElementById('donationNetCost').textContent = '$' + result.netCost.toFixed(2);
       };
     </script>
+
+    <!-- FSS/QPP Calculator (Quebec) -->
+    <script type="module">
+      import { QuebecFSSQPPCalculator } from './quebec-fss-qpp-calculator.js';
+      
+      // Make calculator globally available
+      window.QuebecFSSQPPCalculator = QuebecFSSQPPCalculator;
+      
+      // FSS/QPP Calculator Integration
+      window.calculateFSSQPP = function() {
+        const income = parseFloat(document.getElementById('fssQppIncome').value) || 0;
+
+        if (income === 0) {
+          alert(translations[currentLang]['fss.errorNoIncome'] || 'Please enter your net business income');
+          return;
+        }
+
+        // Calculate FSS and QPP
+        const result = QuebecFSSQPPCalculator.calculate(income);
+
+        // Display results
+        document.getElementById('fssQppResults').style.display = 'block';
+
+        // FSS
+        document.getElementById('fssAmount').textContent = '$' + result.fss.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('fssRate').textContent = `Rate: ${result.fss.ratePercentage}`;
+
+        // QPP
+        document.getElementById('qppBaseAmount').textContent = '$' + result.qpp.baseContribution.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        const qppAdditionalCard = document.getElementById('qppAdditionalCard');
+        if (result.qpp.additionalContribution > 0) {
+          qppAdditionalCard.style.display = 'block';
+          document.getElementById('qppAdditionalAmount').textContent = '$' + result.qpp.additionalContribution.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        } else {
+          qppAdditionalCard.style.display = 'none';
+        }
+
+        // Total
+        document.getElementById('fssQppTotal').textContent = '$' + result.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('effectiveRate').textContent = `${translations[currentLang]['fss.effectiveRate'] || 'Effective rate'}: ${result.effectiveRate.toFixed(2)}%`;
+
+        // Breakdown
+        const breakdownHTML = `
+          <div class="breakdown-row">
+            <span>${translations[currentLang]['fss.netBusinessIncome'] || 'Net Business Income:'}</span>
+            <strong>$${income.toLocaleString()}</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>FSS (${result.fss.ratePercentage}):</span>
+            <strong>$${result.fss.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>QPP Base (12.80% on $${result.qpp.baseIncome.toLocaleString()}):</span>
+            <strong>$${result.qpp.baseContribution.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          </div>
+          ${result.qpp.additionalContribution > 0 ? `
+            <div class="breakdown-row">
+              <span>QPP Additional (2.00% on $${result.qpp.additionalIncome.toLocaleString()}):</span>
+              <strong>$${result.qpp.additionalContribution.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+            </div>
+          ` : ''}
+          ${result.qpp.maxReached ? `
+            <div class="breakdown-row" style="background: #fef3c7; padding: 0.75rem; border-radius: 4px;">
+              <span>⚠️ QPP maximum reached</span>
+              <strong>$${result.qpp.totalQPP.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+            </div>
+          ` : ''}
+          <div class="breakdown-row total-row">
+            <span><strong>${translations[currentLang]['fss.total'] || 'Total Contributions:'}</strong></span>
+            <strong>$${result.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          </div>
+        `;
+
+        document.getElementById('fssQppBreakdown').innerHTML = breakdownHTML;
+      };
+
+      // Show/hide Quebec-only sections based on province
+      window.updateQuebecSections = function() {
+        const province = document.getElementById('provinceSelect').value;
+        const quebecSections = document.querySelectorAll('.qc-only');
+        
+        quebecSections.forEach(section => {
+          section.style.display = province === 'QC' ? 'block' : 'none';
+        });
+      };
+    </script>
     
     <!-- Province Selector and Ontario Trillium Calculator -->
     <script>
@@ -6409,6 +6627,11 @@
               el.style.display = 'block';
             });
             
+            // Update Quebec sections (FSS/QPP)
+            if (window.updateQuebecSections) {
+              window.updateQuebecSections();
+            }
+            
             // If a province-specific tab is currently active, switch to vehicle tab
             const activeTab = document.querySelector('.tab-content.active');
             if (activeTab && activeTab.classList.contains('province-specific') && 
@@ -6416,6 +6639,11 @@
               document.querySelector('.tab-btn[data-tab="vehicle"]').click();
             }
           });
+          
+          // Trigger initial update on page load
+          if (window.updateQuebecSections) {
+            window.updateQuebecSections();
+          }
         }
         
         // Ontario Trillium calculator
@@ -6917,6 +7145,19 @@
         if (gstTooltipEl) {
           gstTooltipEl.innerHTML = createTooltip('gst-threshold', 'right');
         }
+      });
+    </script>
+    
+    <!-- Final initialization after all modules loaded -->
+    <script>
+      // Ensure Quebec-specific sections are visible when page loads with QC selected
+      window.addEventListener('DOMContentLoaded', function() {
+        // Small delay to ensure all modules are loaded
+        setTimeout(function() {
+          if (window.updateQuebecSections) {
+            window.updateQuebecSections();
+          }
+        }, 100);
       });
     </script>
   </body>
