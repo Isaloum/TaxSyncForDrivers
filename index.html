@@ -3214,7 +3214,7 @@
       </section>
 
       <!-- FSS/QPP Calculator (Quebec Only) -->
-      <section id="fssQppCalculator" class="tab-content quebec-only" style="display: none;">
+      <section id="fssQppCalculator" class="tab-content province-specific qc-only quebec-only" style="display: none;">
         <h2>🏥 <span data-i18n="fss.title">FSS & QPP Calculator (Quebec)</span></h2>
         <p data-i18n="fss.subtitle">
           Calculate your Health Services Fund (FSS) and Quebec Pension Plan (QPP) contributions as a self-employed worker.
@@ -6363,7 +6363,7 @@
       // Show/hide Quebec-only sections based on province
       window.updateQuebecSections = function() {
         const province = document.getElementById('provinceSelect').value;
-        const quebecSections = document.querySelectorAll('.quebec-only');
+        const quebecSections = document.querySelectorAll('.qc-only');
         
         quebecSections.forEach(section => {
           section.style.display = province === 'QC' ? 'block' : 'none';
@@ -6911,6 +6911,19 @@
         if (gstTooltipEl) {
           gstTooltipEl.innerHTML = createTooltip('gst-threshold', 'right');
         }
+      });
+    </script>
+    
+    <!-- Final initialization after all modules loaded -->
+    <script>
+      // Ensure Quebec-specific sections are visible when page loads with QC selected
+      window.addEventListener('DOMContentLoaded', function() {
+        // Small delay to ensure all modules are loaded
+        setTimeout(function() {
+          if (window.updateQuebecSections) {
+            window.updateQuebecSections();
+          }
+        }, 100);
       });
     </script>
   </body>
