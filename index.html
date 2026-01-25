@@ -1444,19 +1444,7 @@
           <span data-i18n="province.label">Votre province:</span>
         </label>
         <select id="provinceSelect" class="province-dropdown">
-          <option value="QC" data-i18n="province.qc">Québec</option>
-          <option value="ON" data-i18n="province.on">Ontario</option>
-          <option value="BC" data-i18n="province.bc">Colombie-Britannique</option>
-          <option value="AB" data-i18n="province.ab">Alberta</option>
-          <option value="MB" data-i18n="province.mb">Manitoba</option>
-          <option value="SK" data-i18n="province.sk">Saskatchewan</option>
-          <option value="NS" data-i18n="province.ns">Nouvelle-Écosse</option>
-          <option value="NB" data-i18n="province.nb">Nouveau-Brunswick</option>
-          <option value="PE" data-i18n="province.pe">Île-du-Prince-Édouard</option>
-          <option value="NL" data-i18n="province.nl">Terre-Neuve-et-Labrador</option>
-          <option value="YT" data-i18n="province.yt">Yukon</option>
-          <option value="NT" data-i18n="province.nt">Territoires du Nord-Ouest</option>
-          <option value="NU" data-i18n="province.nu">Nunavut</option>
+          <!-- Options populated dynamically by updateProvinceDropdown() -->
         </select>
         
         <span class="province-flag" id="provinceFlagIcon">🇨🇦</span>
@@ -3403,13 +3391,24 @@
       let currentLang = 'fr';
       function setLang(l) {
         currentLang = l;
+        
+        // Update language toggle buttons
         document
           .querySelectorAll('.lang-btn')
           .forEach((b) => b.classList.toggle('active', b.textContent.trim().toLowerCase() === l));
+        
+        // Update all data-i18n elements
         document.querySelectorAll('[data-i18n]').forEach((el) => {
           const k = el.getAttribute('data-i18n');
           if (translations[l] && translations[l][k]) el.textContent = translations[l][k];
         });
+        
+        // Update province dropdown with translated names
+        if (typeof window.updateProvinceDropdown === 'function') {
+          window.updateProvinceDropdown(l);
+        }
+        
+        // Update HTML lang attribute for accessibility
         document.documentElement.lang = l;
       }
       document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -5729,6 +5728,55 @@
                 : 'Alberta offers competitive tax rates.';
           });
         }
+      });
+    </script>
+    
+    <!-- Province Language Switching Integration -->
+    <script>
+      // Global function to update province dropdown with translated names
+      function updateProvinceDropdown(language) {
+        const select = document.getElementById('provinceSelect');
+        if (!select) return;
+        
+        // Check if province options function is available
+        if (!window.getProvinceOptions) {
+          console.error('Province options function not available');
+          return;
+        }
+        
+        const currentValue = select.value || 'QC';
+        const options = window.getProvinceOptions(language);
+        
+        // Clear existing options
+        select.innerHTML = '';
+        
+        // Add new options in selected language
+        options.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.code;
+          option.textContent = opt.name;
+          if (opt.code === currentValue) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+      }
+      
+      // Make function available globally
+      window.updateProvinceDropdown = updateProvinceDropdown;
+    </script>
+    
+    <script type="module">
+      import { getProvinceOptions, detectLanguage } from './province-language-fix.js';
+      
+      // Make available globally for onclick handlers and updateProvinceDropdown
+      window.getProvinceOptions = getProvinceOptions;
+      window.detectLanguage = detectLanguage;
+      
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        const browserLang = detectLanguage();
+        setLang(browserLang);
       });
     </script>
   </body>
