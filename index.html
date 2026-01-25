@@ -385,6 +385,99 @@
         font-weight: 800;
         font-family: 'SF Mono', Monaco, Consolas, monospace;
       }
+      .installment-schedule {
+        margin-top: 2rem;
+      }
+      .payment-grid {
+        display: grid;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+      .payment-row {
+        display: grid;
+        grid-template-columns: 80px 1fr 120px 120px;
+        align-items: center;
+        padding: 1rem;
+        background: var(--card);
+        border-radius: 8px;
+        border-left: 4px solid var(--accent);
+      }
+      .payment-row.overdue {
+        border-left-color: var(--danger);
+        background: rgba(239, 68, 68, 0.05);
+      }
+      .payment-row .payment-quarter {
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+      .payment-row .payment-date {
+        color: var(--muted);
+      }
+      .payment-row .payment-amount {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--accent);
+      }
+      .payment-status {
+        text-align: right;
+        font-size: 0.9rem;
+      }
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .summary-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        text-align: center;
+      }
+      .summary-card h5 {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      .summary-card .big-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        font-family: 'SF Mono', Monaco, Consolas, monospace;
+      }
+      .summary-card small {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .summary-card.highlight {
+        background: var(--accent-light);
+        border-color: var(--accent);
+      }
+      .results-section {
+        margin-top: 2rem;
+      }
+      .alert {
+        padding: 1rem;
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+      }
+      .alert-info {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid #3b82f6;
+        color: #1e40af;
+      }
+      .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--success);
+        color: #065f46;
+      }
+      .alert-warning {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid var(--warning);
+        color: #92400e;
+      }
       .savings-summary {
         background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
         color: #fff;
@@ -2112,6 +2205,10 @@
           <span class="tab-icon">📅</span
           ><span class="tab-label" data-i18n="tabs.quarterly">Acomptes trimestriels</span>
         </button>
+        <button class="tab-btn" data-tab="quarterlyInstallments">
+          <span class="tab-icon">💰</span
+          ><span class="tab-label" data-i18n="tabs.quarterlyInstallments">Acomptes CRA</span>
+        </button>
         <button class="tab-btn" data-tab="selfemploy">
           <span class="tab-icon">💼</span
           ><span class="tab-label" data-i18n="tabs.selfemploy">RRQ travailleur autonome</span>
@@ -2854,6 +2951,62 @@
           </div>
         </div>
       </section>
+
+      <!-- Quarterly Installment Calculator -->
+      <section id="quarterlyInstallments" class="tab-content">
+        <h2>📅 <span data-i18n="installment.title">Calculateur d'acomptes provisionnels trimestriels</span></h2>
+        <p class="card-subtitle" data-i18n="installment.subtitle">
+          L'ARC exige des paiements trimestriels si votre impôt à payer dépasse 3 000 $. Planifiez à l'avance pour éviter les pénalités.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="estimatedAnnualIncome" data-i18n="installment.estimatedIncome">
+              Revenu annuel estimé ($)
+            </label>
+            <input
+              type="number"
+              id="estimatedAnnualIncome"
+              placeholder="65000"
+              min="0"
+              step="1000"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="priorYearTax" data-i18n="installment.priorYearTax">
+              Impôt total de l'année précédente (Optionnel) ($)
+            </label>
+            <input
+              type="number"
+              id="priorYearTax"
+              placeholder="12000"
+              min="0"
+              step="100"
+            />
+          </div>
+        </div>
+
+        <button class="btn" onclick="calculateQuarterlyInstallments()" data-i18n="installment.calculate">
+          Calculer les acomptes
+        </button>
+
+        <div id="installmentResults" class="results-section" style="display: none;">
+          <div class="alert alert-info" id="installmentMessage"></div>
+
+          <div class="summary-cards" id="installmentSummary"></div>
+
+          <div class="installment-schedule" id="paymentSchedule"></div>
+
+          <div class="alert alert-warning">
+            ⚠️ <strong data-i18n="installment.warningImportant">Important:</strong> <span data-i18n="installment.warningText">Des intérêts s'appliquent aux acomptes en retard ou insuffisants.</span>
+            <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/sole-proprietorships-partnerships/report-business-income-expenses/paying-instalments.html" target="_blank" data-i18n="installment.learnMore">
+              En savoir plus sur les acomptes provisionnels de l'ARC →
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section id="selfemploy" class="tab-content">
         <h2>💼 <span data-i18n="selfemploy.title">Calculateur RRQ travailleur autonome</span></h2>
         <p data-i18n="selfemploy.description">
@@ -3981,6 +4134,7 @@
     </footer>
     <script src="translations.js"></script>
     <script src="driver-calculator.js"></script>
+    <script src="quarterly-installment-calculator.js"></script>
     <script type="module">
       import DocumentAutomation from './document-automation.js';
       window.DocumentAutomation = DocumentAutomation;
@@ -4455,6 +4609,87 @@
         document.getElementById('qppDeductible').textContent =
           '$' + r.deductiblePortion.toLocaleString();
         document.getElementById('qppNetCost').textContent = '$' + r.netCost.toLocaleString();
+      }
+
+      // Quarterly Installment Calculator Integration
+      function calculateQuarterlyInstallments() {
+        const estimatedIncome = parseFloat(document.getElementById('estimatedAnnualIncome').value) || 0;
+        const priorYearTax = parseFloat(document.getElementById('priorYearTax').value) || 0;
+        const province = document.getElementById('provinceSelect')?.value || 'QC';
+
+        if (estimatedIncome === 0) {
+          alert(translations[currentLang]['installment.errorNoIncome'] || 'Please enter your estimated annual income');
+          return;
+        }
+
+        // Calculate installments
+        const result = QuarterlyInstallmentCalculator.calculate({
+          estimatedIncome,
+          priorYearTax,
+          province
+        });
+
+        // Display results
+        const resultsDiv = document.getElementById('installmentResults');
+        resultsDiv.style.display = 'block';
+
+        // Show message
+        const messageDiv = document.getElementById('installmentMessage');
+        if (!result.required) {
+          messageDiv.className = 'alert alert-success';
+          messageDiv.innerHTML = `
+            <strong>✅ ${translations[currentLang]['installment.noInstallmentsRequired'] || 'No Installments Required'}</strong><br>
+            ${result.message}
+          `;
+          document.getElementById('installmentSummary').innerHTML = '';
+          document.getElementById('paymentSchedule').innerHTML = '';
+          return;
+        }
+
+        messageDiv.className = 'alert alert-info';
+        messageDiv.innerHTML = `
+          <strong>📋 ${translations[currentLang]['installment.installmentsRequired'] || 'Installments Required'}</strong><br>
+          ${result.method === 'prior-year' ? 'Based on prior year tax' : 'Based on current year estimate'}, 
+          you should pay quarterly installments.
+        `;
+
+        // Summary cards
+        document.getElementById('installmentSummary').innerHTML = `
+          <div class="summary-card">
+            <h5 data-i18n="installment.quarterlyPayment">${translations[currentLang]['installment.quarterlyPayment'] || 'Quarterly Payment'}</h5>
+            <div class="big-number">$${result.quarterlyAmount.toLocaleString()}</div>
+            <small data-i18n="installment.duePerYear">${translations[currentLang]['installment.duePerYear'] || 'Due 4 times per year'}</small>
+          </div>
+          <div class="summary-card">
+            <h5 data-i18n="installment.annualTotal">${translations[currentLang]['installment.annualTotal'] || 'Annual Total'}</h5>
+            <div class="big-number">$${result.annualTotal.toLocaleString()}</div>
+            <small data-i18n="installment.totalYearlyInstallments">${translations[currentLang]['installment.totalYearlyInstallments'] || 'Total yearly installments'}</small>
+          </div>
+          <div class="summary-card highlight">
+            <h5 data-i18n="installment.nextPayment">${translations[currentLang]['installment.nextPayment'] || 'Next Payment'}</h5>
+            <div class="big-number">${result.nextPayment?.label || 'N/A'}</div>
+            <small>$${result.quarterlyAmount.toLocaleString()} due</small>
+          </div>
+        `;
+
+        // Payment schedule
+        const scheduleHTML = result.schedule.map(payment => `
+          <div class="payment-row ${payment.status}">
+            <div class="payment-quarter">${payment.quarter}</div>
+            <div class="payment-date">${payment.label}, ${new Date().getFullYear()}</div>
+            <div class="payment-amount">$${payment.amount.toLocaleString()}</div>
+            <div class="payment-status">
+              ${payment.isPast ? '⚠️ ' + (translations[currentLang]['installment.overdue'] || 'Overdue') : '✅ ' + (translations[currentLang]['installment.upcoming'] || 'Upcoming')}
+            </div>
+          </div>
+        `).join('');
+
+        document.getElementById('paymentSchedule').innerHTML = `
+          <h3 data-i18n="installment.paymentSchedule">${translations[currentLang]['installment.paymentSchedule'] || 'Payment Schedule'}</h3>
+          <div class="payment-grid">
+            ${scheduleHTML}
+          </div>
+        `;
       }
 
       // Document Processing Functions
