@@ -201,7 +201,7 @@ class QuickStartGuide {
           </div>
           
           <div class="quick-start-footer">
-            <button class="btn-secondary" onclick="window.quickStartGuide.skip()">
+            <button class="btn-skip" onclick="window.quickStartGuide.skip()">
               ${this.lang === 'en' ? 'Skip for now' : 'Passer pour l\'instant'}
             </button>
             <div class="nav-buttons">
