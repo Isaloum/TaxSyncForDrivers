@@ -2376,10 +2376,6 @@
           <span class="tab-icon">🏠</span
           ><span class="tab-label" data-i18n="tabs.homeOffice">Bureau à domicile</span>
         </button>
-        <button class="tab-btn" data-tab="quarterly">
-          <span class="tab-icon">📅</span
-          ><span class="tab-label" data-i18n="tabs.quarterly">Acomptes trimestriels</span>
-        </button>
         <button class="tab-btn" data-tab="quarterlyInstallments">
           <span class="tab-icon">💰</span
           ><span class="tab-label" data-i18n="tabs.quarterlyInstallments">Acomptes CRA</span>
@@ -3165,61 +3161,6 @@
               <strong data-i18n="homeOffice.bestOption">💰 Meilleure option:</strong> <span id="bestMethod"></span>
               <br>
               <strong data-i18n="homeOffice.savings">Économie:</strong> <span id="savingsAmount"></span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section id="quarterly" class="tab-content">
-        <h2>📅 <span data-i18n="quarterly.title">Planificateur d'acomptes trimestriels</span></h2>
-        <p data-i18n="quarterly.description">
-          Planifiez vos paiements pour éviter les intérêts et pénalités.
-        </p>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="estimatedIncome" data-i18n="quarterly.estimatedIncome"
-              >Revenu net estimé (après dépenses)</label
-            ><input type="number" id="estimatedIncome" placeholder="ex: 50000" min="0" />
-          </div>
-        </div>
-        <div class="btn-group">
-          <button class="btn" onclick="calculateQuarterly()" data-i18n="quarterly.calculate">
-            Calculer mes acomptes
-          </button>
-        </div>
-        <div id="quarterlyResults" class="result-box" style="display: none">
-          <div class="result-title">
-            📊 <span data-i18n="quarterly.schedule">Calendrier de paiement</span>
-          </div>
-          <div class="payment-schedule">
-            <div class="payment-card">
-              <div class="payment-quarter">T1</div>
-              <div class="payment-date" data-i18n="quarterly.q1">15 mars</div>
-              <div class="payment-amount" id="q1Amount">$0</div>
-            </div>
-            <div class="payment-card">
-              <div class="payment-quarter">T2</div>
-              <div class="payment-date" data-i18n="quarterly.q2">15 juin</div>
-              <div class="payment-amount" id="q2Amount">$0</div>
-            </div>
-            <div class="payment-card">
-              <div class="payment-quarter">T3</div>
-              <div class="payment-date" data-i18n="quarterly.q3">15 septembre</div>
-              <div class="payment-amount" id="q3Amount">$0</div>
-            </div>
-            <div class="payment-card">
-              <div class="payment-quarter">T4</div>
-              <div class="payment-date" data-i18n="quarterly.q4">15 décembre</div>
-              <div class="payment-amount" id="q4Amount">$0</div>
-            </div>
-          </div>
-          <div class="result-grid" style="margin-top: 1.5rem">
-            <div class="result-item">
-              <div class="result-label" data-i18n="quarterly.weekly">Épargne hebdomadaire</div>
-              <div class="result-value positive" id="weeklyAmount">$0</div>
-            </div>
-            <div class="result-item">
-              <div class="result-label" data-i18n="quarterly.annual">Total annuel</div>
-              <div class="result-value" id="annualTotal">$0</div>
             </div>
           </div>
         </div>
