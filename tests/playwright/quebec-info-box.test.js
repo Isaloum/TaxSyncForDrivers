@@ -8,6 +8,9 @@ import { test, expect } from '@playwright/test';
  * This prevents regression of the issue where the info box appeared on all pages.
  */
 
+// Helper function to get the Quebec info box locator
+const getQuebecInfoBox = (page) => page.locator('text=Quebec-specific contributions:').first();
+
 test.describe('Quebec Info Box Visibility', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -29,8 +32,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(medicalSection).toBeVisible();
     
     // The Quebec info box should NOT be visible
-    const quebecInfoBox = page.locator('text=Quebec-specific contributions:').first();
-    await expect(quebecInfoBox).not.toBeVisible();
+    await expect(getQuebecInfoBox(page)).not.toBeVisible();
   });
 
   test('Quebec info box should NOT appear on Childcare page', async ({ page }) => {
@@ -43,8 +45,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(childcareSection).toBeVisible();
     
     // The Quebec info box should NOT be visible
-    const quebecInfoBox = page.locator('text=Quebec-specific contributions:').first();
-    await expect(quebecInfoBox).not.toBeVisible();
+    await expect(getQuebecInfoBox(page)).not.toBeVisible();
   });
 
   test('Quebec info box should NOT appear on Business Expenses page', async ({ page }) => {
@@ -57,8 +58,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(businessSection).toBeVisible();
     
     // The Quebec info box should NOT be visible
-    const quebecInfoBox = page.locator('text=Quebec-specific contributions:').first();
-    await expect(quebecInfoBox).not.toBeVisible();
+    await expect(getQuebecInfoBox(page)).not.toBeVisible();
   });
 
   test('Quebec info box should NOT appear on Charitable Donations page', async ({ page }) => {
@@ -71,8 +71,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(charitableSection).toBeVisible();
     
     // The Quebec info box should NOT be visible
-    const quebecInfoBox = page.locator('text=Quebec-specific contributions:').first();
-    await expect(quebecInfoBox).not.toBeVisible();
+    await expect(getQuebecInfoBox(page)).not.toBeVisible();
   });
 
   test('Quebec info box should NOT appear on Vehicle Expenses page', async ({ page }) => {
@@ -85,8 +84,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(vehicleSection).toBeVisible();
     
     // The Quebec info box should NOT be visible
-    const quebecInfoBox = page.locator('text=Quebec-specific contributions:').first();
-    await expect(quebecInfoBox).not.toBeVisible();
+    await expect(getQuebecInfoBox(page)).not.toBeVisible();
   });
 
   test('Quebec info box SHOULD appear on FSS & QPP Calculator page', async ({ page }) => {
@@ -99,11 +97,10 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(fssQppSection).toBeVisible();
     
     // The Quebec info box SHOULD be visible
-    const quebecInfoBox = page.locator('.alert.alert-info:has-text("Quebec-specific contributions:")');
-    await expect(quebecInfoBox).toBeVisible();
+    await expect(getQuebecInfoBox(page)).toBeVisible();
     
     // Verify the full text content
-    await expect(quebecInfoBox).toContainText('These apply in addition to federal taxes and Quebec income tax');
+    await expect(getQuebecInfoBox(page)).toContainText('These apply in addition to federal taxes and Quebec income tax');
   });
 
   test('Quebec info box should disappear when switching away from FSS & QPP page', async ({ page }) => {
@@ -116,8 +113,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(fssQppSection).toBeVisible();
     
     // Verify the info box is visible
-    const quebecInfoBox = page.locator('text=Quebec-specific contributions:').first();
-    await expect(quebecInfoBox).toBeVisible();
+    await expect(getQuebecInfoBox(page)).toBeVisible();
     
     // Now switch to another tab
     const medicalTab = page.locator('.tab-btn[data-tab="medical"]');
@@ -128,7 +124,7 @@ test.describe('Quebec Info Box Visibility', () => {
     await expect(medicalSection).toBeVisible();
     
     // The Quebec info box should no longer be visible
-    await expect(quebecInfoBox).not.toBeVisible();
+    await expect(getQuebecInfoBox(page)).not.toBeVisible();
   });
 
   test('FSS & QPP Calculator tab should be visible when Quebec is selected', async ({ page }) => {
