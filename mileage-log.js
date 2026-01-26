@@ -39,8 +39,17 @@ export class MileageLog {
 
     const distance = endOdometer - startOdometer;
 
+    // Generate unique ID using crypto API if available, fallback to timestamp
+    let id;
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      id = `trip-${crypto.randomUUID()}`;
+    } else {
+      // Fallback: Use timestamp with random suffix to reduce collision risk
+      id = `trip-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
+
     const newTrip = {
-      id: `trip-${Date.now()}`,
+      id,
       date: new Date(date).toISOString().split('T')[0],
       destination,
       purpose,
@@ -145,6 +154,18 @@ export class MileageLog {
     const trips = this.getTripsByDateRange(startDate, endDate);
     const summary = this.getPeriodSummary(startDate, endDate);
 
+    // Helper function to escape CSV values to prevent CSV injection
+    const escapeCSV = (value) => {
+      if (value == null) return '';
+      const str = String(value);
+      // If value contains comma, quote, newline, or starts with =, +, -, @, escape it
+      if (str.match(/[",\n\r]/) || str.match(/^[=+\-@]/)) {
+        // Escape quotes by doubling them and wrap in quotes
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
     // CSV Header
     const headers = [
       'Date',
@@ -158,38 +179,38 @@ export class MileageLog {
       'Notes',
     ];
 
-    // CSV Rows
+    // CSV Rows - properly escape all user input
     const rows = trips.map(trip => [
-      trip.date,
-      trip.destination,
-      trip.purpose,
-      trip.startOdometer,
-      trip.endOdometer,
-      trip.distance,
-      trip.isBusinessTrip ? 'Business' : 'Personal',
-      trip.clientName || '',
-      trip.notes || '',
-    ]);
+      escapeCSV(trip.date),
+      escapeCSV(trip.destination),
+      escapeCSV(trip.purpose),
+      escapeCSV(trip.startOdometer),
+      escapeCSV(trip.endOdometer),
+      escapeCSV(trip.distance),
+      escapeCSV(trip.isBusinessTrip ? 'Business' : 'Personal'),
+      escapeCSV(trip.clientName || ''),
+      escapeCSV(trip.notes || ''),
+    ].join(','));
 
     // Summary Footer
     const summaryRows = [
       [''],
       ['SUMMARY'],
-      ['Period', `${startDate} to ${endDate}`],
-      ['Total Business Kilometers', summary.businessKm],
-      ['Total Personal Kilometers', summary.personalKm],
-      ['Total Kilometers', summary.totalKm],
-      ['Business Use Percentage', `${summary.businessPercent}%`],
-      ['Total Trips', summary.tripCount],
-      ['Business Trips', summary.businessTripCount],
-      ['Personal Trips', summary.personalTripCount],
-    ];
+      ['Period', escapeCSV(`${startDate} to ${endDate}`)],
+      ['Total Business Kilometers', escapeCSV(summary.businessKm)],
+      ['Total Personal Kilometers', escapeCSV(summary.personalKm)],
+      ['Total Kilometers', escapeCSV(summary.totalKm)],
+      ['Business Use Percentage', escapeCSV(`${summary.businessPercent}%`)],
+      ['Total Trips', escapeCSV(summary.tripCount)],
+      ['Business Trips', escapeCSV(summary.businessTripCount)],
+      ['Personal Trips', escapeCSV(summary.personalTripCount)],
+    ].map(row => row.join(','));
 
     // Combine all rows
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
-      ...summaryRows.map(row => row.join(',')),
+      ...rows,
+      ...summaryRows,
     ].join('\n');
 
     return {
@@ -259,8 +280,30 @@ export class MileageLog {
    */
   loadTrips() {
     if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('taxsync_mileage_log');
-      return stored ? JSON.parse(stored) : [];
+      try {
+        const stored = localStorage.getItem('taxsync_mileage_log');
+        if (!stored) return [];
+        
+        const parsed = JSON.parse(stored);
+        
+        // Validate that parsed data is an array
+        if (!Array.isArray(parsed)) {
+          console.warn('Invalid mileage log data in localStorage, resetting');
+          return [];
+        }
+        
+        // Basic validation of trip objects
+        return parsed.filter(trip => {
+          return trip &&
+                 typeof trip === 'object' &&
+                 trip.id &&
+                 trip.date &&
+                 typeof trip.distance === 'number';
+        });
+      } catch (error) {
+        console.error('Failed to load mileage log from localStorage:', error);
+        return [];
+      }
     }
     return [];
   }
