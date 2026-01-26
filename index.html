@@ -4885,20 +4885,6 @@
       window.resetHomeOffice = resetHomeOffice;
       window.compareBothHomeOfficeMethods = compareBothHomeOfficeMethods;
 
-      function calculateQuarterly() {
-        const i = parseFloat(document.getElementById('estimatedIncome').value) || 0;
-        const b =
-          DriverCalculator.TAX_BRACKETS.find((x) => i <= x.max) || DriverCalculator.TAX_BRACKETS[5];
-        const t = i * b.rate;
-        const r = DriverCalculator.calculateQuarterlyInstallments(t, i);
-        document.getElementById('quarterlyResults').style.display = 'block';
-        ['q1', 'q2', 'q3', 'q4'].forEach(
-          (q) =>
-            (document.getElementById(q + 'Amount').textContent = '$' + r.quarterly.toLocaleString())
-        );
-        document.getElementById('weeklyAmount').textContent = '$' + r.weekly.toLocaleString();
-        document.getElementById('annualTotal').textContent = '$' + r.annualTax.toLocaleString();
-      }
       function calculateSelfEmploy() {
         const i = parseFloat(document.getElementById('selfEmployIncome').value) || 0;
         const r = DriverCalculator.calculateSelfEmploymentTax(i);
