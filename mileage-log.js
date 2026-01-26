@@ -5,6 +5,269 @@
  */
 
 /**
+ * Mileage Log Manager
+ * CRA-compliant trip tracking for vehicle expense deductions
+ */
+export class MileageLog {
+  constructor() {
+    this.trips = this.loadTrips();
+  }
+
+  /**
+   * Add a new trip
+   */
+  addTrip(trip) {
+    const {
+      date,
+      destination,
+      purpose,
+      startOdometer,
+      endOdometer,
+      isBusinessTrip = true,
+      clientName = '',
+      notes = '',
+    } = trip;
+
+    // Validation
+    if (!date || !destination || !purpose) {
+      throw new Error('Date, destination, and purpose are required');
+    }
+
+    if (endOdometer <= startOdometer) {
+      throw new Error('End odometer must be greater than start odometer');
+    }
+
+    const distance = endOdometer - startOdometer;
+
+    const newTrip = {
+      id: `trip-${Date.now()}`,
+      date: new Date(date).toISOString().split('T')[0],
+      destination,
+      purpose,
+      startOdometer,
+      endOdometer,
+      distance,
+      isBusinessTrip,
+      clientName,
+      notes,
+      createdAt: new Date().toISOString(),
+    };
+
+    this.trips.push(newTrip);
+    this.saveTrips();
+    return newTrip;
+  }
+
+  /**
+   * Get last odometer reading
+   */
+  getLastOdometerReading() {
+    if (this.trips.length === 0) return 0;
+
+    const sortedTrips = [...this.trips].sort((a, b) => 
+      new Date(b.date) - new Date(a.date)
+    );
+
+    return sortedTrips[0].endOdometer;
+  }
+
+  /**
+   * Get trips by date range
+   */
+  getTripsByDateRange(startDate, endDate) {
+    return this.trips.filter(trip => {
+      const tripDate = new Date(trip.date);
+      return tripDate >= new Date(startDate) && tripDate <= new Date(endDate);
+    });
+  }
+
+  /**
+   * Calculate daily summary
+   */
+  getDailySummary(date) {
+    const dayTrips = this.trips.filter(trip => trip.date === date);
+
+    const businessKm = dayTrips
+      .filter(t => t.isBusinessTrip)
+      .reduce((sum, t) => sum + t.distance, 0);
+
+    const personalKm = dayTrips
+      .filter(t => !t.isBusinessTrip)
+      .reduce((sum, t) => sum + t.distance, 0);
+
+    const totalKm = businessKm + personalKm;
+    const businessPercent = totalKm > 0 ? (businessKm / totalKm) * 100 : 0;
+
+    return {
+      date,
+      businessKm,
+      personalKm,
+      totalKm,
+      businessPercent: Math.round(businessPercent * 100) / 100,
+      tripCount: dayTrips.length,
+    };
+  }
+
+  /**
+   * Calculate period summary
+   */
+  getPeriodSummary(startDate, endDate) {
+    const periodTrips = this.getTripsByDateRange(startDate, endDate);
+
+    const businessKm = periodTrips
+      .filter(t => t.isBusinessTrip)
+      .reduce((sum, t) => sum + t.distance, 0);
+
+    const personalKm = periodTrips
+      .filter(t => !t.isBusinessTrip)
+      .reduce((sum, t) => sum + t.distance, 0);
+
+    const totalKm = businessKm + personalKm;
+    const businessPercent = totalKm > 0 ? (businessKm / totalKm) * 100 : 0;
+
+    return {
+      startDate,
+      endDate,
+      businessKm,
+      personalKm,
+      totalKm,
+      businessPercent: Math.round(businessPercent * 100) / 100,
+      tripCount: periodTrips.length,
+      businessTripCount: periodTrips.filter(t => t.isBusinessTrip).length,
+      personalTripCount: periodTrips.filter(t => !t.isBusinessTrip).length,
+    };
+  }
+
+  /**
+   * Export to CRA-compliant CSV
+   */
+  exportToCSV(startDate, endDate) {
+    const trips = this.getTripsByDateRange(startDate, endDate);
+    const summary = this.getPeriodSummary(startDate, endDate);
+
+    // CSV Header
+    const headers = [
+      'Date',
+      'Destination',
+      'Purpose',
+      'Start Odometer (km)',
+      'End Odometer (km)',
+      'Distance (km)',
+      'Business/Personal',
+      'Client/Passenger',
+      'Notes',
+    ];
+
+    // CSV Rows
+    const rows = trips.map(trip => [
+      trip.date,
+      trip.destination,
+      trip.purpose,
+      trip.startOdometer,
+      trip.endOdometer,
+      trip.distance,
+      trip.isBusinessTrip ? 'Business' : 'Personal',
+      trip.clientName || '',
+      trip.notes || '',
+    ]);
+
+    // Summary Footer
+    const summaryRows = [
+      [''],
+      ['SUMMARY'],
+      ['Period', `${startDate} to ${endDate}`],
+      ['Total Business Kilometers', summary.businessKm],
+      ['Total Personal Kilometers', summary.personalKm],
+      ['Total Kilometers', summary.totalKm],
+      ['Business Use Percentage', `${summary.businessPercent}%`],
+      ['Total Trips', summary.tripCount],
+      ['Business Trips', summary.businessTripCount],
+      ['Personal Trips', summary.personalTripCount],
+    ];
+
+    // Combine all rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
+      ...summaryRows.map(row => row.join(',')),
+    ].join('\n');
+
+    return {
+      csvContent,
+      filename: `Mileage_Log_${startDate}_to_${endDate}.csv`,
+      summary,
+    };
+  }
+
+  /**
+   * Check if business use exceeds CRA threshold
+   */
+  checkBusinessUseThreshold(startDate, endDate) {
+    const summary = this.getPeriodSummary(startDate, endDate);
+    const CRA_THRESHOLD = 90;
+
+    if (summary.businessPercent > CRA_THRESHOLD) {
+      return {
+        exceedsThreshold: true,
+        businessPercent: summary.businessPercent,
+        threshold: CRA_THRESHOLD,
+        warning: `Your business use (${summary.businessPercent}%) exceeds the ${CRA_THRESHOLD}% CRA scrutiny threshold. Consider logging more personal trips or be prepared to provide detailed documentation for audit.`,
+      };
+    }
+
+    return {
+      exceedsThreshold: false,
+      businessPercent: summary.businessPercent,
+      threshold: CRA_THRESHOLD,
+    };
+  }
+
+  /**
+   * Update trip
+   */
+  updateTrip(tripId, updates) {
+    const index = this.trips.findIndex(t => t.id === tripId);
+    if (index === -1) throw new Error('Trip not found');
+
+    this.trips[index] = { ...this.trips[index], ...updates };
+    this.saveTrips();
+    return this.trips[index];
+  }
+
+  /**
+   * Delete trip
+   */
+  deleteTrip(tripId) {
+    const index = this.trips.findIndex(t => t.id === tripId);
+    if (index === -1) throw new Error('Trip not found');
+
+    this.trips.splice(index, 1);
+    this.saveTrips();
+  }
+
+  /**
+   * Save trips to localStorage
+   */
+  saveTrips() {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('taxsync_mileage_log', JSON.stringify(this.trips));
+    }
+  }
+
+  /**
+   * Load trips from localStorage
+   */
+  loadTrips() {
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('taxsync_mileage_log');
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  }
+}
+
+// Legacy functional API for backward compatibility
+/**
  * Creates a new trip entry
  * @param {string} date - Trip date in YYYY-MM-DD format
  * @param {number} startKm - Starting odometer reading

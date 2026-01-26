@@ -2099,6 +2099,135 @@
         margin-top: 1.5rem;
         flex-wrap: wrap;
       }
+
+      /* Mileage Log Styles */
+      .trip-log-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .trip-log-table th,
+      .trip-log-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .trip-log-table th {
+        background: var(--accent-light);
+        color: var(--accent-dark);
+        font-weight: 600;
+      }
+
+      .badge-business {
+        background: #10b981;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+      }
+
+      .badge-personal {
+        background: #6b7280;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+      }
+
+      .log-filters {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .log-filters label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .highlight-warning {
+        border: 2px solid var(--warning);
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      .highlight {
+        border: 2px solid var(--success);
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .summary-card {
+        background: var(--card);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      .summary-card h5 {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .summary-card .big-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin: 0.5rem 0;
+      }
+
+      .summary-card small {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .btn-icon {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0.25rem;
+      }
+
+      .btn-icon:hover {
+        opacity: 0.7;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .trip-log-section {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--border);
+      }
+
+      .form-section {
+        background: var(--bg);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        margin-bottom: 2rem;
+      }
     </style>
     
     <!-- PDF.js Library for PDF text extraction -->
@@ -2238,6 +2367,10 @@
         <button class="tab-btn" data-tab="documentAI">
           <span class="tab-icon">🤖</span
           ><span class="tab-label" data-i18n="tabs.documentAI">Document AI</span>
+        </button>
+        <button class="tab-btn" data-tab="mileageLog">
+          <span class="tab-icon">🚗</span
+          ><span class="tab-label" data-i18n="tabs.mileageLog">Mileage Log</span>
         </button>
         <button class="tab-btn" data-tab="homeOffice">
           <span class="tab-icon">🏠</span
@@ -2744,6 +2877,100 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+      <!-- Mileage Log Section -->
+      <section id="mileageLog" class="tab-content">
+        <h2>🚗 <span data-i18n="mileageLog.title">Mileage Log</span></h2>
+        <p class="card-subtitle" data-i18n="mileageLog.subtitle">
+          Track your trips for CRA-compliant vehicle expense documentation
+        </p>
+
+        <!-- Add Trip Form -->
+        <div class="form-section">
+          <h3 data-i18n="mileageLog.addTrip">Add Trip</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tripDate" data-i18n="mileageLog.date">Date:</label>
+              <input type="date" id="tripDate" />
+            </div>
+
+            <div class="form-group">
+              <label for="tripDestination" data-i18n="mileageLog.destination">Destination:</label>
+              <input type="text" id="tripDestination" placeholder="Montreal Airport" list="frequentDestinations" />
+              <datalist id="frequentDestinations"></datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="tripPurpose" data-i18n="mileageLog.purpose">Purpose:</label>
+              <select id="tripPurpose">
+                <option value="">Select purpose...</option>
+                <option value="Rideshare Pickup">Rideshare Pickup</option>
+                <option value="Delivery">Delivery</option>
+                <option value="Vehicle Maintenance">Vehicle Maintenance</option>
+                <option value="Fuel Purchase">Fuel Purchase</option>
+                <option value="Business Meeting">Business Meeting</option>
+                <option value="Personal">Personal</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="tripStartOdometer" data-i18n="mileageLog.startOdometer">Start Odometer (km):</label>
+              <input type="number" id="tripStartOdometer" min="0" step="1" />
+            </div>
+
+            <div class="form-group">
+              <label for="tripEndOdometer" data-i18n="mileageLog.endOdometer">End Odometer (km):</label>
+              <input type="number" id="tripEndOdometer" min="0" step="1" />
+            </div>
+
+            <div class="form-group">
+              <label for="tripDistance" data-i18n="mileageLog.distance">Distance (km):</label>
+              <input type="number" id="tripDistance" readonly style="background: #f0f0f0;" />
+            </div>
+
+            <div class="form-group">
+              <label for="tripType" data-i18n="mileageLog.tripType">Trip Type:</label>
+              <select id="tripType">
+                <option value="business">Business</option>
+                <option value="personal">Personal</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="tripClient" data-i18n="mileageLog.clientPassenger">Client/Passenger (optional):</label>
+              <input type="text" id="tripClient" placeholder="Optional" />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="tripNotes" data-i18n="mileageLog.notes">Notes (optional):</label>
+              <textarea id="tripNotes" rows="2" placeholder="Additional details..."></textarea>
+            </div>
+          </div>
+
+          <button class="btn" onclick="addMileageTrip()" data-i18n="mileageLog.addTripButton">Add Trip</button>
+        </div>
+
+        <!-- Trip Log Display -->
+        <div class="trip-log-section">
+          <h3 data-i18n="mileageLog.tripLogTitle">Trip Log</h3>
+
+          <div class="log-filters">
+            <label>
+              <span data-i18n="mileageLog.from">From:</span> <input type="date" id="logStartDate" />
+            </label>
+            <label>
+              <span data-i18n="mileageLog.to">To:</span> <input type="date" id="logEndDate" />
+            </label>
+            <button class="btn-secondary" onclick="filterMileageLog()" data-i18n="mileageLog.filter">Filter</button>
+            <button class="btn-secondary" onclick="exportMileageLog()" data-i18n="mileageLog.exportCSV">📊 Export CSV</button>
+          </div>
+
+          <div id="mileageLogTable"></div>
+
+          <div id="mileageLogSummary" class="summary-cards"></div>
         </div>
       </section>
       <section id="homeOffice" class="tab-content">
@@ -7146,6 +7373,194 @@
           gstTooltipEl.innerHTML = createTooltip('gst-threshold', 'right');
         }
       });
+    </script>
+    
+    <!-- Mileage Log Integration -->
+    <script type="module">
+      import { MileageLog } from './mileage-log.js';
+      
+      // Initialize Mileage Log
+      let mileageLog;
+
+      document.addEventListener('DOMContentLoaded', () => {
+        mileageLog = new MileageLog();
+        
+        // Set default dates
+        const tripDateField = document.getElementById('tripDate');
+        if (tripDateField) {
+          tripDateField.valueAsDate = new Date();
+        }
+        
+        const today = new Date();
+        const yearStart = new Date(today.getFullYear(), 0, 1);
+        const logStartField = document.getElementById('logStartDate');
+        const logEndField = document.getElementById('logEndDate');
+        if (logStartField) logStartField.valueAsDate = yearStart;
+        if (logEndField) logEndField.valueAsDate = today;
+        
+        // Pre-fill start odometer
+        const startOdometerField = document.getElementById('tripStartOdometer');
+        if (startOdometerField) {
+          startOdometerField.value = mileageLog.getLastOdometerReading();
+        }
+        
+        // Auto-calculate distance
+        const endOdometerField = document.getElementById('tripEndOdometer');
+        if (endOdometerField) {
+          endOdometerField.addEventListener('input', calculateTripDistance);
+        }
+        if (startOdometerField) {
+          startOdometerField.addEventListener('input', calculateTripDistance);
+        }
+        
+        // Load trip log
+        if (typeof filterMileageLog === 'function') {
+          filterMileageLog();
+        }
+      });
+
+      function calculateTripDistance() {
+        const start = parseInt(document.getElementById('tripStartOdometer').value) || 0;
+        const end = parseInt(document.getElementById('tripEndOdometer').value) || 0;
+        const distance = Math.max(0, end - start);
+        document.getElementById('tripDistance').value = distance;
+      }
+
+      window.addMileageTrip = function() {
+        const trip = {
+          date: document.getElementById('tripDate').value,
+          destination: document.getElementById('tripDestination').value,
+          purpose: document.getElementById('tripPurpose').value,
+          startOdometer: parseInt(document.getElementById('tripStartOdometer').value),
+          endOdometer: parseInt(document.getElementById('tripEndOdometer').value),
+          isBusinessTrip: document.getElementById('tripType').value === 'business',
+          clientName: document.getElementById('tripClient').value,
+          notes: document.getElementById('tripNotes').value,
+        };
+
+        try {
+          mileageLog.addTrip(trip);
+          
+          // Clear form
+          document.getElementById('tripDestination').value = '';
+          document.getElementById('tripPurpose').value = '';
+          document.getElementById('tripStartOdometer').value = mileageLog.getLastOdometerReading();
+          document.getElementById('tripEndOdometer').value = '';
+          document.getElementById('tripDistance').value = '';
+          document.getElementById('tripClient').value = '';
+          document.getElementById('tripNotes').value = '';
+          
+          // Refresh log
+          filterMileageLog();
+          
+          alert('✅ Trip added successfully!');
+        } catch (error) {
+          alert('❌ Error: ' + error.message);
+        }
+      };
+
+      window.filterMileageLog = function() {
+        const startDate = document.getElementById('logStartDate').value;
+        const endDate = document.getElementById('logEndDate').value;
+        
+        const trips = mileageLog.getTripsByDateRange(startDate, endDate);
+        const summary = mileageLog.getPeriodSummary(startDate, endDate);
+        const threshold = mileageLog.checkBusinessUseThreshold(startDate, endDate);
+        
+        // Display trips table
+        const tableHTML = `
+          <table class="trip-log-table">
+            <thead>
+              <tr>
+                <th data-i18n="mileageLog.date">Date</th>
+                <th data-i18n="mileageLog.destination">Destination</th>
+                <th data-i18n="mileageLog.purpose">Purpose</th>
+                <th>Start (km)</th>
+                <th>End (km)</th>
+                <th data-i18n="mileageLog.distance">Distance</th>
+                <th>Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${trips.map(trip => `
+                <tr>
+                  <td>${trip.date}</td>
+                  <td>${trip.destination}</td>
+                  <td>${trip.purpose}</td>
+                  <td>${trip.startOdometer.toLocaleString()}</td>
+                  <td>${trip.endOdometer.toLocaleString()}</td>
+                  <td>${trip.distance.toLocaleString()} km</td>
+                  <td><span class="badge ${trip.isBusinessTrip ? 'badge-business' : 'badge-personal'}">${trip.isBusinessTrip ? 'Business' : 'Personal'}</span></td>
+                  <td>
+                    <button class="btn-icon" onclick="deleteTrip('${trip.id}')">🗑️</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        
+        const tableContainer = document.getElementById('mileageLogTable');
+        if (tableContainer) {
+          tableContainer.innerHTML = trips.length > 0 ? tableHTML : '<p>No trips found for this period.</p>';
+        }
+        
+        // Display summary
+        const summaryHTML = `
+          <div class="summary-card">
+            <h5 data-i18n="mileageLog.businessKm">Business Kilometers</h5>
+            <div class="big-number">${summary.businessKm.toLocaleString()} km</div>
+            <small>${summary.businessTripCount} trips</small>
+          </div>
+          <div class="summary-card">
+            <h5 data-i18n="mileageLog.personalKm">Personal Kilometers</h5>
+            <div class="big-number">${summary.personalKm.toLocaleString()} km</div>
+            <small>${summary.personalTripCount} trips</small>
+          </div>
+          <div class="summary-card ${threshold.exceedsThreshold ? 'highlight-warning' : 'highlight'}">
+            <h5 data-i18n="mileageLog.businessUse">Business Use %</h5>
+            <div class="big-number">${summary.businessPercent}%</div>
+            <small>${threshold.exceedsThreshold ? '⚠️ Exceeds CRA threshold' : '✅ Within CRA guidelines'}</small>
+          </div>
+        `;
+        
+        const summaryContainer = document.getElementById('mileageLogSummary');
+        if (summaryContainer) {
+          summaryContainer.innerHTML = summaryHTML;
+        }
+        
+        // Show warning if needed
+        if (threshold.exceedsThreshold) {
+          console.warn(threshold.warning);
+        }
+      };
+
+      window.exportMileageLog = function() {
+        const startDate = document.getElementById('logStartDate').value;
+        const endDate = document.getElementById('logEndDate').value;
+        
+        const { csvContent, filename } = mileageLog.exportToCSV(startDate, endDate);
+        
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        
+        alert('✅ Mileage log exported successfully!');
+      };
+
+      window.deleteTrip = function(tripId) {
+        if (confirm('Are you sure you want to delete this trip?')) {
+          mileageLog.deleteTrip(tripId);
+          filterMileageLog();
+        }
+      };
+
+      // Make mileageLog available globally
+      window.mileageLog = mileageLog;
     </script>
     
     <!-- Final initialization after all modules loaded -->
