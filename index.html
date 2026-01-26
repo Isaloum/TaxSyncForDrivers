@@ -4656,6 +4656,11 @@
           document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
           btn.classList.add('active');
           document.getElementById(t).classList.add('active');
+          
+          // Update Quebec-specific section visibility after tab switch
+          if (window.updateQuebecSections) {
+            window.updateQuebecSections();
+          }
         });
       });
       document.getElementById('showDetailed').addEventListener('change', function () {
@@ -6754,7 +6759,22 @@
         const quebecSections = document.querySelectorAll('.qc-only');
         
         quebecSections.forEach(section => {
-          section.style.display = province === 'QC' ? 'block' : 'none';
+          // For tab-content sections, only show if Quebec is selected AND the tab is active
+          if (section.classList.contains('tab-content')) {
+            if (province === 'QC') {
+              // Only show if this tab is currently active
+              if (section.classList.contains('active')) {
+                section.style.display = 'block';
+              } else {
+                section.style.display = 'none';
+              }
+            } else {
+              section.style.display = 'none';
+            }
+          } else {
+            // For non-tab elements (like navigation buttons), show/hide based on province only
+            section.style.display = province === 'QC' ? 'block' : 'none';
+          }
         });
       };
     </script>
@@ -6778,7 +6798,16 @@
             // Show sections for selected province
             const provinceClass = selectedProvince.toLowerCase() + '-only';
             document.querySelectorAll('.' + provinceClass).forEach(el => {
-              el.style.display = 'block';
+              // For tab-content sections, only show if they are active
+              if (el.classList.contains('tab-content')) {
+                if (el.classList.contains('active')) {
+                  el.style.display = 'block';
+                }
+                // If not active, leave it hidden (display: none already set above)
+              } else {
+                // For non-tab elements (like navigation buttons), show immediately
+                el.style.display = 'block';
+              }
             });
             
             // Update Quebec sections (FSS/QPP)
