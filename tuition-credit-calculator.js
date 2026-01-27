@@ -49,10 +49,10 @@ export function calculateTuitionCredit(tuitionFees, province = 'QC', options = {
     tuitionFees = 0;
   }
   if (typeof carryForwardAmount !== 'number' || carryForwardAmount < 0) {
-    options.carryForwardAmount = 0;
+    carryForwardAmount = 0;
   }
   if (typeof taxOwing !== 'number' || taxOwing < 0) {
-    options.taxOwing = 0;
+    taxOwing = 0;
   }
 
   // Calculate federal credit
@@ -110,7 +110,7 @@ export function calculateTuitionCredit(tuitionFees, province = 'QC', options = {
     federalCredit: Math.round(federalCredit * 100) / 100,
     provincialCredit: Math.round(provincialCredit * 100) / 100,
     currentYearCredit: Math.round(currentYearCredit * 100) / 100,
-    carryForwardUsed: Math.round((carryForwardAmount - Math.max(0, carryForwardAmount - taxOwing)) * 100) / 100,
+    carryForwardUsed: Math.round(Math.min(carryForwardAmount, taxOwing) * 100) / 100,
     totalAvailableCredit: Math.round(totalAvailableCredit * 100) / 100,
     creditUsedByStudent: Math.round(creditUsedByStudent * 100) / 100,
     transferredCredit: Math.round(transferredCredit * 100) / 100,
