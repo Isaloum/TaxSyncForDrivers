@@ -3,7 +3,10 @@
  * Helps users understand features with realistic examples
  */
 
-const SAMPLE_SCENARIOS = {
+/**
+ * Driver-specific scenarios with vehicle data
+ */
+const DRIVER_SCENARIOS = {
   'fulltime-uber-qc': {
     id: 'fulltime-uber-qc',
     name: {
@@ -148,8 +151,13 @@ const SAMPLE_SCENARIOS = {
       { platform: 'Lyft', period: 'Q2 2025', gross: 4800, tips: 340, fees: 1200 },
       { platform: 'Taxi', period: 'Q2 2025', gross: 7900, tips: 680, fees: 790 }
     ]
-  },
-  
+  }
+};
+
+/**
+ * Non-driver scenarios (employees, students, retirees)
+ */
+const OTHER_SCENARIOS = {
   'student-parttime-qc': {
     id: 'student-parttime-qc',
     name: {
@@ -259,7 +267,15 @@ const SAMPLE_SCENARIOS = {
       { type: 'homeOffice', amount: 2400, description: 'Home office expenses (200 sq ft)' },
       { type: 'professionalFees', amount: 850, description: 'CPA membership, industry certifications' },
     ]
-  },
+  }
+};
+
+/**
+ * All scenarios combined (driver + other)
+ */
+const SAMPLE_SCENARIOS = {
+  ...DRIVER_SCENARIOS,
+  ...OTHER_SCENARIOS
 };
 
 /**
@@ -369,13 +385,15 @@ function loadSampleScenario(scenarioId, language = 'fr') {
  * @returns {Array} Array of scenario metadata
  */
 function getAvailableScenarios(language = 'fr') {
-  return Object.values(SAMPLE_SCENARIOS).map(scenario => ({
-    id: scenario.id,
-    name: scenario.name[language],
-    description: scenario.description[language],
-    province: scenario.profile.province,
-    driverType: scenario.profile.driverType
-  }));
+  return Object.values(SAMPLE_SCENARIOS)
+    .filter(scenario => scenario.profile.driverType) // Only include driver scenarios
+    .map(scenario => ({
+      id: scenario.id,
+      name: scenario.name[language],
+      description: scenario.description[language],
+      province: scenario.profile.province,
+      driverType: scenario.profile.driverType
+    }));
 }
 
 // Initialize and export
@@ -385,4 +403,4 @@ if (typeof window !== 'undefined') {
   window.SAMPLE_SCENARIOS = SAMPLE_SCENARIOS;
 }
 
-export { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS };
+export { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS, DRIVER_SCENARIOS, OTHER_SCENARIOS };
