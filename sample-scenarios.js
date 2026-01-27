@@ -1,9 +1,13 @@
 /**
- * Sample Scenarios - Pre-built driver scenarios for TaxSyncForDrivers
- * Helps users understand features with realistic examples
+ * Sample Scenarios - Pre-built tax scenarios for TaxSyncForDrivers
+ * Includes driver scenarios (with vehicle data) and other taxpayer scenarios
+ * (employees, students, retirees)
  */
 
-const SAMPLE_SCENARIOS = {
+/**
+ * Driver-specific scenarios with vehicle data
+ */
+const DRIVER_SCENARIOS = {
   'fulltime-uber-qc': {
     id: 'fulltime-uber-qc',
     name: {
@@ -148,8 +152,13 @@ const SAMPLE_SCENARIOS = {
       { platform: 'Lyft', period: 'Q2 2025', gross: 4800, tips: 340, fees: 1200 },
       { platform: 'Taxi', period: 'Q2 2025', gross: 7900, tips: 680, fees: 790 }
     ]
-  },
-  
+  }
+};
+
+/**
+ * Non-driver scenarios (employees, students, retirees)
+ */
+const OTHER_SCENARIOS = {
   'student-parttime-qc': {
     id: 'student-parttime-qc',
     name: {
@@ -259,7 +268,15 @@ const SAMPLE_SCENARIOS = {
       { type: 'homeOffice', amount: 2400, description: 'Home office expenses (200 sq ft)' },
       { type: 'professionalFees', amount: 850, description: 'CPA membership, industry certifications' },
     ]
-  },
+  }
+};
+
+/**
+ * All scenarios combined (driver + other)
+ */
+const SAMPLE_SCENARIOS = {
+  ...DRIVER_SCENARIOS,
+  ...OTHER_SCENARIOS
 };
 
 /**
@@ -333,18 +350,35 @@ function loadSampleScenario(scenarioId, language = 'fr') {
       ? `\nSample income loaded (${scenario.income.length} periods):\n\n`
       : `\nRevenus d'exemple chargés (${scenario.income.length} périodes):\n\n`;
     
-    const totalGross = scenario.income.reduce((sum, inc) => sum + inc.gross, 0);
-    const totalTips = scenario.income.reduce((sum, inc) => sum + inc.tips, 0);
-    const totalFees = scenario.income.reduce((sum, inc) => sum + inc.fees, 0);
+    // Check if this is a driver scenario (has platform property) or other scenario
+    const isDriverScenario = scenario.income[0].platform !== undefined;
     
-    incomeSummary += scenario.income.map(inc =>
-      `${inc.platform} (${inc.period}): $${inc.gross.toLocaleString()} gross, $${inc.tips.toLocaleString()} tips, -$${inc.fees.toLocaleString()} fees`
-    ).join('\n');
-    
-    incomeSummary += `\n\nTotal Gross: $${totalGross.toLocaleString()}`;
-    incomeSummary += `\nTotal Tips: $${totalTips.toLocaleString()}`;
-    incomeSummary += `\nTotal Fees: -$${totalFees.toLocaleString()}`;
-    incomeSummary += `\nNet Income: $${(totalGross + totalTips - totalFees).toLocaleString()}`;
+    if (isDriverScenario) {
+      const totalGross = scenario.income.reduce((sum, inc) => sum + (inc.gross || 0), 0);
+      const totalTips = scenario.income.reduce((sum, inc) => sum + (inc.tips || 0), 0);
+      const totalFees = scenario.income.reduce((sum, inc) => sum + (inc.fees || 0), 0);
+      
+      incomeSummary += scenario.income.map(inc =>
+        `${inc.platform} (${inc.period}): $${inc.gross.toLocaleString()} gross, $${inc.tips.toLocaleString()} tips, -$${inc.fees.toLocaleString()} fees`
+      ).join('\n');
+      
+      incomeSummary += `\n\nTotal Gross: $${totalGross.toLocaleString()}`;
+      incomeSummary += `\nTotal Tips: $${totalTips.toLocaleString()}`;
+      incomeSummary += `\nTotal Fees: -$${totalFees.toLocaleString()}`;
+      incomeSummary += `\nNet Income: $${(totalGross + totalTips - totalFees).toLocaleString()}`;
+    } else {
+      // Non-driver scenario (employee, student, retiree)
+      incomeSummary += scenario.income.map(inc => {
+        if (inc.type === 'T4') {
+          return `${inc.employer}: $${inc.gross.toLocaleString()} (T4)`;
+        } else if (inc.type === 'T4A' && inc.pension) {
+          return `${inc.payer}: $${inc.pension.toLocaleString()} (Pension)`;
+        } else if (inc.type === 'T4A' && inc.feesForServices) {
+          return `${inc.payer}: $${inc.feesForServices.toLocaleString()} (Consulting)`;
+        }
+        return JSON.stringify(inc);
+      }).join('\n');
+    }
     
     console.log(incomeSummary);
   }
@@ -364,18 +398,21 @@ function loadSampleScenario(scenarioId, language = 'fr') {
 }
 
 /**
- * Get list of available scenarios
+ * Get list of available driver scenarios
+ * Filters to return only scenarios with driverType property (excludes employees, students, etc.)
  * @param {string} language - Current language ('en' or 'fr')
- * @returns {Array} Array of scenario metadata
+ * @returns {Array} Array of driver scenario metadata
  */
 function getAvailableScenarios(language = 'fr') {
-  return Object.values(SAMPLE_SCENARIOS).map(scenario => ({
-    id: scenario.id,
-    name: scenario.name[language],
-    description: scenario.description[language],
-    province: scenario.profile.province,
-    driverType: scenario.profile.driverType
-  }));
+  return Object.values(SAMPLE_SCENARIOS)
+    .filter(scenario => scenario.profile.driverType) // Only include driver scenarios
+    .map(scenario => ({
+      id: scenario.id,
+      name: scenario.name[language],
+      description: scenario.description[language],
+      province: scenario.profile.province,
+      driverType: scenario.profile.driverType
+    }));
 }
 
 // Initialize and export
@@ -385,4 +422,4 @@ if (typeof window !== 'undefined') {
   window.SAMPLE_SCENARIOS = SAMPLE_SCENARIOS;
 }
 
-export { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS };
+export { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS, DRIVER_SCENARIOS, OTHER_SCENARIOS };

@@ -7,7 +7,7 @@ import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { QuickStartGuide, GUIDE_STEPS } from '../quick-start-guide.js';
 import { createTooltip, TAX_TOOLTIPS } from '../tooltip-helper.js';
-import { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS } from '../sample-scenarios.js';
+import { loadSampleScenario, getAvailableScenarios, DRIVER_SCENARIOS } from '../sample-scenarios.js';
 
 describe('Quick Start Guide Module - Comprehensive Tests', () => {
   
@@ -233,18 +233,18 @@ describe('Quick Start Guide Module - Comprehensive Tests', () => {
   describe('Sample Scenarios', () => {
     
     it('should have exactly 3 predefined scenarios', () => {
-      const scenarioKeys = Object.keys(SAMPLE_SCENARIOS);
+      const scenarioKeys = Object.keys(DRIVER_SCENARIOS);
       assert.strictEqual(scenarioKeys.length, 3);
     });
     
     it('should have required scenario IDs', () => {
-      assert.ok(SAMPLE_SCENARIOS['fulltime-uber-qc'], 'Should have fulltime Uber Quebec scenario');
-      assert.ok(SAMPLE_SCENARIOS['parttime-lyft-on'], 'Should have parttime Lyft Ontario scenario');
-      assert.ok(SAMPLE_SCENARIOS['multiplatform-taxi-ab'], 'Should have multiplatform Alberta scenario');
+      assert.ok(DRIVER_SCENARIOS['fulltime-uber-qc'], 'Should have fulltime Uber Quebec scenario');
+      assert.ok(DRIVER_SCENARIOS['parttime-lyft-on'], 'Should have parttime Lyft Ontario scenario');
+      assert.ok(DRIVER_SCENARIOS['multiplatform-taxi-ab'], 'Should have multiplatform Alberta scenario');
     });
     
     it('should have all required properties for each scenario', () => {
-      Object.values(SAMPLE_SCENARIOS).forEach(scenario => {
+      Object.values(DRIVER_SCENARIOS).forEach(scenario => {
         assert.ok(scenario.id, 'Scenario should have id');
         assert.ok(scenario.name, 'Scenario should have name');
         assert.ok(scenario.name.en, 'Scenario name should have English translation');
@@ -258,7 +258,7 @@ describe('Quick Start Guide Module - Comprehensive Tests', () => {
     });
     
     it('should have valid profile data', () => {
-      Object.values(SAMPLE_SCENARIOS).forEach(scenario => {
+      Object.values(DRIVER_SCENARIOS).forEach(scenario => {
         assert.ok(scenario.profile.province, 'Profile should have province');
         assert.ok(scenario.profile.driverType, 'Profile should have driver type');
         assert.ok(scenario.profile.annualIncome > 0, 'Profile should have annual income');
@@ -266,7 +266,7 @@ describe('Quick Start Guide Module - Comprehensive Tests', () => {
     });
     
     it('should have valid vehicle data', () => {
-      Object.values(SAMPLE_SCENARIOS).forEach(scenario => {
+      Object.values(DRIVER_SCENARIOS).forEach(scenario => {
         const vehicle = scenario.vehicle;
         assert.ok(vehicle.cost > 0, 'Vehicle should have cost');
         assert.ok(vehicle.year >= 2020, 'Vehicle year should be recent');
@@ -278,7 +278,7 @@ describe('Quick Start Guide Module - Comprehensive Tests', () => {
     });
     
     it('should have valid expense entries', () => {
-      Object.values(SAMPLE_SCENARIOS).forEach(scenario => {
+      Object.values(DRIVER_SCENARIOS).forEach(scenario => {
         assert.ok(scenario.expenses.length > 0, 'Should have at least one expense');
         scenario.expenses.forEach(expense => {
           assert.ok(expense.date, 'Expense should have date');
@@ -291,7 +291,7 @@ describe('Quick Start Guide Module - Comprehensive Tests', () => {
     });
     
     it('should have valid income entries', () => {
-      Object.values(SAMPLE_SCENARIOS).forEach(scenario => {
+      Object.values(DRIVER_SCENARIOS).forEach(scenario => {
         assert.ok(scenario.income.length > 0, 'Should have at least one income entry');
         scenario.income.forEach(income => {
           assert.ok(income.platform, 'Income should have platform');
@@ -304,14 +304,14 @@ describe('Quick Start Guide Module - Comprehensive Tests', () => {
     });
     
     it('should calculate correct business kilometers', () => {
-      const scenario = SAMPLE_SCENARIOS['fulltime-uber-qc'];
+      const scenario = DRIVER_SCENARIOS['fulltime-uber-qc'];
       const totalKm = scenario.vehicle.odometer.businessKm + scenario.vehicle.odometer.personalKm;
       const expectedEnd = scenario.vehicle.odometer.start + totalKm;
       assert.strictEqual(scenario.vehicle.odometer.end, expectedEnd);
     });
     
     it('should have expenses that align with receipt requirements', () => {
-      Object.values(SAMPLE_SCENARIOS).forEach(scenario => {
+      Object.values(DRIVER_SCENARIOS).forEach(scenario => {
         scenario.expenses.forEach(expense => {
           // Expenses over $75 should have receipts
           if (expense.amount > 75) {
