@@ -6784,11 +6784,15 @@
       // Province selection handler
       let selectedProvince = 'QC'; // Default to Quebec
       
-      document.addEventListener('DOMContentLoaded', function() {
+      // Province selector - execute immediately (DOM already loaded at this point in the file)
+      (function() {
         const provinceSelect = document.getElementById('provinceSelect');
         if (provinceSelect) {
           provinceSelect.addEventListener('change', function(e) {
             selectedProvince = e.target.value;
+            
+            // Update body data attribute for CSS-based visibility control
+            document.body.setAttribute('data-province', selectedProvince);
             
             // Hide all province-specific sections and tabs
             document.querySelectorAll('.province-specific').forEach(el => {
@@ -6828,6 +6832,10 @@
             window.updateQuebecSections();
           }
         }
+      })();  // End of province selector IIFE
+      
+      // Other page features that need DOMContentLoaded
+      document.addEventListener('DOMContentLoaded', function() {
         
         // Ontario Trillium calculator
         const calculateBtn = document.getElementById('calculateOntarioTrilliumBtn');
@@ -7248,7 +7256,8 @@
                 : 'Alberta offers competitive tax rates.';
           });
         }
-      });
+      }
+      }); // Close all nested blocks and the DOMContentLoaded
     </script>
     
     <!-- Province Language Switching Integration -->
