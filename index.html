@@ -1434,6 +1434,16 @@
         display: none; /* Shown when AB province selected */
       }
       
+      /* Profile-specific visibility classes */
+      .driver-only,
+      .employee-only,
+      .self-employed-only,
+      .mixed-only,
+      .student-only,
+      .retiree-only {
+        display: none;
+      }
+      
       /* Ontario Trillium specific styles */
       .info-banner {
         background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
@@ -2344,6 +2354,21 @@
         <span class="province-flag" id="provinceFlagIcon">🇨🇦</span>
       </div>
       
+      <!-- Profile Selector -->
+      <div class="province-selector-bar" style="margin-top: 1rem;">
+        <label for="profileSelect">
+          <span data-i18n="profile.label">Profile:</span>
+        </label>
+        <select id="profileSelect" class="province-dropdown">
+          <option value="driver" data-i18n="profile.driver">🚗 Rideshare/Taxi Driver</option>
+          <option value="employee" data-i18n="profile.employee">👔 Employee (T4 income)</option>
+          <option value="selfEmployed" data-i18n="profile.selfEmployed">💼 Self-Employed (Other)</option>
+          <option value="mixed" data-i18n="profile.mixed">🔀 Mixed Income (Employee + Side Hustle)</option>
+          <option value="student" data-i18n="profile.student">🎓 Student</option>
+          <option value="retiree" data-i18n="profile.retiree">🏡 Retiree (Pension income)</option>
+        </select>
+      </div>
+      
       <!-- GST/HST Registration Warning Banner -->
       <div id="gstHstWarning" class="alert alert-warning" style="display:none; margin: 1rem 0; padding: 1.5rem; background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 12px;">
         <h4 style="margin-top: 0; color: #856404;">
@@ -2399,6 +2424,10 @@
         <button class="tab-btn" data-tab="donations">
           <span class="tab-icon">❤️</span
           ><span class="tab-label" data-i18n="tabs.donations">Charitable Donations</span>
+        </button>
+        <button class="tab-btn student-only" data-tab="tuition" style="display:none;">
+          <span class="tab-icon">🎓</span
+          ><span class="tab-label" data-i18n="tabs.tuition">Tuition Credits</span>
         </button>
         <button class="tab-btn province-specific qc-only" data-tab="fssQppCalculator" style="display:none;">
           <span class="tab-icon">🏥</span
@@ -3802,6 +3831,95 @@
           </div>
         </div>
       </section>
+
+      <!-- Tuition Credits Section -->
+      <section id="tuition" class="tab-content student-only">
+        <h2>🎓 <span data-i18n="tuition.title">Tuition Tax Credit</span></h2>
+        <p data-i18n="tuition.description">
+          Calculate your tuition tax credits. Federal: 15% credit. Provincial rates vary by province.
+        </p>
+
+        <!-- Tuition Input Form -->
+        <fieldset>
+          <legend data-i18n="tuition.tuitionInfo">Tuition Information</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tuitionFees" data-i18n="tuition.fees">Tuition Fees ($)</label>
+              <input type="number" id="tuitionFees" placeholder="5000.00" min="0" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="tuition.studentStatus">Student Status:</label>
+              <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                  <input type="radio" name="studentStatus" value="fullTime" checked />
+                  <span data-i18n="tuition.isFullTime">Full-time</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                  <input type="radio" name="studentStatus" value="partTime" />
+                  <span data-i18n="tuition.isPartTime">Part-time</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tuitionCarryForward" data-i18n="tuition.carryForward">Carryforward from Previous Years ($)</label>
+              <input type="number" id="tuitionCarryForward" placeholder="0.00" min="0" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label for="tuitionTaxOwing" data-i18n="tuition.taxOwing">Tax Owing ($)</label>
+              <input type="number" id="tuitionTaxOwing" placeholder="0.00" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+              <input type="checkbox" id="tuitionTransfer" />
+              <span data-i18n="tuition.transferToFamily">Transfer unused portion to family member</span>
+            </label>
+          </div>
+          <div class="btn-group">
+            <button class="btn" onclick="calculateTuitionCredit()" data-i18n="tuition.calculate">Calculate Credit</button>
+          </div>
+        </fieldset>
+
+        <!-- Credit Calculation Results -->
+        <div id="tuitionResults" class="result-box" style="margin-top: 2rem; display: none;">
+          <div class="result-title">
+            💰 <span data-i18n="tuition.creditTitle">Tuition Tax Credit</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4 data-i18n="tuition.federalCredit">Federal Credit (15%)</h4>
+              <div class="amount" id="tuitionFederalCredit">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="tuition.provincialCredit">Provincial Credit</h4>
+              <div class="amount" id="tuitionProvincialCredit">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="tuition.totalCredit">Total Credit</h4>
+              <div class="amount" id="tuitionTotalCredit">$0.00</div>
+            </div>
+          </div>
+          <div class="result-grid" style="margin-top: 1rem;">
+            <div class="result-item">
+              <div class="result-label" data-i18n="tuition.creditUsedByStudent">Credit Used by Student</div>
+              <div class="result-value" id="tuitionCreditUsed">$0.00</div>
+            </div>
+            <div class="result-item" id="tuitionTransferContainer" style="display: none;">
+              <div class="result-label" data-i18n="tuition.transferredCredit">Transferred to Family</div>
+              <div class="result-value" id="tuitionTransferredCredit">$0.00</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="tuition.newCarryForward">New Carryforward</div>
+              <div class="result-value" id="tuitionNewCarryForward">$0.00</div>
+            </div>
+          </div>
+          <div class="alert alert-info" style="margin-top: 1rem;">
+            <p id="tuitionProvincialNote"></p>
+          </div>
+        </div>
+      </section>
       
       <!-- Ontario Trillium Benefit Calculator -->
       <section id="ontarioTrillium" class="tab-content province-specific on-only" style="display:none;">
@@ -4660,6 +4778,11 @@
           // Update Quebec-specific section visibility after tab switch
           if (window.updateQuebecSections) {
             window.updateQuebecSections();
+          }
+          
+          // Update profile-specific section visibility after tab switch
+          if (window.updateProfileSections) {
+            window.updateProfileSections();
           }
         });
       });
@@ -6677,6 +6800,55 @@
       };
     </script>
 
+    <!-- Tuition Credit Calculator -->
+    <script type="module">
+      import { calculateTuitionCredit, getProvincialTuitionInfo } from './tuition-credit-calculator.js';
+
+      window.calculateTuitionCredit = function() {
+        const tuitionFees = parseFloat(document.getElementById('tuitionFees').value) || 0;
+        const carryForwardAmount = parseFloat(document.getElementById('tuitionCarryForward').value) || 0;
+        const taxOwing = parseFloat(document.getElementById('tuitionTaxOwing').value) || 0;
+        const isFullTime = document.querySelector('input[name="studentStatus"]:checked').value === 'fullTime';
+        const transferToFamily = document.getElementById('tuitionTransfer').checked;
+        const province = document.getElementById('provinceSelect').value;
+
+        if (tuitionFees <= 0) {
+          alert('Please enter a valid tuition amount.');
+          return;
+        }
+
+        const result = calculateTuitionCredit(tuitionFees, province, {
+          isFullTime,
+          carryForwardAmount,
+          transferToFamily,
+          taxOwing
+        });
+
+        // Display results
+        document.getElementById('tuitionFederalCredit').textContent = '$' + result.federalCredit.toFixed(2);
+        document.getElementById('tuitionProvincialCredit').textContent = '$' + result.provincialCredit.toFixed(2);
+        document.getElementById('tuitionTotalCredit').textContent = '$' + result.currentYearCredit.toFixed(2);
+        document.getElementById('tuitionCreditUsed').textContent = '$' + result.creditUsedByStudent.toFixed(2);
+        document.getElementById('tuitionNewCarryForward').textContent = '$' + result.newCarryForward.toFixed(2);
+        
+        // Show/hide transfer section
+        const transferContainer = document.getElementById('tuitionTransferContainer');
+        if (transferToFamily && result.transferredCredit > 0) {
+          transferContainer.style.display = 'block';
+          document.getElementById('tuitionTransferredCredit').textContent = '$' + result.transferredCredit.toFixed(2);
+        } else {
+          transferContainer.style.display = 'none';
+        }
+
+        // Show provincial note
+        const provincialInfo = getProvincialTuitionInfo(province);
+        document.getElementById('tuitionProvincialNote').textContent = provincialInfo.description;
+
+        // Show results box
+        document.getElementById('tuitionResults').style.display = 'block';
+      };
+    </script>
+
     <!-- FSS/QPP Calculator (Quebec) -->
     <script type="module">
       import { QuebecFSSQPPCalculator } from './quebec-fss-qpp-calculator.js';
@@ -6783,6 +6955,37 @@
     <script>
       // Province selection handler
       let selectedProvince = 'QC'; // Default to Quebec
+      let selectedProfile = 'driver'; // Default profile
+      
+      // Profile selector handler
+      function updateProfileSections() {
+        const profile = selectedProfile;
+        
+        // Hide all profile-specific sections and tabs
+        document.querySelectorAll('.driver-only, .employee-only, .self-employed-only, .mixed-only, .student-only, .retiree-only').forEach(el => {
+          el.style.display = 'none';
+        });
+        
+        // Show sections for selected profile
+        const profileClass = profile.replace(/([A-Z])/g, '-$1').toLowerCase() + '-only';
+        document.querySelectorAll('.' + profileClass).forEach(el => {
+          // For tab-content sections, only show if they are active
+          if (el.classList.contains('tab-content')) {
+            if (el.classList.contains('active')) {
+              el.style.display = 'block';
+            }
+          } else {
+            // For non-tab elements (like navigation buttons), show immediately
+            el.style.display = 'block';
+          }
+        });
+        
+        // Save to localStorage
+        localStorage.setItem('selectedProfile', profile);
+      }
+      
+      // Make updateProfileSections available globally
+      window.updateProfileSections = updateProfileSections;
       
       document.addEventListener('DOMContentLoaded', function() {
         const provinceSelect = document.getElementById('provinceSelect');
@@ -6827,6 +7030,33 @@
           if (window.updateQuebecSections) {
             window.updateQuebecSections();
           }
+        }
+        
+        // Profile selector handler
+        const profileSelect = document.getElementById('profileSelect');
+        if (profileSelect) {
+          // Load saved profile from localStorage
+          const savedProfile = localStorage.getItem('selectedProfile');
+          if (savedProfile) {
+            selectedProfile = savedProfile;
+            profileSelect.value = savedProfile;
+          }
+          
+          profileSelect.addEventListener('change', function(e) {
+            selectedProfile = e.target.value;
+            updateProfileSections();
+            
+            // If a profile-specific tab is currently active but not visible for new profile, switch to vehicle tab
+            const activeTab = document.querySelector('.tab-content.active');
+            const profileClass = selectedProfile.replace(/([A-Z])/g, '-$1').toLowerCase() + '-only';
+            if (activeTab && activeTab.classList.contains('student-only') && 
+                !activeTab.classList.contains(profileClass)) {
+              document.querySelector('.tab-btn[data-tab="vehicle"]').click();
+            }
+          });
+          
+          // Trigger initial update on page load
+          updateProfileSections();
         }
         
         // Ontario Trillium calculator
