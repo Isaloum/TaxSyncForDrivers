@@ -7,6 +7,7 @@ export const DOCUMENT_TYPES = {
   T5: 'T5',
   T3: 'T3',
   T5008: 'T5008',
+  T2202: 'T2202',
   RL1: 'RL-1',
   RL2: 'RL-2',
   UBER_SUMMARY: 'UBER_SUMMARY',
@@ -125,6 +126,32 @@ export const T5008_PATTERNS = {
   accountNumber: /(?:Account|Compte)[:\s#]*(\d{4,12})/i,
   
   year: /(?:Tax Year|Année)[:\s]*(\d{4})/i,
+};
+
+// T2202 Pattern Extractors (Tuition and Enrolment Certificate)
+export const T2202_PATTERNS = {
+  // Tuition fees - Box A (or common variations)
+  tuitionFees: /(?:Box|Case)\s+A[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  tuitionFeesAlt: /(?:Tuition|Frais de scolarité|Eligible tuition fees)[:\s]*(?:CA)?\$?\s*([0-9,]+\.?\d{0,2})/i,
+  
+  // Full-time months - Box B
+  fullTimeMonths: /(?:Box|Case)\s+B[:\s]*(\d{1,2})/i,
+  fullTimeMonthsAlt: /(?:Full-time|Temps plein).*?months?[:\s]*(\d{1,2})/i,
+  
+  // Part-time months - Box C
+  partTimeMonths: /(?:Box|Case)\s+C[:\s]*(\d{1,2})/i,
+  partTimeMonthsAlt: /(?:Part-time|Temps partiel).*?months?[:\s]*(\d{1,2})/i,
+  
+  // Student information
+  studentName: /(?:Student|Étudiant|Student name|Nom de l'étudiant)[:\s]*([A-Za-z\s'-]+?)(?:\n|SIN|Program|Address)/i,
+  studentSIN: /(?:SIN|NAS|Social Insurance)[:\s]*(\d{3}[\s-]?\d{3}[\s-]?\d{3})/i,
+  
+  // Institution information
+  institutionName: /(?:Educational institution|Établissement d'enseignement|Institution|University|College|Université|Collège)[:\s]*([A-Za-z0-9\s&.,'-]+?)(?:\n|Address|Box|Program)/i,
+  programName: /(?:Program|Programme|Field of study|Domaine)[:\s]*([A-Za-z\s&.,'-]+?)(?:\n|Address|Box)/i,
+  
+  // Tax year
+  year: /(?:Tax Year|Année d'imposition|Year|Année)[:\s]*(\d{4})/i,
 };
 
 // T4A Pattern Extractors (Contractor/Freelancer Income)
@@ -514,6 +541,9 @@ export function extractFields(text, docType) {
     case DOCUMENT_TYPES.T5008:
       patterns = T5008_PATTERNS;
       break;
+    case DOCUMENT_TYPES.T2202:
+      patterns = T2202_PATTERNS;
+      break;
     case DOCUMENT_TYPES.RL1:
       patterns = RL1_PATTERNS;
       break;
@@ -632,6 +662,11 @@ export function classifyDocument(text, filename = '') {
     T5008: {
       keywords: ['t5008', 'securities transactions', 'proceeds', 'disposition', 'cost base', 'box 20', 'box 21'],
       patterns: [/T5008/i, /Securities\s+Transactions?/i, /Box\s+(?:20|21)/i, /Proceeds.*Disposition/i],
+      confidence: 0,
+    },
+    T2202: {
+      keywords: ['t2202', 'tuition', 'enrolment certificate', 'educational institution', 'eligible tuition fees', 'full-time months', 'part-time months', 'student', 'university', 'college'],
+      patterns: [/T2202/i, /Tuition.*Enrolment/i, /Educational\s+Institution/i, /Eligible\s+tuition\s+fees/i, /Full-time\s+months/i],
       confidence: 0,
     },
     RL1: {
@@ -776,6 +811,11 @@ export function classifyDocumentWithConfidence(text, filename = '') {
     T5008: {
       keywords: ['t5008', 'securities transactions', 'proceeds', 'disposition', 'cost base', 'box 20', 'box 21'],
       patterns: [/T5008/i, /Securities\s+Transactions?/i, /Box\s+(?:20|21)/i, /Proceeds.*Disposition/i],
+      confidence: 0,
+    },
+    T2202: {
+      keywords: ['t2202', 'tuition', 'enrolment certificate', 'educational institution', 'eligible tuition fees', 'full-time months', 'part-time months', 'student', 'university', 'college'],
+      patterns: [/T2202/i, /Tuition.*Enrolment/i, /Educational\s+Institution/i, /Eligible\s+tuition\s+fees/i, /Full-time\s+months/i],
       confidence: 0,
     },
     RL1: {

@@ -1,9 +1,13 @@
 /**
- * Sample Scenarios - Pre-built driver scenarios for TaxSyncForDrivers
- * Helps users understand features with realistic examples
+ * Sample Scenarios - Pre-built tax scenarios for TaxSyncForDrivers
+ * Includes driver scenarios (with vehicle data) and other taxpayer scenarios
+ * (employees, students, retirees)
  */
 
-const SAMPLE_SCENARIOS = {
+/**
+ * Driver-specific scenarios with vehicle data
+ */
+const DRIVER_SCENARIOS = {
   'fulltime-uber-qc': {
     id: 'fulltime-uber-qc',
     name: {
@@ -152,6 +156,130 @@ const SAMPLE_SCENARIOS = {
 };
 
 /**
+ * Non-driver scenarios (employees, students, retirees)
+ */
+const OTHER_SCENARIOS = {
+  'student-parttime-qc': {
+    id: 'student-parttime-qc',
+    name: {
+      en: 'Part-Time Student (Quebec)',
+      fr: 'Étudiant temps partiel (Québec)'
+    },
+    description: {
+      en: 'University student in Montreal with part-time job and tuition credits',
+      fr: 'Étudiant universitaire à Montréal avec emploi à temps partiel et crédits de scolarité'
+    },
+    profile: {
+      province: 'QC',
+      userType: 'student',
+      annualIncome: 18000,
+      tuitionFees: 7500,
+      isFullTimeStudent: false,
+    },
+    income: [
+      { type: 'T4', employer: 'Tim Hortons', gross: 18000, incomeTax: 800, cpp: 920, ei: 290 }
+    ],
+    deductions: [
+      { type: 'tuition', amount: 7500, description: 'University of Montreal - Fall/Winter 2025' },
+      { type: 'studentLoanInterest', amount: 450, description: 'Student loan interest paid' },
+    ]
+  },
+
+  'employee-t4-on': {
+    id: 'employee-t4-on',
+    name: {
+      en: 'Employee with RRSP (Ontario)',
+      fr: 'Employé avec REER (Ontario)'
+    },
+    description: {
+      en: 'Office worker in Toronto with T4 income, RRSP, and charitable donations',
+      fr: 'Travailleur de bureau à Toronto avec revenu T4, REER et dons de charité'
+    },
+    profile: {
+      province: 'ON',
+      userType: 'employee',
+      annualIncome: 75000,
+    },
+    income: [
+      { type: 'T4', employer: 'TechCorp Inc.', gross: 75000, incomeTax: 12500, cpp: 3867, ei: 953 }
+    ],
+    deductions: [
+      { type: 'rrsp', amount: 13500, description: 'RRSP contribution (18% limit)' },
+      { type: 'charitableDonations', amount: 2000, description: 'United Way, Red Cross' },
+      { type: 'unionDues', amount: 850, description: 'Professional association dues' },
+    ]
+  },
+
+  'retiree-pension-bc': {
+    id: 'retiree-pension-bc',
+    name: {
+      en: 'Retiree with Pension (BC)',
+      fr: 'Retraité avec pension (CB)'
+    },
+    description: {
+      en: 'Retired couple in Victoria with pension income and medical expenses',
+      fr: 'Couple retraité à Victoria avec revenu de pension et frais médicaux'
+    },
+    profile: {
+      province: 'BC',
+      userType: 'retiree',
+      annualIncome: 52000,
+      age: 68,
+      isMarried: true,
+    },
+    income: [
+      { type: 'T4A', payer: 'Federal Pension', pension: 28000, incomeTax: 3200 },
+      { type: 'T4A', payer: 'CPP', pension: 14000, incomeTax: 0 },
+      { type: 'T4A', payer: 'Old Age Security', pension: 10000, incomeTax: 0 },
+    ],
+    deductions: [
+      { type: 'medicalExpenses', amount: 8500, description: 'Prescription drugs, dental, physiotherapy' },
+      { type: 'pensionIncomeSplitting', amount: 14000, description: 'Split eligible pension with spouse' },
+      { type: 'ageAmount', eligible: true, description: 'Age 65+ credit' },
+    ]
+  },
+
+  'mixed-income-ab': {
+    id: 'mixed-income-ab',
+    name: {
+      en: 'Mixed Income (Alberta)',
+      fr: 'Revenus mixtes (Alberta)'
+    },
+    description: {
+      en: 'Calgary worker with full-time job plus freelance consulting',
+      fr: 'Travailleur de Calgary avec emploi à temps plein et consultation indépendante'
+    },
+    profile: {
+      province: 'AB',
+      userType: 'mixed',
+      annualIncome: 95000,
+    },
+    income: [
+      { type: 'T4', employer: 'Energy Corp', gross: 70000, incomeTax: 14000, cpp: 3867, ei: 953 },
+      { type: 'T4A', payer: 'Consulting Clients', feesForServices: 25000, incomeTax: 0 },
+    ],
+    expenses: [
+      { date: '2025-01-15', amount: 850, vendor: 'Office Depot', category: 'office-supplies', receipt: true },
+      { date: '2025-02-01', amount: 120, vendor: 'Telus', category: 'phone', receipt: true },
+      { date: '2025-02-15', amount: 200, vendor: 'Professional Development', category: 'training', receipt: true },
+      { date: '2025-03-10', amount: 450, vendor: 'Home Office Furniture', category: 'equipment', receipt: true },
+    ],
+    deductions: [
+      { type: 'homeOffice', amount: 2400, description: 'Home office expenses (200 sq ft)' },
+      { type: 'professionalFees', amount: 850, description: 'CPA membership, industry certifications' },
+    ]
+  }
+};
+
+/**
+ * All scenarios combined (driver + other)
+ */
+const SAMPLE_SCENARIOS = {
+  ...DRIVER_SCENARIOS,
+  ...OTHER_SCENARIOS
+};
+
+/**
  * Load a sample scenario into the application
  * @param {string} scenarioId - ID of the scenario to load
  * @param {string} language - Current language ('en' or 'fr')
@@ -222,18 +350,35 @@ function loadSampleScenario(scenarioId, language = 'fr') {
       ? `\nSample income loaded (${scenario.income.length} periods):\n\n`
       : `\nRevenus d'exemple chargés (${scenario.income.length} périodes):\n\n`;
     
-    const totalGross = scenario.income.reduce((sum, inc) => sum + inc.gross, 0);
-    const totalTips = scenario.income.reduce((sum, inc) => sum + inc.tips, 0);
-    const totalFees = scenario.income.reduce((sum, inc) => sum + inc.fees, 0);
+    // Check if this is a driver scenario (has platform property) or other scenario
+    const isDriverScenario = scenario.income[0].platform !== undefined;
     
-    incomeSummary += scenario.income.map(inc =>
-      `${inc.platform} (${inc.period}): $${inc.gross.toLocaleString()} gross, $${inc.tips.toLocaleString()} tips, -$${inc.fees.toLocaleString()} fees`
-    ).join('\n');
-    
-    incomeSummary += `\n\nTotal Gross: $${totalGross.toLocaleString()}`;
-    incomeSummary += `\nTotal Tips: $${totalTips.toLocaleString()}`;
-    incomeSummary += `\nTotal Fees: -$${totalFees.toLocaleString()}`;
-    incomeSummary += `\nNet Income: $${(totalGross + totalTips - totalFees).toLocaleString()}`;
+    if (isDriverScenario) {
+      const totalGross = scenario.income.reduce((sum, inc) => sum + (inc.gross || 0), 0);
+      const totalTips = scenario.income.reduce((sum, inc) => sum + (inc.tips || 0), 0);
+      const totalFees = scenario.income.reduce((sum, inc) => sum + (inc.fees || 0), 0);
+      
+      incomeSummary += scenario.income.map(inc =>
+        `${inc.platform} (${inc.period}): $${inc.gross.toLocaleString()} gross, $${inc.tips.toLocaleString()} tips, -$${inc.fees.toLocaleString()} fees`
+      ).join('\n');
+      
+      incomeSummary += `\n\nTotal Gross: $${totalGross.toLocaleString()}`;
+      incomeSummary += `\nTotal Tips: $${totalTips.toLocaleString()}`;
+      incomeSummary += `\nTotal Fees: -$${totalFees.toLocaleString()}`;
+      incomeSummary += `\nNet Income: $${(totalGross + totalTips - totalFees).toLocaleString()}`;
+    } else {
+      // Non-driver scenario (employee, student, retiree)
+      incomeSummary += scenario.income.map(inc => {
+        if (inc.type === 'T4') {
+          return `${inc.employer}: $${inc.gross.toLocaleString()} (T4)`;
+        } else if (inc.type === 'T4A' && inc.pension) {
+          return `${inc.payer}: $${inc.pension.toLocaleString()} (Pension)`;
+        } else if (inc.type === 'T4A' && inc.feesForServices) {
+          return `${inc.payer}: $${inc.feesForServices.toLocaleString()} (Consulting)`;
+        }
+        return JSON.stringify(inc);
+      }).join('\n');
+    }
     
     console.log(incomeSummary);
   }
@@ -253,18 +398,21 @@ function loadSampleScenario(scenarioId, language = 'fr') {
 }
 
 /**
- * Get list of available scenarios
+ * Get list of available driver scenarios
+ * Filters to return only scenarios with driverType property (excludes employees, students, etc.)
  * @param {string} language - Current language ('en' or 'fr')
- * @returns {Array} Array of scenario metadata
+ * @returns {Array} Array of driver scenario metadata
  */
 function getAvailableScenarios(language = 'fr') {
-  return Object.values(SAMPLE_SCENARIOS).map(scenario => ({
-    id: scenario.id,
-    name: scenario.name[language],
-    description: scenario.description[language],
-    province: scenario.profile.province,
-    driverType: scenario.profile.driverType
-  }));
+  return Object.values(SAMPLE_SCENARIOS)
+    .filter(scenario => scenario.profile.driverType) // Only include driver scenarios
+    .map(scenario => ({
+      id: scenario.id,
+      name: scenario.name[language],
+      description: scenario.description[language],
+      province: scenario.profile.province,
+      driverType: scenario.profile.driverType
+    }));
 }
 
 // Initialize and export
@@ -274,4 +422,4 @@ if (typeof window !== 'undefined') {
   window.SAMPLE_SCENARIOS = SAMPLE_SCENARIOS;
 }
 
-export { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS };
+export { loadSampleScenario, getAvailableScenarios, SAMPLE_SCENARIOS, DRIVER_SCENARIOS, OTHER_SCENARIOS };

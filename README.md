@@ -1,8 +1,10 @@
-# 🚗 TaxSyncForDrivers
+# 🇨🇦 TaxSyncForDrivers
 
-**Smart Tax Planning for Canadian Rideshare & Taxi Drivers**
+**Comprehensive Canadian Tax Calculator & Expense Tracker for All Provinces & Territories**
 
-> Maximize deductions • Track expenses • Plan quarterly taxes • **NEW: Automated document processing**
+> **For everyone:** Drivers • Employees • Students • Self-employed • Retirees • Mixed income
+> 
+> Maximize deductions • Track expenses • AI-powered document processing • 100% client-side
 
 [![Tests](https://img.shields.io/badge/tests-477%20passing-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
 [![Coverage](https://img.shields.io/badge/coverage-83%25-brightgreen)](https://github.com/Isaloum/TaxSyncForDrivers)
@@ -15,19 +17,89 @@
 
 ## 💡 Why TaxSyncForDrivers?
 
-**Uber/Lyft/Taxi drivers lose $3,000-$5,000/year on taxes**
+**Canadians leave thousands on the table every tax year**
 
-Why?
+Common issues across all taxpayers:
 
-- ❌ Don't track vehicle expenses
-- ❌ Miss mileage deduction ($0.70/km!)
-- ❌ No quarterly tax planning
-- ❌ Manual self-employment tax
-- ❌ **Manual data entry from tax documents**
+- ❌ Miss eligible deductions and credits
+- ❌ Manual data entry from tax documents
+- ❌ Unclear province-specific benefits
+- ❌ No tax planning throughout the year
+- ❌ Complicated forms and calculations
 
-**We solve this.**
+**We solve this for everyone.**
+
+## 👥 Who is TaxSyncForDrivers For?
+
+### 🚗 Rideshare & Taxi Drivers
+- Vehicle expense optimization (simplified vs. detailed method)
+- Uber/Lyft statement parsing
+- Quarterly tax planning
+- GST/QST tracking
+
+### 💼 Self-Employed Workers
+- Business expense tracking with CRA-compliant categories
+- Home office deduction calculator
+- Capital Cost Allowance (CCA) automation
+- T2125/TP-80-V form generation
+
+### 👔 Employees
+- T4 income slip parsing
+- RRSP contribution optimizer
+- Union dues and employment expenses
+- Tax refund estimator
+
+### 🎓 Students
+- **NEW:** Tuition tax credit calculator (T2202)
+- Student loan interest deduction
+- Part-time income optimization
+- Moving expense calculator (for work/study)
+
+### 🏡 Retirees
+- Pension income splitting optimizer
+- Age amount and pension income credits
+- Medical expense tracking
+- OAS/GIS benefit calculator
+
+### 🔀 Mixed Income
+- Multiple income stream optimization
+- Self-employment + employment tax planning
+- Investment income integration (T5)
 
 ## 🚀 Features
+
+### ✅ All Income Types
+- **Employment (T4)** - Parse and calculate federal/provincial tax
+- **Self-employment** - Business income and expenses (T2125/TP-80-V)
+- **Investment (T5)** - Dividend and interest income
+- **Pension** - Retirement income with splitting optimization
+- **Platform income** - Uber/Lyft/DoorDash automated parsing
+
+### ✅ Universal Deductions & Credits
+- **RRSP** - Contribution optimizer and carry-forward tracking
+- **Charitable donations** - Federal and provincial credit calculation
+- **Medical expenses** - Family claim optimization
+- **Childcare** - Eligible expense tracking
+- **Tuition** - T2202 processing with provincial variations
+- **Home office** - For employees and self-employed
+- **Moving expenses** - Work/study relocation
+
+### ✅ All Provinces & Territories
+- **Complete coverage** - 10 provinces + 3 territories
+- **Province-specific credits** - Climate action, child benefits, seniors benefits
+- **Accurate 2026 rates** - Federal tax rate reduction to 14%
+- **Provincial variations** - Quebec (RL-1, QPP), Ontario (Trillium), BC (Climate Action), etc.
+
+### ✅ Multiple User Profiles
+- **Smart UI** - Shows only relevant sections for your situation
+- **Profile types** - Driver, Employee, Self-employed, Student, Retiree, Mixed income
+- **Optimized workflows** - Tailored guidance for each user type
+
+### ✅ AI Document Processing
+- **T4, T5, RL-1, T2202** - Tax slips
+- **Uber/Lyft statements** - Platform earnings
+- **Receipts** - Gas, maintenance, insurance
+- **100% client-side** - Your data stays private
 
 ### 1. 🚙 Vehicle Expense Optimizer
 
@@ -90,7 +162,9 @@ Why?
 
 #### Supported Documents:
 - **T4 / T4A** - Canadian employment slips
+- **T5** - Investment income slips
 - **RL-1 / RL-2** - Quebec employment slips
+- **T2202** - Tuition and Enrolment Certificate
 - **Uber / Lyft** - Weekly/monthly earnings summaries
 - **Gas receipts** - Shell, Esso, Petro-Canada, etc.
 - **Vehicle maintenance** - Repairs, tires, oil changes
@@ -189,6 +263,6 @@ Help other drivers save money!
 
 ---
 
-**For Quebec's rideshare & taxi drivers** 🚗
+**For all Canadians** 🇨🇦
 
-_Consult a tax professional for advice_
+_While this tool provides accurate calculations based on 2026 CRA rates, always consult a tax professional for personalized advice._
