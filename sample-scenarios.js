@@ -148,7 +148,118 @@ const SAMPLE_SCENARIOS = {
       { platform: 'Lyft', period: 'Q2 2025', gross: 4800, tips: 340, fees: 1200 },
       { platform: 'Taxi', period: 'Q2 2025', gross: 7900, tips: 680, fees: 790 }
     ]
-  }
+  },
+  
+  'student-parttime-qc': {
+    id: 'student-parttime-qc',
+    name: {
+      en: 'Part-Time Student (Quebec)',
+      fr: 'Étudiant temps partiel (Québec)'
+    },
+    description: {
+      en: 'University student in Montreal with part-time job and tuition credits',
+      fr: 'Étudiant universitaire à Montréal avec emploi à temps partiel et crédits de scolarité'
+    },
+    profile: {
+      province: 'QC',
+      userType: 'student',
+      annualIncome: 18000,
+      tuitionFees: 7500,
+      isFullTimeStudent: false,
+    },
+    income: [
+      { type: 'T4', employer: 'Tim Hortons', gross: 18000, incomeTax: 800, cpp: 920, ei: 290 }
+    ],
+    deductions: [
+      { type: 'tuition', amount: 7500, description: 'University of Montreal - Fall/Winter 2025' },
+      { type: 'studentLoanInterest', amount: 450, description: 'Student loan interest paid' },
+    ]
+  },
+
+  'employee-t4-on': {
+    id: 'employee-t4-on',
+    name: {
+      en: 'Employee with RRSP (Ontario)',
+      fr: 'Employé avec REER (Ontario)'
+    },
+    description: {
+      en: 'Office worker in Toronto with T4 income, RRSP, and charitable donations',
+      fr: 'Travailleur de bureau à Toronto avec revenu T4, REER et dons de charité'
+    },
+    profile: {
+      province: 'ON',
+      userType: 'employee',
+      annualIncome: 75000,
+    },
+    income: [
+      { type: 'T4', employer: 'TechCorp Inc.', gross: 75000, incomeTax: 12500, cpp: 3867, ei: 953 }
+    ],
+    deductions: [
+      { type: 'rrsp', amount: 13500, description: 'RRSP contribution (18% limit)' },
+      { type: 'charitableDonations', amount: 2000, description: 'United Way, Red Cross' },
+      { type: 'unionDues', amount: 850, description: 'Professional association dues' },
+    ]
+  },
+
+  'retiree-pension-bc': {
+    id: 'retiree-pension-bc',
+    name: {
+      en: 'Retiree with Pension (BC)',
+      fr: 'Retraité avec pension (CB)'
+    },
+    description: {
+      en: 'Retired couple in Victoria with pension income and medical expenses',
+      fr: 'Couple retraité à Victoria avec revenu de pension et frais médicaux'
+    },
+    profile: {
+      province: 'BC',
+      userType: 'retiree',
+      annualIncome: 52000,
+      age: 68,
+      isMarried: true,
+    },
+    income: [
+      { type: 'T4A', payer: 'Federal Pension', pension: 28000, incomeTax: 3200 },
+      { type: 'T4A', payer: 'CPP', pension: 14000, incomeTax: 0 },
+      { type: 'T4A', payer: 'Old Age Security', pension: 10000, incomeTax: 0 },
+    ],
+    deductions: [
+      { type: 'medicalExpenses', amount: 8500, description: 'Prescription drugs, dental, physiotherapy' },
+      { type: 'pensionIncomeSplitting', amount: 14000, description: 'Split eligible pension with spouse' },
+      { type: 'ageAmount', eligible: true, description: 'Age 65+ credit' },
+    ]
+  },
+
+  'mixed-income-ab': {
+    id: 'mixed-income-ab',
+    name: {
+      en: 'Mixed Income (Alberta)',
+      fr: 'Revenus mixtes (Alberta)'
+    },
+    description: {
+      en: 'Calgary worker with full-time job plus freelance consulting',
+      fr: 'Travailleur de Calgary avec emploi à temps plein et consultation indépendante'
+    },
+    profile: {
+      province: 'AB',
+      userType: 'mixed',
+      annualIncome: 95000,
+    },
+    income: [
+      { type: 'T4', employer: 'Energy Corp', gross: 70000, incomeTax: 14000, cpp: 3867, ei: 953 },
+      { type: 'T4A', payer: 'Consulting Clients', feesForServices: 25000, incomeTax: 0 },
+    ],
+    expenses: [
+      { date: '2025-01-15', amount: 850, vendor: 'Office Depot', category: 'office-supplies', receipt: true },
+      { date: '2025-02-01', amount: 120, vendor: 'Telus', category: 'phone', receipt: true },
+      { date: '2025-02-15', amount: 200, vendor: 'Professional Development', category: 'training', receipt: true },
+      { date: '2025-03-10', amount: 450, vendor: 'Home Office Furniture', category: 'equipment', receipt: true },
+    ],
+    deductions: [
+      { type: 'homeOffice', amount: 2400, description: 'Home office expenses (200 sq ft)' },
+      { type: 'professionalFees', amount: 850, description: 'CPA membership, industry certifications' },
+    ]
+  },
 };
 
 /**
