@@ -375,7 +375,7 @@ test('calculateRDSPGrants: age limit (over 49)', () => {
   const result = calculateRDSPGrants(1000, 50000, 50);
   
   assert.strictEqual(result.eligible, false);
-  assert.strictEqual(result.reason, 'RDSP grants only available until age 49');
+  assert.strictEqual(result.reason, 'RDSP grants only available until end of age 49');
   assert.strictEqual(result.grant, 0);
 });
 

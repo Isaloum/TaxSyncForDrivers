@@ -285,7 +285,7 @@ export function calculateChildDisabilityBenefit(familyIncome, numChildren) {
 }
 
 /**
- * Calculate RDSP government grants (300% match up to $90k lifetime)
+ * Calculate RDSP government grants (300% match up to $70k lifetime)
  * 
  * @param {number} contribution - Annual contribution amount
  * @param {number} familyIncome - Adjusted family net income
@@ -303,14 +303,14 @@ export function calculateRDSPGrants(contribution, familyIncome, age) {
     ANNUAL_GRANT_LIMIT,
   } = RDSP_GRANT_PARAMETERS_2026;
   
-  // RDSP grants only available until age 49
+  // RDSP grants only available until end of age 49 (stop at age 50)
   if (age > 49) {
     return {
       contribution: Math.round(contribution * 100) / 100,
       familyIncome: Math.round(familyIncome * 100) / 100,
       age,
       eligible: false,
-      reason: 'RDSP grants only available until age 49',
+      reason: 'RDSP grants only available until end of age 49',
       grant: 0,
       matchRate: 0,
       lifetimeLimit: LIFETIME_GRANT_LIMIT,
@@ -446,9 +446,9 @@ export function calculateCombinedDTCBenefits(params) {
     mes = calculateMedicalExpenseSupplement(workIncome, netIncome || workIncome);
   }
   
-  // Calculate Child Disability Benefit
+  // Calculate Child Disability Benefit (for children with disabilities)
   let cdb = null;
-  if (numChildren > 0 && age < 18) {
+  if (numChildren > 0) {
     cdb = calculateChildDisabilityBenefit(familyIncome || netIncome, numChildren);
   }
   
