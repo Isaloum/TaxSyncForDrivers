@@ -2429,6 +2429,10 @@
           <span class="tab-icon">❤️</span
           ><span class="tab-label" data-i18n="tabs.donations">Charitable Donations</span>
         </button>
+        <button class="tab-btn" data-tab="dividendTaxCredit">
+          <span class="tab-icon">💰</span
+          ><span class="tab-label" data-i18n="tabs.dividendTaxCredit">Dividend Tax Credit</span>
+        </button>
         <button class="tab-btn student-only" data-tab="tuition" style="display:none;">
           <span class="tab-icon">🎓</span
           ><span class="tab-label" data-i18n="tabs.tuition">Tuition Credits</span>
@@ -3977,6 +3981,100 @@
           <div class="alert alert-info" style="margin-top: 1rem;">
             <p id="tuitionProvincialNote"></p>
           </div>
+        </div>
+      </section>
+      
+      <!-- Dividend Tax Credit Calculator -->
+      <section id="dividendTaxCredit" class="tab-content">
+        <h2>💰 <span data-i18n="dividendTaxCredit.title">Dividend Tax Credit Calculator</span></h2>
+        
+        <div class="info-box">
+          <p><strong data-i18n="dividendTaxCredit.description">Dividends are taxed more favorably than interest income</strong></p>
+          <p>✅ <span data-i18n="dividendTaxCredit.grossup">Dividend gross-up reflects corporate tax paid</span><br>
+             ✅ <span data-i18n="dividendTaxCredit.credit">Dividend tax credit eliminates double taxation</span><br>
+             ✅ <span data-i18n="dividendTaxCredit.lowerRates">Lower effective tax rates than interest</span></p>
+        </div>
+        
+        <fieldset>
+          <legend data-i18n="dividendTaxCredit.dividendInfo">Dividend Information</legend>
+          
+          <div class="form-group">
+            <label data-i18n="dividendTaxCredit.dividendType">Dividend Type:</label>
+            <select id="dividendType">
+              <option value="eligible" data-i18n="dividendTaxCredit.eligible">Eligible Dividends (Large Corporations)</option>
+              <option value="nonEligible" data-i18n="dividendTaxCredit.nonEligible">Non-Eligible Dividends (Small Business/CCPC)</option>
+            </select>
+            <small data-i18n="dividendTaxCredit.t5help">Check your T5 slip: Box 24 (eligible) or Box 10 (non-eligible)</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="dividendAmount" data-i18n="dividendTaxCredit.dividendAmount">Actual Dividend Received ($):</label>
+            <input type="number" id="dividendAmount" placeholder="10000" min="0" step="0.01">
+            <small data-i18n="dividendTaxCredit.amountHelp">Amount you actually received (before gross-up)</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="dividendProvince" data-i18n="dividendTaxCredit.province">Province:</label>
+            <select id="dividendProvince">
+              <option value="QC">Quebec</option>
+              <option value="ON">Ontario</option>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="MB">Manitoba</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="NB">New Brunswick</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="NL">Newfoundland</option>
+              <option value="YT">Yukon</option>
+              <option value="NT">Northwest Territories</option>
+              <option value="NU">Nunavut</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="dividendMarginalRate" data-i18n="dividendTaxCredit.marginalRate">Your Marginal Tax Rate (%):</label>
+            <input type="number" id="dividendMarginalRate" placeholder="50" min="0" max="100" step="0.1">
+            <small data-i18n="dividendTaxCredit.marginalHelp">Combined federal + provincial (e.g., 50%)</small>
+          </div>
+          
+          <div class="btn-group">
+            <button class="btn" onclick="calculateDividendCredit()" data-i18n="dividendTaxCredit.calculate">Calculate Dividend Tax</button>
+          </div>
+        </fieldset>
+        
+        <div id="dividendResults" style="display:none; margin-top: 2rem;">
+          <h3 data-i18n="dividendTaxCredit.resultsTitle">Dividend Tax Calculation</h3>
+          <div class="result-box">
+            <div class="result-grid">
+              <div class="result-item">
+                <div class="result-label" data-i18n="dividendTaxCredit.actualDividend">Actual Dividend Received:</div>
+                <div class="result-value" id="divActual">$0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label" data-i18n="dividendTaxCredit.grossUpAmount">Gross-Up Amount:</div>
+                <div class="result-value" id="divGrossUp">+$0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label" data-i18n="dividendTaxCredit.taxableDividend">Taxable Dividend (Grossed-Up):</div>
+                <div class="result-value" id="divTaxable">$0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label" data-i18n="dividendTaxCredit.dividendCredit">Dividend Tax Credit:</div>
+                <div class="result-value positive" id="divCredit">-$0</div>
+              </div>
+              <div class="result-item highlight">
+                <div class="result-label" data-i18n="dividendTaxCredit.netTax">Net Tax Owing:</div>
+                <div class="result-value negative" id="divNetTax">$0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label" data-i18n="dividendTaxCredit.effectiveRate">Effective Tax Rate:</div>
+                <div class="result-value" id="divEffectiveRate">0%</div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="dividendComparison"></div>
         </div>
       </section>
       
@@ -7018,6 +7116,62 @@
 
         // Show results box
         document.getElementById('tuitionResults').style.display = 'block';
+      };
+    </script>
+
+    <!-- Dividend Tax Credit Calculator -->
+    <script type="module">
+      import { 
+        calculateNetTaxOnDividend, 
+        compareDividendVsInterest 
+      } from './dividend-tax-credit-calculator.js';
+      
+      window.calculateNetTaxOnDividend = calculateNetTaxOnDividend;
+      window.compareDividendVsInterest = compareDividendVsInterest;
+      
+      window.calculateDividendCredit = function() {
+        const amount = parseFloat(document.getElementById('dividendAmount').value) || 0;
+        const type = document.getElementById('dividendType').value;
+        const province = document.getElementById('dividendProvince').value;
+        const marginalRate = (parseFloat(document.getElementById('dividendMarginalRate').value) || 0) / 100;
+        
+        if (amount <= 0) {
+          alert('Please enter a valid dividend amount.');
+          return;
+        }
+        
+        if (marginalRate <= 0) {
+          alert('Please enter your marginal tax rate.');
+          return;
+        }
+        
+        const isEligible = type === 'eligible';
+        const result = calculateNetTaxOnDividend(amount, isEligible, marginalRate, province);
+        
+        // Display results
+        document.getElementById('divActual').textContent = '$' + result.actualDividend.toLocaleString();
+        document.getElementById('divGrossUp').textContent = '+$' + result.grossUpAmount.toLocaleString();
+        document.getElementById('divTaxable').textContent = '$' + result.grossedUpDividend.toLocaleString();
+        document.getElementById('divCredit').textContent = '-$' + result.totalCredit.toLocaleString();
+        document.getElementById('divNetTax').textContent = '$' + result.netTax.toLocaleString();
+        document.getElementById('divEffectiveRate').textContent = result.effectiveRate + '%';
+        
+        // Show comparison with interest
+        const comparison = compareDividendVsInterest(amount, isEligible, marginalRate, province);
+        document.getElementById('dividendComparison').innerHTML = `
+          <div class="info-box" style="background-color: #d4edda; border-color: #c3e6cb; margin-top: 1rem;">
+            <h4>💡 Dividend vs. Interest Comparison</h4>
+            <p>If you received $${amount.toLocaleString()} as <strong>interest</strong> instead:</p>
+            <p>Tax on interest: <strong>$${comparison.interestTax.toLocaleString()}</strong></p>
+            <p>Tax on dividend: <strong>$${comparison.dividendTax.toLocaleString()}</strong></p>
+            <p style="color: green; font-weight: bold;">
+              💰 Tax savings with dividends: $${comparison.taxSavings.toLocaleString()} 
+              (${comparison.savingsPercentage}%)
+            </p>
+          </div>
+        `;
+        
+        document.getElementById('dividendResults').style.display = 'block';
       };
     </script>
 

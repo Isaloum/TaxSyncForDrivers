@@ -71,9 +71,14 @@ Common issues across all taxpayers:
 ### ✅ All Income Types
 - **Employment (T4)** - Parse and calculate federal/provincial tax
 - **Self-employment** - Business income and expenses (T2125/TP-80-V)
-- **Investment (T5)** - Dividend and interest income
+- **Investment (T5)** - Dividend and interest income with tax-efficient planning
 - **Pension** - Retirement income with splitting optimization
 - **Platform income** - Uber/Lyft/DoorDash automated parsing
+
+### ✅ Investment Income Calculators
+- **Dividend Tax Credit** - Eligible & non-eligible dividends, all provinces/territories
+- **Dividend vs. Interest Comparison** - Tax-efficient income planning
+- **T5 slip processing** - Automatic dividend extraction and validation
 
 ### ✅ Universal Deductions & Credits
 - **RRSP** - Contribution optimizer and carry-forward tracking
