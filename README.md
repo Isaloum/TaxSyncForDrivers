@@ -80,6 +80,7 @@ Common issues across all taxpayers:
 - **Charitable donations** - Federal and provincial credit calculation
 - **Medical expenses** - Family claim optimization
 - **Childcare** - Eligible expense tracking
+- **Canada Child Benefit (CCB)** - Tax-free monthly payments for children under 18
 - **Tuition** - T2202 processing with provincial variations
 - **Home office** - For employees and self-employed
 - **Moving expenses** - Work/study relocation
