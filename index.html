@@ -2421,6 +2421,10 @@
           <span class="tab-icon">👶</span
           ><span class="tab-label" data-i18n="tabs.childcare">Childcare</span>
         </button>
+        <button class="tab-btn" data-tab="canadaChildBenefit">
+          <span class="tab-icon">🇨🇦</span
+          ><span class="tab-label" data-i18n="tabs.canadaChildBenefit">Canada Child Benefit</span>
+        </button>
         <button class="tab-btn" data-tab="donations">
           <span class="tab-icon">❤️</span
           ><span class="tab-label" data-i18n="tabs.donations">Charitable Donations</span>
@@ -3741,6 +3745,61 @@
           <div class="btn-group">
             <button class="btn" onclick="calculateChildcareDeduction()" data-i18n="childcare.calculate">Calculate Deduction</button>
           </div>
+        </div>
+      </section>
+
+      <!-- Canada Child Benefit Calculator -->
+      <section id="canadaChildBenefit" class="tab-content">
+        <h2>🇨🇦 <span data-i18n="ccb.title">Canada Child Benefit (CCB) Calculator</span></h2>
+        
+        <div class="info-box">
+          <p data-i18n="ccb.infoBox1"><strong>Tax-free monthly payments</strong> for families with children under 18.</p>
+          <p><span data-i18n="ccb.infoBox2">💰 Up to <strong>$7,787/year</strong> per child under 6</span><br>
+             <span data-i18n="ccb.infoBox3">💰 Up to <strong>$6,570/year</strong> per child 6-17</span></p>
+        </div>
+        
+        <div class="form-group">
+          <label for="ccbFamilyIncome" data-i18n="ccb.familyIncome">Adjusted Family Net Income (AFNI):</label>
+          <input type="number" id="ccbFamilyIncome" placeholder="75000" min="0">
+          <small data-i18n="ccb.familyIncomeHelp">Combined net income of both spouses (Line 23600 on tax return)</small>
+        </div>
+        
+        <fieldset>
+          <legend data-i18n="ccb.children">Children</legend>
+          <div id="ccbChildrenContainer">
+            <!-- Dynamic child inputs will be added here -->
+          </div>
+          <button type="button" onclick="addCCBChild()" class="btn btn-secondary" style="margin-top: 1rem;">+ <span data-i18n="ccb.addChild">Add Child</span></button>
+        </fieldset>
+        
+        <button onclick="calculateCCBBenefit()" class="btn btn-primary" data-i18n="ccb.calculate">Calculate CCB</button>
+        
+        <div id="ccbResults" style="display:none; margin-top: 2rem;">
+          <h3 data-i18n="ccb.results">Your Canada Child Benefit</h3>
+          <div class="result-card">
+            <div class="result-item">
+              <span class="result-label" data-i18n="ccb.annualPayment">Annual CCB Payment:</span>
+              <span class="result-value" id="ccbAnnual">$0</span>
+            </div>
+            <div class="result-item highlight">
+              <span class="result-label" data-i18n="ccb.monthlyPayment">Monthly Payment:</span>
+              <span class="result-value" id="ccbMonthly">$0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label" data-i18n="ccb.baseAmount">Base Amount:</span>
+              <span class="result-value" id="ccbBase">$0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label" data-i18n="ccb.incomeReduction">Income Reduction:</span>
+              <span class="result-value negative" id="ccbReduction">-$0</span>
+            </div>
+            <div class="result-item" id="ccbDisabilitySupplementRow" style="display:none;">
+              <span class="result-label" data-i18n="ccb.disabilitySupplement">Disability Supplement:</span>
+              <span class="result-value" id="ccbDisabilitySupplement">$0</span>
+            </div>
+          </div>
+          
+          <div id="ccbBreakdown" style="margin-top: 1rem;"></div>
         </div>
       </section>
 
@@ -6719,6 +6778,119 @@
         };
         document.getElementById('childcareLimitMessage').textContent = limitMessages[result.limitingFactor];
       };
+    </script>
+
+    <!-- Canada Child Benefit Calculator -->
+    <script type="module">
+      import { calculateCCB, calculateAFNI } from './canada-child-benefit-calculator.js';
+
+      let ccbChildren = [];
+
+      window.addCCBChild = function() {
+        const container = document.getElementById('ccbChildrenContainer');
+        const childIndex = ccbChildren.length;
+        
+        const childDiv = document.createElement('div');
+        childDiv.className = 'form-grid';
+        childDiv.style.marginBottom = '1rem';
+        childDiv.style.padding = '1rem';
+        childDiv.style.background = 'var(--bg)';
+        childDiv.style.borderRadius = '8px';
+        childDiv.innerHTML = `
+          <div class="form-group">
+            <label data-i18n="ccb.childNumber">Child #${childIndex + 1}</label>
+          </div>
+          <div class="form-group">
+            <label for="ccbChildAge${childIndex}" data-i18n="ccb.childAge">Age</label>
+            <input type="number" id="ccbChildAge${childIndex}" placeholder="5" min="0" max="17" value="5">
+          </div>
+          <div class="form-group">
+            <label for="ccbChildDisability${childIndex}" data-i18n="ccb.hasDisability">Has Disability</label>
+            <select id="ccbChildDisability${childIndex}">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="button" onclick="removeCCBChild(${childIndex})" class="btn btn-secondary" style="background: var(--danger); color: white;">Remove</button>
+          </div>
+        `;
+        
+        container.appendChild(childDiv);
+        ccbChildren.push({ index: childIndex, element: childDiv });
+      };
+
+      window.removeCCBChild = function(index) {
+        const childData = ccbChildren.find(c => c.index === index);
+        if (childData) {
+          childData.element.remove();
+          ccbChildren = ccbChildren.filter(c => c.index !== index);
+        }
+      };
+
+      window.getCCBChildren = function() {
+        const children = [];
+        ccbChildren.forEach(child => {
+          const ageInput = document.getElementById(`ccbChildAge${child.index}`);
+          const disabilityInput = document.getElementById(`ccbChildDisability${child.index}`);
+          
+          if (ageInput && disabilityInput) {
+            children.push({
+              age: parseInt(ageInput.value) || 0,
+              hasDisability: disabilityInput.value === 'true'
+            });
+          }
+        });
+        return children;
+      };
+
+      window.calculateCCBBenefit = function() {
+        const familyIncome = parseFloat(document.getElementById('ccbFamilyIncome').value) || 0;
+        const children = getCCBChildren();
+        
+        if (children.length === 0) {
+          alert('Please add at least one child first.');
+          return;
+        }
+        
+        const result = calculateCCB(familyIncome, children);
+        
+        // Display results
+        document.getElementById('ccbAnnual').textContent = `$${result.totalAnnualCCB.toLocaleString('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('ccbMonthly').textContent = `$${result.monthlyPayment.toLocaleString('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('ccbBase').textContent = `$${result.baseAmount.toLocaleString('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('ccbReduction').textContent = `-$${result.reductionAmount.toLocaleString('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        
+        // Show/hide disability supplement
+        if (result.disabilitySupplement > 0) {
+          document.getElementById('ccbDisabilitySupplementRow').style.display = 'flex';
+          document.getElementById('ccbDisabilitySupplement').textContent = `$${result.disabilitySupplement.toLocaleString('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        } else {
+          document.getElementById('ccbDisabilitySupplementRow').style.display = 'none';
+        }
+        
+        // Show breakdown
+        let breakdownHtml = '<h4 style="margin-top: 1rem;">Children Breakdown:</h4>';
+        breakdownHtml += '<table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem;">';
+        breakdownHtml += '<thead><tr style="background: var(--bg);"><th style="padding: 0.5rem; text-align: left;">Child</th><th style="padding: 0.5rem;">Age Group</th><th style="padding: 0.5rem; text-align: right;">Base Amount</th></tr></thead><tbody>';
+        
+        result.breakdown.forEach((child) => {
+          breakdownHtml += `<tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 0.5rem;">Child #${child.childNumber}${child.hasDisability ? ' 🦽' : ''}</td>
+            <td style="padding: 0.5rem; text-align: center;">${child.ageGroup}</td>
+            <td style="padding: 0.5rem; text-align: right;">$${child.baseAmount.toLocaleString('en-CA')}</td>
+          </tr>`;
+        });
+        
+        breakdownHtml += '</tbody></table>';
+        document.getElementById('ccbBreakdown').innerHTML = breakdownHtml;
+        
+        document.getElementById('ccbResults').style.display = 'block';
+      };
+
+      // Make functions globally available
+      window.calculateCCB = calculateCCB;
+      window.calculateAFNI = calculateAFNI;
     </script>
 
     <!-- Charitable Donations Calculator -->
