@@ -2481,6 +2481,18 @@
           <span class="tab-icon">📊</span
           ><span class="tab-label" data-i18n="tabs.albertaTaxSummary">AB Tax Advantage</span>
         </button>
+        <button class="tab-btn retiree-only" data-tab="oasCalculator" style="display:none;">
+          <span class="tab-icon">👴</span
+          ><span class="tab-label" data-i18n="tabs.oasCalculator">OAS Calculator</span>
+        </button>
+        <button class="tab-btn retiree-only" data-tab="gisCalculator" style="display:none;">
+          <span class="tab-icon">💵</span
+          ><span class="tab-label" data-i18n="tabs.gisCalculator">GIS Calculator</span>
+        </button>
+        <button class="tab-btn retiree-only" data-tab="pensionSplitting" style="display:none;">
+          <span class="tab-icon">👫</span
+          ><span class="tab-label" data-i18n="tabs.pensionSplitting">Pension Splitting</span>
+        </button>
       </nav>
       <section id="vehicle" class="tab-content driver-only self-employed-only mixed-only">
         <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
@@ -4661,6 +4673,257 @@
             <h5 data-i18n="albertaTaxSummary.savings">💰 Your Alberta Tax Savings:</h5>
             <p id="albertaSavingsAmount"></p>
           </div>
+        </div>
+      </section>
+
+      <!-- OAS Calculator Tab -->
+      <section id="oasCalculator" class="tab-content retiree-only" style="display:none;">
+        <h2>👴 <span data-i18n="oasCalculator.title">Old Age Security (OAS) Calculator</span></h2>
+        <p data-i18n="oasCalculator.subtitle">Calculate your OAS benefit for 2026</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="oasCalculator.info">📘 OAS Benefits 2026:</strong>
+          <ul>
+            <li data-i18n="oasCalculator.maxBenefit">✅ Maximum: $691.67/month ($8,300.04/year)</li>
+            <li data-i18n="oasCalculator.eligibility">✅ Eligibility: 65+ with 10+ years Canadian residence</li>
+            <li data-i18n="oasCalculator.clawback">⚠️ Clawback: 15% on income over $90,997</li>
+            <li data-i18n="oasCalculator.deferral">💡 Deferral: +0.6% per month (up to age 70)</li>
+          </ul>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <label data-i18n="oasCalculator.age">Your Age:</label>
+            <input type="number" id="oasAge" min="60" max="120" value="65" placeholder="e.g., 65">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="oasCalculator.residenceYears">Years of Canadian Residence (after age 18):</label>
+            <input type="number" id="oasResidenceYears" min="0" max="100" value="40" placeholder="e.g., 40">
+            <small data-i18n="oasCalculator.residenceNote">Full benefit requires 40 years, minimum 10 years</small>
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="oasCalculator.annualIncome">Annual Net Income:</label>
+            <input type="number" id="oasAnnualIncome" step="0.01" placeholder="e.g., 75000">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="oasCalculator.deferralMonths">Deferral Months (past age 65):</label>
+            <input type="number" id="oasDeferralMonths" min="0" max="60" value="0" placeholder="e.g., 0">
+            <small data-i18n="oasCalculator.deferralNote">Defer to age 70 (60 months) for +36% increase</small>
+          </div>
+          
+          <button id="calculateOASBtn" class="btn btn-primary" data-i18n="oasCalculator.calculate">Calculate OAS</button>
+        </div>
+        
+        <div id="oasResults" style="display:none;" class="results-section">
+          <div class="summary-card highlight">
+            <h5 data-i18n="oasCalculator.netBenefit">Net Monthly OAS Benefit</h5>
+            <p class="big-number" id="oasMonthlyBenefit">$0.00</p>
+          </div>
+          
+          <div class="results-grid">
+            <div class="result-item">
+              <strong data-i18n="oasCalculator.baseBenefit">Base Benefit:</strong>
+              <span id="oasBaseBenefit"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="oasCalculator.deferralBonus">Deferral Bonus:</strong>
+              <span id="oasDeferralBonus"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="oasCalculator.grossBenefit">Gross Benefit:</strong>
+              <span id="oasGrossBenefit"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="oasCalculator.clawbackAmount">Clawback:</strong>
+              <span id="oasClawback"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="oasCalculator.annualBenefit">Annual Benefit:</strong>
+              <span id="oasAnnualBenefit"></span>
+            </div>
+          </div>
+          
+          <div id="oasWarning" style="display:none;" class="warning-banner">
+            <p id="oasWarningText"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- GIS Calculator Tab -->
+      <section id="gisCalculator" class="tab-content retiree-only" style="display:none;">
+        <h2>💵 <span data-i18n="gisCalculator.title">Guaranteed Income Supplement (GIS) Calculator</span></h2>
+        <p data-i18n="gisCalculator.subtitle">Calculate your GIS benefit for 2026</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="gisCalculator.info">📘 GIS Benefits 2026:</strong>
+          <ul>
+            <li data-i18n="gisCalculator.singleMax">✅ Single: Up to $1,062.01/month</li>
+            <li data-i18n="gisCalculator.coupleMax">✅ Couple (both OAS): Up to $639.77/month each</li>
+            <li data-i18n="gisCalculator.eligibility">✅ For low-income OAS recipients</li>
+            <li data-i18n="gisCalculator.incomeTested">⚠️ Income-tested: Phases out based on income</li>
+          </ul>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <label data-i18n="gisCalculator.maritalStatus">Marital Status:</label>
+            <select id="gisMaritalStatus">
+              <option value="single" data-i18n="gisCalculator.single">Single</option>
+              <option value="coupleOAS" data-i18n="gisCalculator.coupleOAS">Couple (both receive OAS)</option>
+              <option value="coupleOneOAS" data-i18n="gisCalculator.coupleOneOAS">Couple (only one receives OAS)</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="gisCalculator.yourIncome">Your Annual Income (excluding OAS/GIS):</label>
+            <input type="number" id="gisYourIncome" step="0.01" placeholder="e.g., 5000">
+          </div>
+          
+          <div class="form-group" id="gisPartnerIncomeGroup" style="display:none;">
+            <label data-i18n="gisCalculator.partnerIncome">Partner's Annual Income:</label>
+            <input type="number" id="gisPartnerIncome" step="0.01" placeholder="e.g., 3000">
+          </div>
+          
+          <button id="calculateGISBtn" class="btn btn-primary" data-i18n="gisCalculator.calculate">Calculate GIS</button>
+        </div>
+        
+        <div id="gisResults" style="display:none;" class="results-section">
+          <div class="summary-card highlight">
+            <h5 data-i18n="gisCalculator.monthlyBenefit">Monthly GIS Benefit</h5>
+            <p class="big-number" id="gisMonthlyBenefit">$0.00</p>
+          </div>
+          
+          <div class="results-grid">
+            <div class="result-item">
+              <strong data-i18n="gisCalculator.annualBenefit">Annual Benefit:</strong>
+              <span id="gisAnnualBenefit"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="gisCalculator.maxBenefit">Maximum Benefit:</strong>
+              <span id="gisMaxBenefit"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="gisCalculator.combinedIncome">Combined Income:</strong>
+              <span id="gisCombinedIncome"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="gisCalculator.reductionRate">Reduction Rate:</strong>
+              <span id="gisReductionRate"></span>
+            </div>
+          </div>
+          
+          <div id="gisNotEligible" style="display:none;" class="warning-banner">
+            <p data-i18n="gisCalculator.notEligible">You are not eligible for GIS at this income level.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pension Splitting Calculator Tab -->
+      <section id="pensionSplitting" class="tab-content retiree-only" style="display:none;">
+        <h2>👫 <span data-i18n="pensionSplitting.title">Pension Income Splitting Calculator</span></h2>
+        <p data-i18n="pensionSplitting.subtitle">Optimize your couple's tax burden through pension splitting</p>
+        
+        <div class="info-banner">
+          <strong data-i18n="pensionSplitting.info">📘 Pension Splitting:</strong>
+          <ul>
+            <li data-i18n="pensionSplitting.eligibility">✅ At least one spouse must be 65+</li>
+            <li data-i18n="pensionSplitting.maxSplit">✅ Can split up to 50% of eligible pension income</li>
+            <li data-i18n="pensionSplitting.eligible">✅ Eligible: RRSP annuities, RRIF, LIF, pension income</li>
+            <li data-i18n="pensionSplitting.benefits">💡 Reduces combined family tax burden</li>
+          </ul>
+        </div>
+        
+        <div class="form-section">
+          <h4 data-i18n="pensionSplitting.spouse1">Spouse 1</h4>
+          <div class="form-group">
+            <label data-i18n="pensionSplitting.spouse1Age">Age:</label>
+            <input type="number" id="spouse1Age" min="50" max="120" value="65" placeholder="e.g., 65">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="pensionSplitting.spouse1TotalIncome">Total Income:</label>
+            <input type="number" id="spouse1Income" step="0.01" placeholder="e.g., 80000">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="pensionSplitting.spouse1PensionIncome">Eligible Pension Income:</label>
+            <input type="number" id="spouse1PensionIncome" step="0.01" placeholder="e.g., 30000">
+          </div>
+          
+          <h4 data-i18n="pensionSplitting.spouse2">Spouse 2</h4>
+          <div class="form-group">
+            <label data-i18n="pensionSplitting.spouse2Age">Age:</label>
+            <input type="number" id="spouse2Age" min="50" max="120" value="65" placeholder="e.g., 65">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="pensionSplitting.spouse2TotalIncome">Total Income:</label>
+            <input type="number" id="spouse2Income" step="0.01" placeholder="e.g., 50000">
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="pensionSplitting.spouse2PensionIncome">Eligible Pension Income:</label>
+            <input type="number" id="spouse2PensionIncome" step="0.01" placeholder="e.g., 20000">
+          </div>
+          
+          <button id="calculatePensionSplittingBtn" class="btn btn-primary" data-i18n="pensionSplitting.calculate">Calculate Optimal Split</button>
+        </div>
+        
+        <div id="pensionSplittingResults" style="display:none;" class="results-section">
+          <h4 data-i18n="pensionSplitting.beforeSplitting">Before Splitting</h4>
+          <div class="results-grid">
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.spouse1Income">Spouse 1 Income:</strong>
+              <span id="beforeSpouse1Income"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.spouse2Income">Spouse 2 Income:</strong>
+              <span id="beforeSpouse2Income"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.totalIncome">Total Income:</strong>
+              <span id="beforeTotalIncome"></span>
+            </div>
+          </div>
+          
+          <h4 data-i18n="pensionSplitting.afterSplitting">After Optimal Splitting</h4>
+          <div class="results-grid">
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.spouse1Income">Spouse 1 Income:</strong>
+              <span id="afterSpouse1Income"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.spouse2Income">Spouse 2 Income:</strong>
+              <span id="afterSpouse2Income"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.totalIncome">Total Income:</strong>
+              <span id="afterTotalIncome"></span>
+            </div>
+          </div>
+          
+          <h4 data-i18n="pensionSplitting.transfers">Income Transfers</h4>
+          <div class="results-grid">
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.spouse1ToSpouse2">Spouse 1 → Spouse 2:</strong>
+              <span id="transferSpouse1ToSpouse2"></span>
+            </div>
+            <div class="result-item">
+              <strong data-i18n="pensionSplitting.spouse2ToSpouse1">Spouse 2 → Spouse 1:</strong>
+              <span id="transferSpouse2ToSpouse1"></span>
+            </div>
+          </div>
+          
+          <div class="info-banner">
+            <p data-i18n="pensionSplitting.note">💡 Use the full tax calculator to estimate actual tax savings from pension splitting.</p>
+          </div>
+        </div>
+        
+        <div id="pensionSplittingNotEligible" style="display:none;" class="warning-banner">
+          <p id="pensionSplittingNotEligibleText"></p>
         </div>
       </section>
       
@@ -7815,6 +8078,161 @@
         }
       }
       }); // Close all nested blocks and the DOMContentLoaded
+    </script>
+    
+    <!-- Seniors Benefits Calculator -->
+    <script type="module">
+      import {
+        calculateOAS,
+        calculateGIS,
+        calculatePensionSplitting,
+        validateSeniorBenefitInputs
+      } from './seniors-benefits-calculator.js';
+      
+      // Make functions available globally
+      window.calculateOAS = calculateOAS;
+      window.calculateGIS = calculateGIS;
+      window.calculatePensionSplitting = calculatePensionSplitting;
+      window.validateSeniorBenefitInputs = validateSeniorBenefitInputs;
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        // OAS Calculator
+        const calculateOASBtn = document.getElementById('calculateOASBtn');
+        if (calculateOASBtn) {
+          calculateOASBtn.addEventListener('click', function() {
+            const age = parseInt(document.getElementById('oasAge').value) || 65;
+            const residenceYears = parseInt(document.getElementById('oasResidenceYears').value) || 40;
+            const annualIncome = parseFloat(document.getElementById('oasAnnualIncome').value) || 0;
+            const deferralMonths = parseInt(document.getElementById('oasDeferralMonths').value) || 0;
+            
+            // Validate inputs
+            const validation = validateSeniorBenefitInputs(age, annualIncome, residenceYears);
+            if (!validation.isValid) {
+              alert('Validation errors:\\n' + validation.errors.join('\\n'));
+              return;
+            }
+            
+            const result = calculateOAS(annualIncome, residenceYears, age, deferralMonths);
+            
+            const resultsDiv = document.getElementById('oasResults');
+            const warningDiv = document.getElementById('oasWarning');
+            
+            resultsDiv.style.display = 'block';
+            
+            if (result.eligible) {
+              document.getElementById('oasMonthlyBenefit').textContent = '$' + result.monthlyBenefit.toFixed(2);
+              document.getElementById('oasBaseBenefit').textContent = '$' + result.baseBenefit.toFixed(2);
+              document.getElementById('oasDeferralBonus').textContent = '$' + result.deferralIncrease.toFixed(2);
+              document.getElementById('oasGrossBenefit').textContent = '$' + result.grossBenefit.toFixed(2);
+              document.getElementById('oasClawback').textContent = '$' + result.clawback.toFixed(2);
+              document.getElementById('oasAnnualBenefit').textContent = '$' + result.netBenefit.toFixed(2);
+              
+              // Show warnings
+              if (result.isPartialBenefit) {
+                warningDiv.style.display = 'block';
+                document.getElementById('oasWarningText').textContent = 
+                  '⚠️ Partial benefit: You have ' + residenceYears + ' years of residence. Full benefit requires 40 years.';
+              } else if (result.clawback > 0) {
+                warningDiv.style.display = 'block';
+                document.getElementById('oasWarningText').textContent = 
+                  '⚠️ Your income exceeds the clawback threshold ($90,997). You are subject to OAS recovery tax.';
+              } else {
+                warningDiv.style.display = 'none';
+              }
+            } else {
+              document.getElementById('oasMonthlyBenefit').textContent = '$0.00';
+              warningDiv.style.display = 'block';
+              document.getElementById('oasWarningText').textContent = '❌ Not eligible: ' + result.reason;
+            }
+          });
+        }
+        
+        // GIS Calculator
+        const calculateGISBtn = document.getElementById('calculateGISBtn');
+        const gisMaritalStatus = document.getElementById('gisMaritalStatus');
+        
+        if (gisMaritalStatus) {
+          gisMaritalStatus.addEventListener('change', function() {
+            const partnerGroup = document.getElementById('gisPartnerIncomeGroup');
+            partnerGroup.style.display = this.value !== 'single' ? 'block' : 'none';
+          });
+        }
+        
+        if (calculateGISBtn) {
+          calculateGISBtn.addEventListener('click', function() {
+            const maritalStatus = document.getElementById('gisMaritalStatus').value;
+            const yourIncome = parseFloat(document.getElementById('gisYourIncome').value) || 0;
+            const partnerIncome = parseFloat(document.getElementById('gisPartnerIncome').value) || 0;
+            
+            const isSingle = maritalStatus === 'single';
+            const partnerReceivesOAS = maritalStatus === 'coupleOAS';
+            
+            const result = calculateGIS(yourIncome, isSingle, partnerReceivesOAS, partnerIncome);
+            
+            const resultsDiv = document.getElementById('gisResults');
+            const notEligibleDiv = document.getElementById('gisNotEligible');
+            
+            resultsDiv.style.display = 'block';
+            
+            if (result.eligible) {
+              notEligibleDiv.style.display = 'none';
+              document.getElementById('gisMonthlyBenefit').textContent = '$' + result.monthlyBenefit.toFixed(2);
+              document.getElementById('gisAnnualBenefit').textContent = '$' + result.annualBenefit.toFixed(2);
+              document.getElementById('gisMaxBenefit').textContent = '$' + result.maxBenefit.toFixed(2);
+              document.getElementById('gisCombinedIncome').textContent = '$' + result.combinedIncome.toFixed(2);
+              document.getElementById('gisReductionRate').textContent = result.reductionRate + '%';
+            } else {
+              notEligibleDiv.style.display = 'block';
+              document.getElementById('gisMonthlyBenefit').textContent = '$0.00';
+            }
+          });
+        }
+        
+        // Pension Splitting Calculator
+        const calculatePensionSplittingBtn = document.getElementById('calculatePensionSplittingBtn');
+        if (calculatePensionSplittingBtn) {
+          calculatePensionSplittingBtn.addEventListener('click', function() {
+            const spouse1Age = parseInt(document.getElementById('spouse1Age').value) || 65;
+            const spouse1Income = parseFloat(document.getElementById('spouse1Income').value) || 0;
+            const spouse1PensionIncome = parseFloat(document.getElementById('spouse1PensionIncome').value) || 0;
+            const spouse2Age = parseInt(document.getElementById('spouse2Age').value) || 65;
+            const spouse2Income = parseFloat(document.getElementById('spouse2Income').value) || 0;
+            const spouse2PensionIncome = parseFloat(document.getElementById('spouse2PensionIncome').value) || 0;
+            
+            const result = calculatePensionSplitting(
+              spouse1Income,
+              spouse1PensionIncome,
+              spouse2Income,
+              spouse2PensionIncome,
+              spouse1Age,
+              spouse2Age
+            );
+            
+            const resultsDiv = document.getElementById('pensionSplittingResults');
+            const notEligibleDiv = document.getElementById('pensionSplittingNotEligible');
+            
+            if (result.eligible) {
+              resultsDiv.style.display = 'block';
+              notEligibleDiv.style.display = 'none';
+              
+              document.getElementById('beforeSpouse1Income').textContent = '$' + result.beforeSplitting.spouse1Income.toFixed(2);
+              document.getElementById('beforeSpouse2Income').textContent = '$' + result.beforeSplitting.spouse2Income.toFixed(2);
+              document.getElementById('beforeTotalIncome').textContent = '$' + result.beforeSplitting.totalIncome.toFixed(2);
+              
+              document.getElementById('afterSpouse1Income').textContent = '$' + result.afterSplitting.spouse1Income.toFixed(2);
+              document.getElementById('afterSpouse2Income').textContent = '$' + result.afterSplitting.spouse2Income.toFixed(2);
+              document.getElementById('afterTotalIncome').textContent = '$' + result.afterSplitting.totalIncome.toFixed(2);
+              
+              document.getElementById('transferSpouse1ToSpouse2').textContent = '$' + result.transfers.spouse1ToSpouse2.toFixed(2);
+              document.getElementById('transferSpouse2ToSpouse1').textContent = '$' + result.transfers.spouse2ToSpouse1.toFixed(2);
+            } else {
+              resultsDiv.style.display = 'none';
+              notEligibleDiv.style.display = 'block';
+              document.getElementById('pensionSplittingNotEligibleText').textContent = '❌ ' + result.reason;
+            }
+          });
+        }
+      });
     </script>
     
     <!-- Province Language Switching Integration -->
