@@ -50,8 +50,10 @@ Common issues across all taxpayers:
 - Tax refund estimator
 
 ### 🎓 Students
-- **NEW:** Tuition tax credit calculator (T2202)
-- Student loan interest deduction
+- **Tuition Tax Credit** - T2202 processing, federal + provincial, all provinces
+- **Student Loan Interest** - Government loan interest credit, 5-year carryforward
+- **Strategic claiming optimizer** - Maximize lifetime benefit
+- **Lifetime savings calculator** - Project total tax savings over loan repayment
 - Part-time income optimization
 - Moving expense calculator (for work/study)
 
