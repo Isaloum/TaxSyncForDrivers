@@ -29,7 +29,7 @@ export const EMPLOYMENT_CREDITS_2026 = {
   },
   
   // First-Time Home Buyers' Amount
-  homeBuilersAmount: {
+  homeBuyersAmount: {
     federal: {
       amount: 10000,
       creditRate: 0.15,
@@ -114,7 +114,7 @@ export function calculateHomeBuyersAmount(
   usingRRSPHBP = false,
   hasSpouse = false
 ) {
-  const { homeBuilersAmount } = EMPLOYMENT_CREDITS_2026;
+  const { homeBuyersAmount } = EMPLOYMENT_CREDITS_2026;
   
   if (!isFirstTimeBuyer) {
     return {
@@ -127,17 +127,17 @@ export function calculateHomeBuyersAmount(
   }
   
   // Federal credit
-  const federalCredit = homeBuilersAmount.federal.credit;
+  const federalCredit = homeBuyersAmount.federal.credit;
   
   // Provincial rebate/credit
-  const provincialInfo = homeBuilersAmount.provincial[province];
+  const provincialInfo = homeBuyersAmount.provincial[province];
   const provincialRebate = provincialInfo?.maxRebate || 0;
   const provincialDescription = provincialInfo?.description || 'No provincial benefit';
   
   // RRSP HBP
   let rrspHBPAmount = 0;
   if (usingRRSPHBP) {
-    rrspHBPAmount = homeBuilersAmount.rrspHBP.maxWithdrawal;
+    rrspHBPAmount = homeBuyersAmount.rrspHBP.maxWithdrawal;
     if (hasSpouse) {
       rrspHBPAmount *= 2; // Both can withdraw
     }
@@ -153,8 +153,8 @@ export function calculateHomeBuyersAmount(
     totalBenefit: Math.round(totalBenefit * 100) / 100,
     rrspHBP: usingRRSPHBP ? {
       maxWithdrawal: rrspHBPAmount,
-      repaymentPeriod: homeBuilersAmount.rrspHBP.repaymentPeriod,
-      description: homeBuilersAmount.rrspHBP.description,
+      repaymentPeriod: homeBuyersAmount.rrspHBP.repaymentPeriod,
+      description: homeBuyersAmount.rrspHBP.description,
     } : null,
     province,
   };
