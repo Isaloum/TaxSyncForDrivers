@@ -2421,6 +2421,10 @@
           <span class="tab-icon">👶</span
           ><span class="tab-label" data-i18n="tabs.childcare">Childcare</span>
         </button>
+        <button class="tab-btn" data-tab="disabilityTaxCredit">
+          <span class="tab-icon">♿</span
+          ><span class="tab-label" data-i18n="tabs.disabilityTaxCredit">Disability Tax Credit</span>
+        </button>
         <button class="tab-btn" data-tab="canadaChildBenefit">
           <span class="tab-icon">🇨🇦</span
           ><span class="tab-label" data-i18n="tabs.canadaChildBenefit">Canada Child Benefit</span>
@@ -3591,6 +3595,289 @@
           </div>
           <div class="btn-group">
             <button class="btn" onclick="calculateMedicalCredit()" data-i18n="medical.calculate">Calculate Credit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disability Tax Credit Calculator -->
+      <section id="disabilityTaxCredit" class="tab-content">
+        <h2>♿ <span data-i18n="dtc.title">Disability Tax Credit (DTC) Calculator</span></h2>
+        <p data-i18n="dtc.description">
+          Calculate your Disability Tax Credit for all provinces/territories. Includes retroactive claims (up to 10 years), 
+          child supplement, transfer options, Medical Expense Supplement, Child Disability Benefit, and RDSP grants.
+        </p>
+
+        <div class="alert alert-info" style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+          ℹ️ <strong>Form T2201 Required:</strong> The Disability Tax Credit Certificate must be approved by CRA. 
+          The impairment must last at least 12 consecutive months.
+          <a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/forms/t2201.html" target="_blank" rel="noopener">Learn about Form T2201</a>
+        </div>
+
+        <!-- Basic Information -->
+        <fieldset>
+          <legend data-i18n="dtc.basicInfo">Basic Information</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="dtcAge">
+                <span data-i18n="dtc.age">Age</span>
+                <span class="tooltip" title="Current age of person with disability">ℹ️</span>
+              </label>
+              <input type="number" id="dtcAge" placeholder="35" min="0" max="120" step="1" required aria-required="true" />
+            </div>
+            <div class="form-group">
+              <label for="dtcProvince">
+                <span data-i18n="dtc.province">Province/Territory</span>
+              </label>
+              <select id="dtcProvince" required aria-required="true">
+                <option value="">-- Select Province --</option>
+                <option value="ON">Ontario (ON)</option>
+                <option value="QC">Quebec (QC)</option>
+                <option value="BC">British Columbia (BC)</option>
+                <option value="AB">Alberta (AB)</option>
+                <option value="MB">Manitoba (MB)</option>
+                <option value="SK">Saskatchewan (SK)</option>
+                <option value="NS">Nova Scotia (NS)</option>
+                <option value="NB">New Brunswick (NB)</option>
+                <option value="PE">Prince Edward Island (PE)</option>
+                <option value="NL">Newfoundland and Labrador (NL)</option>
+                <option value="YT">Yukon (YT)</option>
+                <option value="NT">Northwest Territories (NT)</option>
+                <option value="NU">Nunavut (NU)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="dtcApprovalYear">
+                <span data-i18n="dtc.approvalYear">DTC Approval Year (Optional)</span>
+                <span class="tooltip" title="Year Form T2201 was approved - for retroactive claims">ℹ️</span>
+              </label>
+              <select id="dtcApprovalYear">
+                <option value="">-- Not Applicable --</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Eligibility Validation -->
+        <fieldset>
+          <legend data-i18n="dtc.eligibility">Eligibility Validation</legend>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="dtcHasT2201" />
+              <span data-i18n="dtc.hasT2201">I have an approved Form T2201 (Disability Tax Credit Certificate)</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="dtcImpairmentMonths">
+              <span data-i18n="dtc.impairmentDuration">Impairment Duration (months)</span>
+              <span class="tooltip" title="Must be at least 12 consecutive months">ℹ️</span>
+            </label>
+            <input type="number" id="dtcImpairmentMonths" placeholder="24" min="0" step="1" />
+          </div>
+        </fieldset>
+
+        <!-- Additional Benefits Inputs -->
+        <fieldset>
+          <legend data-i18n="dtc.additionalBenefits">Additional Benefits (Optional)</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="dtcWorkIncome">
+                <span data-i18n="dtc.workIncome">Work Income (for MES)</span>
+                <span class="tooltip" title="Employment/self-employment income for Medical Expense Supplement">ℹ️</span>
+              </label>
+              <input type="number" id="dtcWorkIncome" placeholder="15000" min="0" step="100" />
+            </div>
+            <div class="form-group">
+              <label for="dtcNetIncome">
+                <span data-i18n="dtc.netIncome">Net Income</span>
+              </label>
+              <input type="number" id="dtcNetIncome" placeholder="25000" min="0" step="100" />
+            </div>
+            <div class="form-group">
+              <label for="dtcFamilyIncome">
+                <span data-i18n="dtc.familyIncome">Family Income (for CDB/RDSP)</span>
+                <span class="tooltip" title="Adjusted family net income for Child Disability Benefit and RDSP">ℹ️</span>
+              </label>
+              <input type="number" id="dtcFamilyIncome" placeholder="50000" min="0" step="100" />
+            </div>
+            <div class="form-group">
+              <label for="dtcNumChildren">
+                <span data-i18n="dtc.numChildren">Number of Children with DTC</span>
+                <span class="tooltip" title="Children under 18 eligible for Child Disability Benefit">ℹ️</span>
+              </label>
+              <input type="number" id="dtcNumChildren" placeholder="0" min="0" max="10" step="1" />
+            </div>
+            <div class="form-group">
+              <label for="dtcRdspContribution">
+                <span data-i18n="dtc.rdspContribution">Annual RDSP Contribution</span>
+                <span class="tooltip" title="Registered Disability Savings Plan contribution (300% government match)">ℹ️</span>
+              </label>
+              <input type="number" id="dtcRdspContribution" placeholder="1500" min="0" step="100" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Transfer to Supporting Person -->
+        <fieldset>
+          <legend data-i18n="dtc.transfer">Transfer to Supporting Person (Optional)</legend>
+          <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+            If the person with disability can't use the full credit, it can be transferred to a spouse or parent.
+          </p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="dtcDisabledIncome">
+                <span data-i18n="dtc.disabledIncome">Disabled Person Income</span>
+              </label>
+              <input type="number" id="dtcDisabledIncome" placeholder="10000" min="0" step="100" />
+            </div>
+            <div class="form-group">
+              <label for="dtcDisabledTax">
+                <span data-i18n="dtc.disabledTax">Disabled Person Tax Payable</span>
+              </label>
+              <input type="number" id="dtcDisabledTax" placeholder="0" min="0" step="10" />
+            </div>
+            <div class="form-group">
+              <label for="dtcSupportIncome">
+                <span data-i18n="dtc.supportIncome">Supporting Person Income</span>
+              </label>
+              <input type="number" id="dtcSupportIncome" placeholder="60000" min="0" step="100" />
+            </div>
+            <div class="form-group">
+              <label for="dtcSupportTax">
+                <span data-i18n="dtc.supportTax">Supporting Person Tax Payable</span>
+              </label>
+              <input type="number" id="dtcSupportTax" placeholder="8000" min="0" step="10" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Calculate Button -->
+        <div class="btn-group">
+          <button class="btn" onclick="calculateDTC()" data-i18n="dtc.calculate">Calculate Disability Tax Credit</button>
+        </div>
+
+        <!-- Results Display -->
+        <div id="dtcResults" class="result-box" style="margin-top: 2rem; display: none;">
+          <div class="result-title">
+            ♿ <span data-i18n="dtc.resultsTitle">Disability Tax Credit Results</span>
+          </div>
+          
+          <!-- Validation Errors -->
+          <div id="dtcValidationErrors" style="display: none;"></div>
+
+          <!-- Annual DTC -->
+          <div id="dtcAnnualSection" style="display: none;">
+            <h3>📋 <span data-i18n="dtc.annualCredit">Annual Credit</span></h3>
+            <div class="method-comparison">
+              <div class="method-card">
+                <h4 data-i18n="dtc.federalCredit">Federal Credit</h4>
+                <div class="amount" id="dtcFederalCredit">$0.00</div>
+              </div>
+              <div class="method-card">
+                <h4 data-i18n="dtc.provincialCredit">Provincial Credit</h4>
+                <div class="amount" id="dtcProvincialCredit">$0.00</div>
+              </div>
+              <div class="method-card highlight">
+                <h4 data-i18n="dtc.totalAnnual">Total Annual</h4>
+                <div class="amount" id="dtcTotalAnnual">$0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Retroactive Claims -->
+          <div id="dtcRetroactiveSection" style="display: none; margin-top: 2rem;">
+            <h3>🕐 <span data-i18n="dtc.retroactive">Retroactive Claims</span></h3>
+            <div class="savings-box">
+              <div class="savings-label" id="dtcRetroactiveYears">10 Years (2016-2025)</div>
+              <div class="savings-amount" id="dtcRetroactiveAmount">$0.00</div>
+            </div>
+            <div class="savings-box">
+              <div class="savings-label" data-i18n="dtc.interest">Estimated Interest</div>
+              <div class="savings-amount" id="dtcInterest">$0.00</div>
+            </div>
+            <div class="savings-box highlight">
+              <div class="savings-label" data-i18n="dtc.totalRefund">Total Refund 🎉</div>
+              <div class="savings-amount" id="dtcTotalRefund">$0.00</div>
+            </div>
+          </div>
+
+          <!-- Transfer Analysis -->
+          <div id="dtcTransferSection" style="display: none; margin-top: 2rem;">
+            <h3>👥 <span data-i18n="dtc.transferAnalysis">Transfer to Supporting Person</span></h3>
+            <div id="dtcTransferRecommendation" class="alert"></div>
+            <div class="method-comparison">
+              <div class="method-card">
+                <h4 data-i18n="dtc.usedByDisabled">Used by Disabled</h4>
+                <div class="amount" id="dtcUsedByDisabled">$0.00</div>
+              </div>
+              <div class="method-card">
+                <h4 data-i18n="dtc.transferred">Transferred</h4>
+                <div class="amount" id="dtcTransferred">$0.00</div>
+              </div>
+              <div class="method-card highlight">
+                <h4 data-i18n="dtc.totalSavings">Total Savings</h4>
+                <div class="amount" id="dtcTotalSavings">$0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Benefits -->
+          <div id="dtcAdditionalBenefits" style="display: none; margin-top: 2rem;">
+            <h3>💰 <span data-i18n="dtc.additionalBenefitsTitle">Additional Benefits</span></h3>
+            
+            <!-- Medical Expense Supplement -->
+            <div id="dtcMesSection" style="display: none;">
+              <div class="savings-box">
+                <div class="savings-label" data-i18n="dtc.mes">Medical Expense Supplement (MES)</div>
+                <div class="savings-amount" id="dtcMesAmount">$0.00</div>
+              </div>
+            </div>
+
+            <!-- Child Disability Benefit -->
+            <div id="dtcCdbSection" style="display: none;">
+              <div class="savings-box">
+                <div class="savings-label" data-i18n="dtc.cdb">Child Disability Benefit (CDB)</div>
+                <div class="savings-amount" id="dtcCdbAnnual">$0.00</div>
+              </div>
+              <div style="font-size: 0.9rem; color: #666; margin-left: 1rem;">
+                <span data-i18n="dtc.monthlyBenefit">Monthly:</span> <span id="dtcCdbMonthly">$0.00</span>
+              </div>
+            </div>
+
+            <!-- RDSP Grants -->
+            <div id="dtcRdspSection" style="display: none;">
+              <div class="savings-box">
+                <div class="savings-label" data-i18n="dtc.rdsp">RDSP Government Grant</div>
+                <div class="savings-amount" id="dtcRdspGrant">$0.00</div>
+              </div>
+              <div style="font-size: 0.9rem; color: #666; margin-left: 1rem;">
+                <span data-i18n="dtc.matchRate">Match Rate:</span> <span id="dtcRdspMatch">0%</span> | 
+                <span data-i18n="dtc.lifetimeLimit">Lifetime Limit:</span> $70,000
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div id="dtcSummarySection" style="display: none; margin-top: 2rem;">
+            <h3>📊 <span data-i18n="dtc.summary">Total Benefits Summary</span></h3>
+            <div class="savings-box">
+              <div class="savings-label" data-i18n="dtc.annualBenefits">Total Annual Benefits</div>
+              <div class="savings-amount" id="dtcTotalAnnualBenefits">$0.00</div>
+            </div>
+            <div class="savings-box highlight">
+              <div class="savings-label" data-i18n="dtc.withRetroactive">Total with Retroactive Claims</div>
+              <div class="savings-amount" id="dtcTotalWithRetroactive">$0.00</div>
+            </div>
           </div>
         </div>
       </section>
@@ -8905,6 +9192,184 @@
         } else {
           alert(result.reason);
         }
+      };
+    </script>
+    
+    <!-- Disability Tax Credit Calculator -->
+    <script type="module">
+      import {
+        calculateDisabilityTaxCredit,
+        calculateRetroactiveDTC,
+        calculateDTCTransfer,
+        calculateMedicalExpenseSupplement,
+        calculateChildDisabilityBenefit,
+        calculateRDSPGrants,
+        validateDTCEligibility,
+        calculateCombinedDTCBenefits,
+      } from './disability-tax-credit-calculator.js';
+
+      window.calculateDTC = function() {
+        // Get input values
+        const age = parseInt(document.getElementById('dtcAge').value) || 0;
+        const province = document.getElementById('dtcProvince').value;
+        const approvalYear = document.getElementById('dtcApprovalYear').value ? parseInt(document.getElementById('dtcApprovalYear').value) : null;
+        const hasT2201 = document.getElementById('dtcHasT2201').checked;
+        const impairmentMonths = parseInt(document.getElementById('dtcImpairmentMonths').value) || 0;
+        
+        // Additional benefits inputs
+        const workIncome = parseFloat(document.getElementById('dtcWorkIncome').value) || 0;
+        const netIncome = parseFloat(document.getElementById('dtcNetIncome').value) || 0;
+        const familyIncome = parseFloat(document.getElementById('dtcFamilyIncome').value) || 0;
+        const numChildren = parseInt(document.getElementById('dtcNumChildren').value) || 0;
+        const rdspContribution = parseFloat(document.getElementById('dtcRdspContribution').value) || 0;
+        
+        // Transfer inputs
+        const disabledIncome = parseFloat(document.getElementById('dtcDisabledIncome').value) || 0;
+        const disabledTax = parseFloat(document.getElementById('dtcDisabledTax').value) || 0;
+        const supportIncome = parseFloat(document.getElementById('dtcSupportIncome').value) || 0;
+        const supportTax = parseFloat(document.getElementById('dtcSupportTax').value) || 0;
+
+        // Validate required fields
+        if (!age || !province) {
+          alert('Please enter age and select a province/territory.');
+          return;
+        }
+
+        // Calculate combined benefits
+        const result = calculateCombinedDTCBenefits({
+          age,
+          province,
+          currentYear: 2026,
+          approvalYear,
+          workIncome,
+          netIncome,
+          familyIncome,
+          numChildren,
+          rdspContribution,
+          hasT2201,
+          impairmentMonths,
+          disabledIncome,
+          disabledTax,
+          supportIncome,
+          supportTax,
+        });
+
+        // Display results
+        const resultsDiv = document.getElementById('dtcResults');
+        const errorsDiv = document.getElementById('dtcValidationErrors');
+        const annualSection = document.getElementById('dtcAnnualSection');
+        const retroactiveSection = document.getElementById('dtcRetroactiveSection');
+        const transferSection = document.getElementById('dtcTransferSection');
+        const additionalBenefits = document.getElementById('dtcAdditionalBenefits');
+        const summarySection = document.getElementById('dtcSummarySection');
+
+        // Show results container
+        resultsDiv.style.display = 'block';
+
+        // Check eligibility
+        if (!result.eligible) {
+          errorsDiv.innerHTML = `
+            <div class="alert alert-error" style="background: #fee; border: 1px solid #c00; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+              <strong>❌ Not Eligible</strong>
+              <ul style="margin: 0.5rem 0 0 1.5rem;">
+                ${result.errors.map(err => `<li>${err}</li>`).join('')}
+              </ul>
+              <p style="margin-top: 0.5rem;"><em>${result.guidance}</em></p>
+            </div>
+          `;
+          errorsDiv.style.display = 'block';
+          annualSection.style.display = 'none';
+          retroactiveSection.style.display = 'none';
+          transferSection.style.display = 'none';
+          additionalBenefits.style.display = 'none';
+          summarySection.style.display = 'none';
+          return;
+        }
+
+        // Hide errors
+        errorsDiv.style.display = 'none';
+
+        // Display annual DTC
+        annualSection.style.display = 'block';
+        document.getElementById('dtcFederalCredit').textContent = `$${result.dtc.federalCredit.toLocaleString()}`;
+        document.getElementById('dtcProvincialCredit').textContent = `$${result.dtc.provincialCredit.toLocaleString()}`;
+        document.getElementById('dtcTotalAnnual').textContent = `$${result.dtc.totalAnnualCredit.toLocaleString()}`;
+
+        // Display retroactive claims if applicable
+        if (result.retroactive && result.retroactive.yearsClaimed > 0) {
+          retroactiveSection.style.display = 'block';
+          const yearsText = `${result.retroactive.yearsClaimed} Years (${result.retroactive.yearlyBreakdown[0].year}-${result.retroactive.yearlyBreakdown[result.retroactive.yearlyBreakdown.length - 1].year})`;
+          document.getElementById('dtcRetroactiveYears').textContent = yearsText;
+          document.getElementById('dtcRetroactiveAmount').textContent = `$${result.retroactive.totalRetroactive.toLocaleString()}`;
+          document.getElementById('dtcInterest').textContent = `$${result.retroactive.estimatedInterest.toLocaleString()}`;
+          document.getElementById('dtcTotalRefund').textContent = `$${result.retroactive.totalRefund.toLocaleString()}`;
+        } else {
+          retroactiveSection.style.display = 'none';
+        }
+
+        // Display transfer analysis if applicable
+        if (result.transfer) {
+          transferSection.style.display = 'block';
+          const recommendation = result.transfer.shouldTransfer
+            ? `<div class="alert alert-success" style="background: #efe; border: 1px solid #0c0; border-radius: 8px; padding: 1rem;">
+                ✅ <strong>Recommend Transfer:</strong> Transfer $${result.transfer.availableForTransfer.toLocaleString()} to supporting person to maximize tax savings.
+              </div>`
+            : `<div class="alert alert-info" style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 8px; padding: 1rem;">
+                ℹ️ <strong>No Transfer Needed:</strong> Person with disability can use the full credit.
+              </div>`;
+          document.getElementById('dtcTransferRecommendation').innerHTML = recommendation;
+          document.getElementById('dtcUsedByDisabled').textContent = `$${result.transfer.usedByDisabled.toLocaleString()}`;
+          document.getElementById('dtcTransferred').textContent = `$${result.transfer.usedBySupport.toLocaleString()}`;
+          document.getElementById('dtcTotalSavings').textContent = `$${result.transfer.totalTaxSavings.toLocaleString()}`;
+        } else {
+          transferSection.style.display = 'none';
+        }
+
+        // Display additional benefits
+        let hasAdditionalBenefits = false;
+
+        // MES
+        const mesSection = document.getElementById('dtcMesSection');
+        if (result.mes && result.mes.eligible && result.mes.supplement > 0) {
+          mesSection.style.display = 'block';
+          document.getElementById('dtcMesAmount').textContent = `$${result.mes.supplement.toLocaleString()}`;
+          hasAdditionalBenefits = true;
+        } else {
+          mesSection.style.display = 'none';
+        }
+
+        // CDB
+        const cdbSection = document.getElementById('dtcCdbSection');
+        if (result.cdb && result.cdb.annualBenefit > 0) {
+          cdbSection.style.display = 'block';
+          document.getElementById('dtcCdbAnnual').textContent = `$${result.cdb.annualBenefit.toLocaleString()}`;
+          document.getElementById('dtcCdbMonthly').textContent = `$${result.cdb.monthlyBenefit.toLocaleString()}`;
+          hasAdditionalBenefits = true;
+        } else {
+          cdbSection.style.display = 'none';
+        }
+
+        // RDSP
+        const rdspSection = document.getElementById('dtcRdspSection');
+        if (result.rdsp && result.rdsp.eligible && result.rdsp.grant > 0) {
+          rdspSection.style.display = 'block';
+          document.getElementById('dtcRdspGrant').textContent = `$${result.rdsp.grant.toLocaleString()}`;
+          const matchPercentage = (result.rdsp.matchRate * 100).toFixed(0);
+          document.getElementById('dtcRdspMatch').textContent = `${matchPercentage}%`;
+          hasAdditionalBenefits = true;
+        } else {
+          rdspSection.style.display = 'none';
+        }
+
+        additionalBenefits.style.display = hasAdditionalBenefits ? 'block' : 'none';
+
+        // Display summary
+        summarySection.style.display = 'block';
+        document.getElementById('dtcTotalAnnualBenefits').textContent = `$${result.summary.totalAnnualBenefits.toLocaleString()}`;
+        document.getElementById('dtcTotalWithRetroactive').textContent = `$${result.summary.totalWithRetroactive.toLocaleString()}`;
+
+        // Scroll to results
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       };
     </script>
     
