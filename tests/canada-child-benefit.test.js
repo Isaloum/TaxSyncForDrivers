@@ -195,3 +195,37 @@ test('CCB: Multiple children with disabilities', () => {
   assert.strictEqual(result.breakdown[0].disabilitySupplement, 3322);
   assert.strictEqual(result.breakdown[1].disabilitySupplement, 3322);
 });
+
+test('CCB: Invalid child age (18) is filtered out', () => {
+  const result = calculateCCB(30000, [
+    { age: 5, hasDisability: false },
+    { age: 18, hasDisability: false }  // Not eligible
+  ]);
+  
+  // Should only count the valid child
+  assert.strictEqual(result.totalChildren, 1);
+  assert.strictEqual(result.childrenUnder6, 1);
+  assert.strictEqual(result.baseAmount, 7787);
+});
+
+test('CCB: Negative child age is filtered out', () => {
+  const result = calculateCCB(30000, [
+    { age: -1, hasDisability: false },
+    { age: 7, hasDisability: false }
+  ]);
+  
+  // Should only count the valid child
+  assert.strictEqual(result.totalChildren, 1);
+  assert.strictEqual(result.children6to17, 1);
+  assert.strictEqual(result.baseAmount, 6570);
+});
+
+test('CCB: All invalid children returns zero', () => {
+  const result = calculateCCB(30000, [
+    { age: 18, hasDisability: false },
+    { age: 20, hasDisability: false }
+  ]);
+  
+  assert.strictEqual(result.totalAnnualCCB, 0);
+  assert.strictEqual(result.totalChildren, 0);
+});

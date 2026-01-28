@@ -47,12 +47,33 @@ export function calculateCCB(familyNetIncome, children) {
     };
   }
   
+  // Filter out invalid children (age must be 0-17)
+  const validChildren = children.filter(child => {
+    const age = child.age;
+    return typeof age === 'number' && age >= 0 && age <= 17;
+  });
+  
+  if (validChildren.length === 0) {
+    return {
+      totalAnnualCCB: 0,
+      monthlyPayment: 0,
+      childrenUnder6: 0,
+      children6to17: 0,
+      totalChildren: 0,
+      baseAmount: 0,
+      reductionAmount: 0,
+      disabilitySupplement: 0,
+      disabilityReduction: 0,
+      breakdown: [],
+    };
+  }
+  
   let baseAmount = 0;
   let disabilitySupplement = 0;
   const breakdown = [];
   
   // Calculate base amounts per child
-  children.forEach((child, index) => {
+  validChildren.forEach((child, index) => {
     const childBase = child.age < 6 
       ? CCB_RATES_2026.baseAmountUnder6 
       : CCB_RATES_2026.baseAmount6to17;
@@ -82,19 +103,19 @@ export function calculateCCB(familyNetIncome, children) {
       familyNetIncome - CCB_RATES_2026.phaseOut1Start,
       CCB_RATES_2026.phaseOut1Limit - CCB_RATES_2026.phaseOut1Start
     );
-    reductionAmount += phase1Income * CCB_RATES_2026.phaseOut1Rate * children.length;
+    reductionAmount += phase1Income * CCB_RATES_2026.phaseOut1Rate * validChildren.length;
   }
   
   if (familyNetIncome > CCB_RATES_2026.phaseOut1Limit) {
     const phase2Income = familyNetIncome - CCB_RATES_2026.phaseOut1Limit;
-    reductionAmount += phase2Income * CCB_RATES_2026.phaseOut2Rate * children.length;
+    reductionAmount += phase2Income * CCB_RATES_2026.phaseOut2Rate * validChildren.length;
   }
   
   // Reduce disability supplement separately
   let disabilityReduction = 0;
   if (familyNetIncome > CCB_RATES_2026.cdbPhaseOutStart && disabilitySupplement > 0) {
     const excessIncome = familyNetIncome - CCB_RATES_2026.cdbPhaseOutStart;
-    const childrenWithDisability = children.filter(c => c.hasDisability).length;
+    const childrenWithDisability = validChildren.filter(c => c.hasDisability).length;
     disabilityReduction = Math.min(
       excessIncome * CCB_RATES_2026.cdbPhaseOutRate * childrenWithDisability,
       disabilitySupplement
@@ -108,9 +129,9 @@ export function calculateCCB(familyNetIncome, children) {
   return {
     totalAnnualCCB: Math.round(totalAnnualCCB * 100) / 100,
     monthlyPayment: Math.round(monthlyPayment * 100) / 100,
-    childrenUnder6: children.filter(c => c.age < 6).length,
-    children6to17: children.filter(c => c.age >= 6 && c.age <= 17).length,
-    totalChildren: children.length,
+    childrenUnder6: validChildren.filter(c => c.age < 6).length,
+    children6to17: validChildren.filter(c => c.age >= 6 && c.age <= 17).length,
+    totalChildren: validChildren.length,
     baseAmount: Math.round(baseAmount * 100) / 100,
     reductionAmount: Math.round(reductionAmount * 100) / 100,
     disabilitySupplement: Math.round(disabilitySupplement * 100) / 100,
