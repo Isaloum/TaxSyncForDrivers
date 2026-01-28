@@ -2437,6 +2437,10 @@
           <span class="tab-icon">🎓</span
           ><span class="tab-label" data-i18n="tabs.tuition">Tuition Credits</span>
         </button>
+        <button class="tab-btn student-only mixed-only" data-tab="studentLoanInterest" style="display:none;">
+          <span class="tab-icon">📚</span
+          ><span class="tab-label" data-i18n="tabs.studentLoan">Student Loan Interest</span>
+        </button>
         <button class="tab-btn employee-only self-employed-only mixed-only" data-tab="unionDues">
           <span class="tab-icon">👷</span
           ><span class="tab-label" data-i18n="tabs.unionDues">Union Dues</span>
@@ -4000,6 +4004,131 @@
           </div>
           <div class="alert alert-info" style="margin-top: 1rem;">
             <p id="tuitionProvincialNote"></p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Student Loan Interest Calculator -->
+      <section id="studentLoanInterest" class="tab-content student-only mixed-only">
+        <h2>🎓 <span data-i18n="studentLoan.title">Student Loan Interest Tax Credit</span></h2>
+        
+        <div class="info-box">
+          <p><strong data-i18n="studentLoan.description">Claim tax credits for student loan interest!</strong></p>
+          <p>✅ <span data-i18n="studentLoan.benefit1">Federal 15% + provincial credit</span><br>
+             ✅ <span data-i18n="studentLoan.benefit2">Carry forward unused amounts for 5 years</span><br>
+             ✅ <span data-i18n="studentLoan.benefit3">Only government student loans qualify (OSAP, AFE, etc.)</span></p>
+        </div>
+        
+        <fieldset>
+          <legend data-i18n="studentLoan.currentYear">2026 Interest</legend>
+          <div class="form-group">
+            <label for="studentLoanInterest2026" data-i18n="studentLoan.interestPaid">Interest Paid in 2026:</label>
+            <input type="number" id="studentLoanInterest2026" placeholder="2500" min="0" step="0.01">
+            <small data-i18n="studentLoan.interestHelp">From NSLSC or provincial student aid statement</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="studentLoanProvince" data-i18n="studentLoan.province">Province:</label>
+            <select id="studentLoanProvince">
+              <option value="QC">Quebec (AFE)</option>
+              <option value="ON">Ontario (OSAP)</option>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="MB">Manitoba</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="NB">New Brunswick</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="NL">Newfoundland</option>
+              <option value="YT">Yukon</option>
+              <option value="NT">Northwest Territories</option>
+              <option value="NU">Nunavut</option>
+            </select>
+          </div>
+        </fieldset>
+        
+        <fieldset>
+          <legend data-i18n="studentLoan.carryforward">Carryforward from Previous Years</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="carryforward2025" data-i18n="studentLoan.year2025">2025 Interest:</label>
+              <input type="number" id="carryforward2025" placeholder="0" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="carryforward2024" data-i18n="studentLoan.year2024">2024 Interest:</label>
+              <input type="number" id="carryforward2024" placeholder="0" min="0" step="0.01">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="carryforward2023" data-i18n="studentLoan.year2023">2023 Interest:</label>
+              <input type="number" id="carryforward2023" placeholder="0" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="carryforward2022" data-i18n="studentLoan.year2022">2022 Interest:</label>
+              <input type="number" id="carryforward2022" placeholder="0" min="0" step="0.01">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="carryforward2021" data-i18n="studentLoan.year2021">2021 Interest:</label>
+            <input type="number" id="carryforward2021" placeholder="0" min="0" step="0.01">
+          </div>
+        </fieldset>
+        
+        <fieldset>
+          <legend data-i18n="studentLoan.strategy">Claiming Strategy (Optional)</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="studentCurrentIncome" data-i18n="studentLoan.currentIncome">Current Income:</label>
+              <input type="number" id="studentCurrentIncome" placeholder="45000" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="studentTaxOwing" data-i18n="studentLoan.taxOwing">Estimated Tax Owing:</label>
+              <input type="number" id="studentTaxOwing" placeholder="5000" min="0" step="0.01">
+            </div>
+          </div>
+        </fieldset>
+        
+        <div class="btn-group">
+          <button class="btn" onclick="calculateStudentLoanCredit()" data-i18n="studentLoan.calculate">Calculate Tax Credit</button>
+        </div>
+        
+        <div id="studentLoanResults" class="result-box" style="margin-top: 2rem; display: none;">
+          <div class="result-title">
+            💰 <span data-i18n="studentLoan.creditTitle">Tax Credit Calculation</span>
+          </div>
+          <div class="method-comparison">
+            <div class="method-card">
+              <h4 data-i18n="studentLoan.currentInterest">Current Year Interest</h4>
+              <div class="amount" id="slCurrentInterest">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="studentLoan.carryforwardInterest">Carryforward Interest</h4>
+              <div class="amount" id="slCarryforwardInterest">$0.00</div>
+            </div>
+            <div class="method-card">
+              <h4 data-i18n="studentLoan.totalInterest">Total Interest</h4>
+              <div class="amount" id="slTotalInterest">$0.00</div>
+            </div>
+          </div>
+          <div class="result-grid" style="margin-top: 1rem;">
+            <div class="result-item">
+              <div class="result-label" data-i18n="studentLoan.federalCredit">Federal Credit (15%)</div>
+              <div class="result-value" id="slFederalCredit">$0.00</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label" data-i18n="studentLoan.provincialCredit">Provincial Credit</div>
+              <div class="result-value" id="slProvincialCredit">$0.00</div>
+            </div>
+            <div class="result-item highlight">
+              <div class="result-label" data-i18n="studentLoan.totalCredit">Total Tax Savings</div>
+              <div class="result-value" id="slTotalCredit">$0.00</div>
+            </div>
+          </div>
+          
+          <div id="slStrategy" class="alert alert-info" style="margin-top: 1rem; display: none;">
+            <h4>💡 <span data-i18n="studentLoan.strategyRecommendation">Claiming Strategy Recommendation</span></h4>
+            <div id="slStrategyContent"></div>
           </div>
         </div>
       </section>
@@ -7423,6 +7552,63 @@
       // Make functions globally available
       window.calculateCCB = calculateCCB;
       window.calculateAFNI = calculateAFNI;
+    </script>
+
+    <!-- Student Loan Interest Calculator -->
+    <script type="module">
+      import { 
+        calculateWithCarryforward,
+        optimizeClaimingStrategy,
+      } from './student-loan-interest-calculator.js';
+      
+      window.calculateStudentLoanCredit = function() {
+        const current = parseFloat(document.getElementById('studentLoanInterest2026').value) || 0;
+        const province = document.getElementById('studentLoanProvince').value;
+        
+        if (current <= 0) {
+          alert('Please enter interest paid in 2026.');
+          return;
+        }
+        
+        const carryforward = [
+          { year: 2025, amount: parseFloat(document.getElementById('carryforward2025').value) || 0 },
+          { year: 2024, amount: parseFloat(document.getElementById('carryforward2024').value) || 0 },
+          { year: 2023, amount: parseFloat(document.getElementById('carryforward2023').value) || 0 },
+          { year: 2022, amount: parseFloat(document.getElementById('carryforward2022').value) || 0 },
+          { year: 2021, amount: parseFloat(document.getElementById('carryforward2021').value) || 0 },
+        ].filter(cf => cf.amount > 0);
+        
+        const result = calculateWithCarryforward(current, carryforward, province);
+        
+        document.getElementById('slCurrentInterest').textContent = '$' + result.currentYearInterest.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('slCarryforwardInterest').textContent = '$' + result.carryforwardInterest.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('slTotalInterest').textContent = '$' + result.totalInterest.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('slFederalCredit').textContent = '$' + result.federalCredit.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('slProvincialCredit').textContent = '$' + result.provincialCredit.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('slTotalCredit').textContent = '$' + result.totalCredit.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        // Strategy recommendation
+        const income = parseFloat(document.getElementById('studentCurrentIncome').value) || 0;
+        const taxOwing = parseFloat(document.getElementById('studentTaxOwing').value) || 0;
+        
+        if (income > 0 && taxOwing > 0) {
+          const strategy = optimizeClaimingStrategy(result.totalInterest, income, taxOwing, null, province);
+          
+          const strategyHTML = `
+            <p><strong>${strategy.recommendation === 'claim-now' ? '✅ Claim Now' : '⏳ Carry Forward'}</strong></p>
+            ${strategy.reasoning.map(r => `<p>• ${r}</p>`).join('')}
+            <p>Usable credit now: $${strategy.usableNow.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            ${strategy.wastedIfClaimNow > 0 ? `<p style="color: orange;">⚠️ Would waste: $${strategy.wastedIfClaimNow.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
+          `;
+          
+          document.getElementById('slStrategyContent').innerHTML = strategyHTML;
+          document.getElementById('slStrategy').style.display = 'block';
+        } else {
+          document.getElementById('slStrategy').style.display = 'none';
+        }
+        
+        document.getElementById('studentLoanResults').style.display = 'block';
+      };
     </script>
 
     <!-- Charitable Donations Calculator -->
