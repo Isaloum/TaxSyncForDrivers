@@ -56,10 +56,14 @@ Common issues across all taxpayers:
 - Moving expense calculator (for work/study)
 
 ### 🏡 Retirees
-- Pension income splitting optimizer
+- **Old Age Security (OAS)** - Monthly benefits for 65+, clawback calculator
+- **Guaranteed Income Supplement (GIS)** - Low-income senior support
+- **CPP/QPP Retirement** - Pension estimates, early/late start analysis
+- **Pension Income Splitting** - Optimize couples' tax burden
+- **Allowance & Survivor Benefits** - Ages 60-64
+- Comprehensive retirement planning for all Canadian provinces/territories
 - Age amount and pension income credits
 - Medical expense tracking
-- OAS/GIS benefit calculator
 
 ### 🔀 Mixed Income
 - Multiple income stream optimization
