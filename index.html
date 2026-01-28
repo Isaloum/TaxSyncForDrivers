@@ -2437,6 +2437,14 @@
           <span class="tab-icon">🎓</span
           ><span class="tab-label" data-i18n="tabs.tuition">Tuition Credits</span>
         </button>
+        <button class="tab-btn employee-only self-employed-only mixed-only" data-tab="unionDues">
+          <span class="tab-icon">👷</span
+          ><span class="tab-label" data-i18n="tabs.unionDues">Union Dues</span>
+        </button>
+        <button class="tab-btn" data-tab="homeBuyers">
+          <span class="tab-icon">🏠</span
+          ><span class="tab-label" data-i18n="tabs.homeBuyers">Home Buyers</span>
+        </button>
         <button class="tab-btn province-specific qc-only" data-tab="fssQppCalculator" style="display:none;">
           <span class="tab-icon">🏥</span
           ><span class="tab-label" data-i18n="tabs.fssQpp">FSS & QPP (QC)</span>
@@ -3992,6 +4000,169 @@
           </div>
           <div class="alert alert-info" style="margin-top: 1rem;">
             <p id="tuitionProvincialNote"></p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Union/Professional Dues Credit -->
+      <section id="unionDues" class="tab-content">
+        <h2>👷 <span data-i18n="unionDues.title">Union & Professional Dues Tax Credit</span></h2>
+        
+        <div class="info-box">
+          <p><strong data-i18n="unionDues.description">Claim your union or professional association dues!</strong></p>
+          <p>✅ <span data-i18n="unionDues.benefit1">15% federal credit + provincial credit</span><br>
+             ✅ <span data-i18n="unionDues.benefit2">Common for teachers, nurses, engineers, accountants, lawyers</span><br>
+             ✅ <span data-i18n="unionDues.benefit3">Found on T4 slip (Box 44) or separate receipt</span></p>
+        </div>
+        
+        <div class="form-group">
+          <label for="unionDuesAmount" data-i18n="unionDues.amount">Annual Dues Paid:</label>
+          <input type="number" id="unionDuesAmount" placeholder="800" min="0" step="0.01">
+          <small data-i18n="unionDues.amountHelp">Total union/professional dues for the year</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="unionDuesProvince" data-i18n="unionDues.province">Province:</label>
+          <select id="unionDuesProvince">
+            <option value="QC">Quebec</option>
+            <option value="ON">Ontario</option>
+            <option value="AB">Alberta</option>
+            <option value="BC">British Columbia</option>
+            <option value="MB">Manitoba</option>
+            <option value="SK">Saskatchewan</option>
+            <option value="NS">Nova Scotia</option>
+            <option value="NB">New Brunswick</option>
+            <option value="PE">Prince Edward Island</option>
+            <option value="NL">Newfoundland</option>
+            <option value="YT">Yukon</option>
+            <option value="NT">Northwest Territories</option>
+            <option value="NU">Nunavut</option>
+          </select>
+        </div>
+        
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" id="duesRequired" checked>
+            <span data-i18n="unionDues.required">Required for employment</span>
+          </label>
+        </div>
+        
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" id="duesReimbursed">
+            <span data-i18n="unionDues.reimbursed">Reimbursed by employer (not eligible if yes)</span>
+          </label>
+        </div>
+        
+        <button onclick="calculateUnionDuesCredit()" class="btn-primary" data-i18n="unionDues.calculate">Calculate Tax Credit</button>
+        
+        <div id="unionDuesResults" style="display:none;">
+          <h3 data-i18n="unionDues.resultsTitle">Tax Credit Calculation</h3>
+          <div class="result-card">
+            <div class="result-item">
+              <span class="result-label" data-i18n="unionDues.duesPaid">Dues Paid:</span>
+              <span class="result-value" id="duesPaid">$0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label" data-i18n="unionDues.federalCredit">Federal Credit (15%):</span>
+              <span class="result-value positive" id="duesFederalCredit">$0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label" data-i18n="unionDues.provincialCredit">Provincial Credit:</span>
+              <span class="result-value positive" id="duesProvincialCredit">$0</span>
+            </div>
+            <div class="result-item highlight">
+              <span class="result-label" data-i18n="unionDues.totalCredit">Total Tax Savings:</span>
+              <span class="result-value positive" id="duesTotalCredit">$0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- First-Time Home Buyers' Amount -->
+      <section id="homeBuyers" class="tab-content">
+        <h2>🏠 <span data-i18n="homeBuyers.title">First-Time Home Buyers' Tax Credit</span></h2>
+        
+        <div class="info-box">
+          <p><strong data-i18n="homeBuyers.description">Buying your first home? Get tax credits!</strong></p>
+          <p>✅ <span data-i18n="homeBuyers.benefit1">Federal: $1,500 tax credit</span><br>
+             ✅ <span data-i18n="homeBuyers.benefit2">Provincial: Up to $8,000 (varies by province)</span><br>
+             ✅ <span data-i18n="homeBuyers.benefit3">RRSP Home Buyers' Plan: Withdraw up to $60,000 tax-free</span></p>
+        </div>
+        
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" id="isFirstTimeBuyer" checked>
+            <span data-i18n="homeBuyers.firstTime">I am a first-time home buyer (no ownership in past 4 years)</span>
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label for="homeBuyerProvince" data-i18n="homeBuyers.province">Province:</label>
+          <select id="homeBuyerProvince">
+            <option value="ON">Ontario</option>
+            <option value="BC">British Columbia</option>
+            <option value="QC">Quebec</option>
+            <option value="AB">Alberta</option>
+            <option value="MB">Manitoba</option>
+            <option value="SK">Saskatchewan</option>
+            <option value="NS">Nova Scotia</option>
+            <option value="NB">New Brunswick</option>
+            <option value="PE">Prince Edward Island</option>
+            <option value="NL">Newfoundland</option>
+            <option value="YT">Yukon</option>
+            <option value="NT">Northwest Territories</option>
+            <option value="NU">Nunavut</option>
+          </select>
+        </div>
+        
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" id="usingRRSPHBP">
+            <span data-i18n="homeBuyers.usingHBP">Planning to use RRSP Home Buyers' Plan</span>
+          </label>
+        </div>
+        
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" id="hasSpouseBuyer">
+            <span data-i18n="homeBuyers.hasSpouse">Buying with spouse/partner</span>
+          </label>
+        </div>
+        
+        <button onclick="calculateHomeBuyers()" class="btn-primary" data-i18n="homeBuyers.calculate">Calculate Benefits</button>
+        
+        <div id="homeBuyersResults" style="display:none;">
+          <h3 data-i18n="homeBuyers.resultsTitle">Home Buyers' Benefits</h3>
+          <div class="result-card">
+            <div class="result-item">
+              <span class="result-label" data-i18n="homeBuyers.federalCredit">Federal Tax Credit:</span>
+              <span class="result-value positive" id="homeFederalCredit">$1,500</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label" data-i18n="homeBuyers.provincialRebate">Provincial Rebate:</span>
+              <span class="result-value positive" id="homeProvincialRebate">$0</span>
+            </div>
+            <div class="result-item highlight">
+              <span class="result-label" data-i18n="homeBuyers.totalBenefit">Total Tax Benefit:</span>
+              <span class="result-value positive" id="homeTotalBenefit">$0</span>
+            </div>
+            <div id="rrspHBPInfo" style="display:none;">
+              <hr>
+              <h4 data-i18n="homeBuyers.rrspHBP">RRSP Home Buyers' Plan</h4>
+              <div class="result-item">
+                <span class="result-label" data-i18n="homeBuyers.maxWithdrawal">Max Withdrawal:</span>
+                <span class="result-value" id="hbpMaxWithdrawal">$60,000</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label" data-i18n="homeBuyers.repaymentPeriod">Repayment Period:</span>
+                <span class="result-value">15 years</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label" data-i18n="homeBuyers.interest">Interest:</span>
+                <span class="result-value positive">$0 (interest-free!)</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -8501,6 +8672,54 @@
 
       // Make mileageLog available globally
       window.mileageLog = mileageLog;
+    </script>
+    
+    <!-- Employment Credits Integration -->
+    <script type="module">
+      import { 
+        calculateUnionDuesCredit as calcUnion,
+        calculateHomeBuyersAmount as calcHome,
+      } from './employment-credits-calculator.js';
+      
+      window.calculateUnionDuesCredit = function() {
+        const amount = parseFloat(document.getElementById('unionDuesAmount').value) || 0;
+        const province = document.getElementById('unionDuesProvince').value;
+        
+        const result = calcUnion(amount, province);
+        
+        document.getElementById('duesPaid').textContent = `$${result.duesPaid.toLocaleString()}`;
+        document.getElementById('duesFederalCredit').textContent = `$${result.federalCredit.toLocaleString()}`;
+        document.getElementById('duesProvincialCredit').textContent = `$${result.provincialCredit.toLocaleString()}`;
+        document.getElementById('duesTotalCredit').textContent = `$${result.totalCredit.toLocaleString()}`;
+        
+        document.getElementById('unionDuesResults').style.display = 'block';
+      };
+      
+      window.calculateHomeBuyers = function() {
+        const isFirstTime = document.getElementById('isFirstTimeBuyer').checked;
+        const province = document.getElementById('homeBuyerProvince').value;
+        const usingHBP = document.getElementById('usingRRSPHBP').checked;
+        const hasSpouse = document.getElementById('hasSpouseBuyer').checked;
+        
+        const result = calcHome(isFirstTime, province, usingHBP, hasSpouse);
+        
+        if (result.eligible) {
+          document.getElementById('homeFederalCredit').textContent = `$${result.federalCredit.toLocaleString()}`;
+          document.getElementById('homeProvincialRebate').textContent = `$${result.provincialRebate.toLocaleString()}`;
+          document.getElementById('homeTotalBenefit').textContent = `$${result.totalBenefit.toLocaleString()}`;
+          
+          if (result.rrspHBP) {
+            document.getElementById('hbpMaxWithdrawal').textContent = `$${result.rrspHBP.maxWithdrawal.toLocaleString()}`;
+            document.getElementById('rrspHBPInfo').style.display = 'block';
+          } else {
+            document.getElementById('rrspHBPInfo').style.display = 'none';
+          }
+          
+          document.getElementById('homeBuyersResults').style.display = 'block';
+        } else {
+          alert(result.reason);
+        }
+      };
     </script>
     
     <!-- Final initialization after all modules loaded -->

@@ -84,6 +84,12 @@ Common issues across all taxpayers:
 - **Dividend vs. Interest Comparison** - Tax-efficient income planning
 - **T5 slip processing** - Automatic dividend extraction and validation
 
+### ✅ Employment & Deductions
+- **Union Dues** - Tax credit for union/professional association fees
+- **Professional Dues** - Engineers, lawyers, accountants, nurses
+- **First-Time Home Buyers' Amount** - $1,500 federal + provincial rebates
+- **RRSP Home Buyers' Plan** - Withdraw up to $60,000 tax-free
+
 ### ✅ Universal Deductions & Credits
 - **RRSP** - Contribution optimizer and carry-forward tracking
 - **Charitable donations** - Federal and provincial credit calculation
