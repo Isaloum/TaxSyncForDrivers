@@ -64,7 +64,6 @@ Common issues across all taxpayers:
 - Comprehensive retirement planning for all Canadian provinces/territories
 - Age amount and pension income credits
 - Medical expense tracking
-- OAS/GIS benefit calculator
 
 ### 🔀 Mixed Income
 - Multiple income stream optimization

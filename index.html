@@ -4705,7 +4705,7 @@
           
           <div class="form-group">
             <label data-i18n="oasCalculator.annualIncome">Annual Net Income:</label>
-            <input type="number" id="oasAnnualIncome" step="0.01" placeholder="e.g., 75000">
+            <input type="number" id="oasAnnualIncome" step="0.01" min="0" placeholder="e.g., 75000">
           </div>
           
           <div class="form-group">
@@ -4779,12 +4779,12 @@
           
           <div class="form-group">
             <label data-i18n="gisCalculator.yourIncome">Your Annual Income (excluding OAS/GIS):</label>
-            <input type="number" id="gisYourIncome" step="0.01" placeholder="e.g., 5000">
+            <input type="number" id="gisYourIncome" step="0.01" min="0" placeholder="e.g., 5000">
           </div>
           
           <div class="form-group" id="gisPartnerIncomeGroup" style="display:none;">
             <label data-i18n="gisCalculator.partnerIncome">Partner's Annual Income:</label>
-            <input type="number" id="gisPartnerIncome" step="0.01" placeholder="e.g., 3000">
+            <input type="number" id="gisPartnerIncome" step="0.01" min="0" placeholder="e.g., 3000">
           </div>
           
           <button id="calculateGISBtn" class="btn btn-primary" data-i18n="gisCalculator.calculate">Calculate GIS</button>
@@ -4845,12 +4845,12 @@
           
           <div class="form-group">
             <label data-i18n="pensionSplitting.spouse1TotalIncome">Total Income:</label>
-            <input type="number" id="spouse1Income" step="0.01" placeholder="e.g., 80000">
+            <input type="number" id="spouse1Income" step="0.01" min="0" placeholder="e.g., 80000">
           </div>
           
           <div class="form-group">
             <label data-i18n="pensionSplitting.spouse1PensionIncome">Eligible Pension Income:</label>
-            <input type="number" id="spouse1PensionIncome" step="0.01" placeholder="e.g., 30000">
+            <input type="number" id="spouse1PensionIncome" step="0.01" min="0" placeholder="e.g., 30000">
           </div>
           
           <h4 data-i18n="pensionSplitting.spouse2">Spouse 2</h4>
@@ -4861,12 +4861,12 @@
           
           <div class="form-group">
             <label data-i18n="pensionSplitting.spouse2TotalIncome">Total Income:</label>
-            <input type="number" id="spouse2Income" step="0.01" placeholder="e.g., 50000">
+            <input type="number" id="spouse2Income" step="0.01" min="0" placeholder="e.g., 50000">
           </div>
           
           <div class="form-group">
             <label data-i18n="pensionSplitting.spouse2PensionIncome">Eligible Pension Income:</label>
-            <input type="number" id="spouse2PensionIncome" step="0.01" placeholder="e.g., 20000">
+            <input type="number" id="spouse2PensionIncome" step="0.01" min="0" placeholder="e.g., 20000">
           </div>
           
           <button id="calculatePensionSplittingBtn" class="btn btn-primary" data-i18n="pensionSplitting.calculate">Calculate Optimal Split</button>
@@ -8108,7 +8108,7 @@
             // Validate inputs
             const validation = validateSeniorBenefitInputs(age, annualIncome, residenceYears);
             if (!validation.isValid) {
-              alert('Validation errors:\\n' + validation.errors.join('\\n'));
+              alert('Validation errors:\n' + validation.errors.join('\n'));
               return;
             }
             
@@ -8135,7 +8135,7 @@
               } else if (result.clawback > 0) {
                 warningDiv.style.display = 'block';
                 document.getElementById('oasWarningText').textContent = 
-                  '⚠️ Your income exceeds the clawback threshold ($90,997). You are subject to OAS recovery tax.';
+                  '⚠️ Your income exceeds the clawback threshold ($' + result.clawbackThreshold.toLocaleString() + '). You are subject to OAS recovery tax.';
               } else {
                 warningDiv.style.display = 'none';
               }
