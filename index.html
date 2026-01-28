@@ -2385,15 +2385,15 @@
       </div>
       
       <nav class="tabs">
-        <button class="tab-btn active" data-tab="vehicle">
+        <button class="tab-btn driver-only self-employed-only mixed-only" data-tab="vehicle">
           <span class="tab-icon">🚙</span
           ><span class="tab-label" data-i18n="tabs.vehicle">Dépenses véhicule</span>
         </button>
-        <button class="tab-btn" data-tab="documentAI">
+        <button class="tab-btn active" data-tab="documentAI">
           <span class="tab-icon">🤖</span
           ><span class="tab-label" data-i18n="tabs.documentAI">Document AI</span>
         </button>
-        <button class="tab-btn" data-tab="mileageLog">
+        <button class="tab-btn driver-only" data-tab="mileageLog">
           <span class="tab-icon">🚗</span
           ><span class="tab-label" data-i18n="tabs.mileageLog">Mileage Log</span>
         </button>
@@ -2474,7 +2474,7 @@
           ><span class="tab-label" data-i18n="tabs.albertaTaxSummary">AB Tax Advantage</span>
         </button>
       </nav>
-      <section id="vehicle" class="tab-content active">
+      <section id="vehicle" class="tab-content driver-only self-employed-only mixed-only">
         <h2>🚙 <span data-i18n="vehicle.title">Optimiseur de dépenses véhicule</span></h2>
         <p data-i18n="vehicle.description">
           Comparez la méthode simplifiée (par km) et détaillée pour maximiser vos déductions.
@@ -2592,7 +2592,7 @@
           </div>
         </div>
       </section>
-      <section id="documentAI" class="tab-content">
+      <section id="documentAI" class="tab-content active">
         <h2>🤖 <span data-i18n="documentAI.title">Document AI Hub</span></h2>
         <p data-i18n="documentAI.subtitle">
           Process tax documents automatically using email, camera, or upload
@@ -2905,7 +2905,7 @@
         </div>
       </section>
       <!-- Mileage Log Section -->
-      <section id="mileageLog" class="tab-content">
+      <section id="mileageLog" class="tab-content driver-only">
         <h2>🚗 <span data-i18n="mileageLog.title">Mileage Log</span></h2>
         <p class="card-subtitle" data-i18n="mileageLog.subtitle">
           Track your trips for CRA-compliant vehicle expense documentation
@@ -7022,11 +7022,11 @@
               window.updateQuebecSections();
             }
             
-            // If a province-specific tab is currently active, switch to vehicle tab
+            // If a province-specific tab is currently active, switch to documentAI tab
             const activeTab = document.querySelector('.tab-content.active');
             if (activeTab && activeTab.classList.contains('province-specific') && 
                 !activeTab.classList.contains(provinceClass)) {
-              document.querySelector('.tab-btn[data-tab="vehicle"]').click();
+              document.querySelector('.tab-btn[data-tab="documentAI"]').click();
             }
           });
           
@@ -7054,12 +7054,13 @@
             selectedProfile = e.target.value;
             updateProfileSections();
             
-            // If a profile-specific tab is currently active but not visible for new profile, switch to vehicle tab
+            // If a profile-specific tab is currently active but not visible for new profile, switch to documentAI tab
             const activeTab = document.querySelector('.tab-content.active');
             const profileClass = selectedProfile.replace(/([A-Z])/g, '-$1').toLowerCase() + '-only';
-            if (activeTab && activeTab.classList.contains('student-only') && 
-                !activeTab.classList.contains(profileClass)) {
-              document.querySelector('.tab-btn[data-tab="vehicle"]').click();
+            const profileSpecificClasses = ['driver-only', 'employee-only', 'self-employed-only', 'mixed-only', 'student-only', 'retiree-only'];
+            const isProfileSpecific = profileSpecificClasses.some(cls => activeTab && activeTab.classList.contains(cls));
+            if (isProfileSpecific && activeTab && !activeTab.classList.contains(profileClass)) {
+              document.querySelector('.tab-btn[data-tab="documentAI"]').click();
             }
           });
           
