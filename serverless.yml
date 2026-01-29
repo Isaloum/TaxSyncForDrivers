@@ -1,0 +1,93 @@
+service: taxsync-email-automation
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-2
+  memorySize: 512
+  timeout: 30
+  
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource: arn:aws:s3:::taxsync-incoming-emails-${sls:instanceId}/*
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: '*'
+  
+  environment:
+    AWS_REGION: us-east-2
+    FROM_EMAIL: notifications@isaloumapps.com
+
+functions:
+  emailProcessor:
+    handler: lambda/email-processor/index.handler
+    events:
+      - s3:
+          bucket: taxsync-incoming-emails-${sls:instanceId}
+          event: s3:ObjectCreated:*
+          existing: false
+    package:
+      patterns:
+        - 'lambda/email-processor/**'
+        - 'document-processor.js'
+        - 'pattern-library.js'
+        - 'validation-engine.js'
+        - '!lambda/email-processor/__tests__/**'
+        - '!lambda/email-processor/node_modules/**'
+
+resources:
+  Resources:
+    EmailBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: taxsync-incoming-emails-${sls:instanceId}
+        LifecycleConfiguration:
+          Rules:
+            - Id: DeleteOldEmails
+              Status: Enabled
+              ExpirationInDays: 30
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        NotificationConfiguration:
+          LambdaConfigurations:
+            - Event: s3:ObjectCreated:*
+              Function: !GetAtt EmailProcessorLambdaFunction.Arn
+
+    # Allow S3 to invoke Lambda
+    EmailProcessorLambdaPermissionEmailBucketS3:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt EmailProcessorLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: s3.amazonaws.com
+        SourceArn: arn:aws:s3:::taxsync-incoming-emails-${sls:instanceId}
+
+plugins:
+  - serverless-plugin-scripts
+
+custom:
+  scripts:
+    hooks:
+      'before:deploy:deploy': npm install --prefix lambda/email-processor
+
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!tests/**'
+    - '!.git/**'
+    - '!.github/**'
+    - '!docs/**'
+    - '!scripts/**'
+    - '!*.md'

@@ -746,6 +746,215 @@ DEBUG=* node email-server.js
 
 ---
 
+## AWS Lambda Deployment
+
+### Overview
+
+Deploy a serverless email automation system using AWS Lambda, SES, and S3.
+
+**Benefits:**
+- ✅ Serverless architecture (no server management)
+- ✅ Auto-scaling (handles any volume)
+- ✅ Cost-effective (~$1-2/month)
+- ✅ AWS free tier eligible
+- ✅ Enterprise-grade email handling
+
+### Prerequisites
+
+1. **AWS Account** with admin access
+2. **AWS CLI** installed and configured
+3. **Node.js 18+** installed
+4. **Serverless Framework** (installed automatically)
+5. **Domain access** for MX record configuration
+
+### Quick Deployment
+
+```bash
+# One-command deployment
+./scripts/deploy-lambda.sh
+```
+
+This script automatically:
+1. ✅ Checks prerequisites
+2. ✅ Installs dependencies
+3. ✅ Deploys infrastructure (S3, Lambda, IAM)
+4. ✅ Shows next steps
+
+### Manual Deployment Steps
+
+#### 1. Configure AWS Credentials
+
+```bash
+aws configure
+# Enter:
+# - AWS Access Key ID
+# - AWS Secret Access Key
+# - Region: us-east-2
+# - Output format: json
+```
+
+#### 2. Install Dependencies
+
+```bash
+cd lambda/email-processor
+npm install
+cd ../..
+```
+
+#### 3. Deploy with Serverless
+
+```bash
+# Install Serverless Framework globally
+npm install -g serverless
+
+# Deploy
+serverless deploy
+```
+
+#### 4. Configure SES Receiving
+
+```bash
+./scripts/setup-ses-receiving.sh
+```
+
+This configures:
+- Receipt rule set
+- S3 bucket permissions
+- Spam/virus scanning
+- Lambda trigger
+
+#### 5. Verify Email/Domain
+
+**Option A: Verify Email Address**
+1. Go to [AWS SES Console](https://console.aws.amazon.com/ses/)
+2. Select region: **us-east-2**
+3. Create identity → Email address
+4. Enter: `notifications@isaloumapps.com`
+5. Click verification link in email
+
+**Option B: Verify Domain (Recommended)**
+1. Go to [AWS SES Console](https://console.aws.amazon.com/ses/)
+2. Create identity → Domain
+3. Enter: `isaloumapps.com`
+4. Enable DKIM
+5. Add DNS records provided
+
+#### 6. Configure MX Record
+
+Add this MX record to your domain DNS:
+
+```
+Type:     MX
+Priority: 10
+Value:    inbound-smtp.us-east-2.amazonaws.com
+```
+
+**DNS Providers:**
+
+*Route 53:*
+```bash
+aws route53 change-resource-record-sets \
+  --hosted-zone-id YOUR_ZONE_ID \
+  --change-batch '{
+    "Changes": [{
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "isaloumapps.com",
+        "Type": "MX",
+        "TTL": 3600,
+        "ResourceRecords": [{"Value": "10 inbound-smtp.us-east-2.amazonaws.com"}]
+      }
+    }]
+  }'
+```
+
+*Cloudflare/GoDaddy:*
+- Add MX record in DNS settings
+- Priority: 10
+- Points to: inbound-smtp.us-east-2.amazonaws.com
+
+### Testing Lambda Deployment
+
+```bash
+# Test the system
+./scripts/test-email-automation.sh
+
+# View logs in real-time
+./scripts/view-lambda-logs.sh
+
+# Get metrics and costs
+./scripts/get-lambda-metrics.sh
+```
+
+### Monitoring
+
+**CloudWatch Logs:**
+```bash
+# View logs
+aws logs tail /aws/lambda/taxsync-email-automation-dev-emailProcessor --follow
+
+# Or use serverless
+serverless logs -f emailProcessor --tail
+```
+
+**Metrics:**
+```bash
+# Get invocation count, errors, duration
+./scripts/get-lambda-metrics.sh
+```
+
+### Cost Estimate
+
+| Service | Monthly Usage | Cost |
+|---------|--------------|------|
+| SES Receiving | 1,000 emails | $0.10 |
+| SES Sending | 1,000 emails | Free (within 62K limit) |
+| Lambda | 1,000 invocations | Free (within 1M limit) |
+| S3 Storage | ~100 MB | $0.50 |
+| **Total** | | **~$0.60/month** |
+
+### Updating Lambda
+
+```bash
+# Make code changes
+# Then redeploy
+serverless deploy
+```
+
+### Rollback
+
+```bash
+# List deployments
+serverless deploy list
+
+# Rollback to previous
+serverless rollback --timestamp TIMESTAMP
+```
+
+### Troubleshooting
+
+**Email not received:**
+- Check MX record: `dig MX isaloumapps.com`
+- Verify email/domain in SES
+- Check SES is out of sandbox mode
+
+**Lambda not triggered:**
+- Check S3 bucket exists
+- Verify Lambda has S3 trigger
+- Review CloudWatch logs
+
+**Permission errors:**
+- Check IAM roles
+- Redeploy to recreate roles
+
+### Documentation
+
+- 📖 [AWS Lambda Setup Guide](docs/AWS_LAMBDA_SETUP.md) - Complete setup
+- 🏗️ [Lambda Architecture](docs/LAMBDA_ARCHITECTURE.md) - Technical details
+- 💰 [Cost Optimization](docs/COST_OPTIMIZATION.md) - Budget optimization
+
+---
+
 ## Security Checklist
 
 - [x] ✅ HTTPS endpoints only

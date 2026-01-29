@@ -29,6 +29,69 @@ Common issues across all taxpayers:
 
 **We solve this for everyone.**
 
+## 📧 Email Automation (AWS Lambda)
+
+**NEW: Automatically process tax documents sent to notifications@isaloumapps.com**
+
+### Quick Start
+
+```bash
+./scripts/deploy-lambda.sh
+```
+
+**Monthly cost: ~$1-2** (within AWS free tier limits)
+
+### How It Works
+
+1. 📧 **Send Email** → Forward documents to notifications@isaloumapps.com
+2. 🔒 **SES Receives** → AWS SES receives and scans for spam/viruses
+3. 💾 **S3 Stores** → Email saved to S3 bucket (30-day retention)
+4. ⚡ **Lambda Processes** → Extracts data from attachments automatically
+5. 📬 **Get Results** → Receive formatted response with extracted data
+
+### Features
+
+- ✅ **Automatic Processing** - No manual upload needed
+- ✅ **Multi-Document Support** - Process multiple attachments at once
+- ✅ **Spam Protection** - Built-in SES spam/virus scanning
+- ✅ **Beautiful Emails** - Professional HTML response templates
+- ✅ **Cost Effective** - ~$0.10 per 1,000 emails
+- ✅ **Serverless** - Auto-scales, no server maintenance
+- ✅ **Secure** - AWS IAM permissions, encrypted storage
+
+### Supported Documents
+
+- T4, T4A, T5, T3, T5008, T2202 (tax slips)
+- RL-1, RL-2 (Quebec slips)
+- Uber/Lyft summaries
+- Gas receipts, vehicle maintenance, insurance
+- Phone bills, parking receipts, and more
+
+### Documentation
+
+- 📖 [AWS Lambda Setup Guide](docs/AWS_LAMBDA_SETUP.md) - Complete deployment instructions
+- 🏗️ [Lambda Architecture](docs/LAMBDA_ARCHITECTURE.md) - Technical details
+- 💰 [Cost Optimization](docs/COST_OPTIMIZATION.md) - Stay under $2/month
+
+### Scripts
+
+```bash
+# Deploy infrastructure
+./scripts/deploy-lambda.sh
+
+# Configure SES receiving
+./scripts/setup-ses-receiving.sh
+
+# Test the system
+./scripts/test-email-automation.sh
+
+# View logs
+./scripts/view-lambda-logs.sh
+
+# Get metrics and costs
+./scripts/get-lambda-metrics.sh
+```
+
 ## 👥 Who is TaxSyncForDrivers For?
 
 ### 🚗 Rideshare & Taxi Drivers
