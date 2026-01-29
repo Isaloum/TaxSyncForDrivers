@@ -1,0 +1,17 @@
+{
+  "name": "taxsync-email-processor",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AWS Lambda function for processing tax documents sent via email",
+  "main": "index.mjs",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.679.0",
+    "@aws-sdk/client-ses": "^3.679.0",
+    "mailparser": "^3.7.1"
+  },
+  "scripts": {
+    "test": "echo \"Tests run from root project\" && exit 0"
+  },
+  "author": "Isaloum",
+  "license": "MIT"
+}
