@@ -1,0 +1,30 @@
+From: test@example.com
+To: ihabsaloum85@gmail.com
+Subject: Final Test - Notification Check
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----=_FINAL_TEST"
+
+------=_FINAL_TEST
+Content-Type: text/plain; charset="us-ascii"
+
+Final test to verify notifications work.
+
+------=_FINAL_TEST
+Content-Type: application/pdf; name="final-test.pdf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="final-test.pdf"
+
+JVBERi0xLjQKJcOkw7zDtsO4DQoxIDAgb2JqCjw8Ci9UeXBlIC9DYXRhbG9nCi9QYWdlcyAyIDAg
+UgovTGFuZyAoZW4tVVMpCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBl
+IC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+
+PgplbmRvYmoKMiAwIG9iago8PAovVHlwZSAvUGFnZXMKL0tpZHMgWzMgMCBSXQovQ291bnQgMQo+
+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJveCBb
+MCA0NTAgNjEyIDc5Ml0KL0NvbnRlbnRzIDUgMCBSCi9SZXNvdXJjZXMgPDwKL0ZvbnQgPDwKL0Yx
+IDQgMCBSCj4+Cj4+Cj4+CmVuZG9iago1IDAgb2JqCjw8Ci9MZW5ndGggNjAKPj4Kc3RyZWFtCkJU
+Ci9GMSAxMiBUZgoxMCA3MDAgVGQKKEZpbmFsIFRlc3QgLSBOb3RpZmljYXRpb24gQ2hlY2spIFRq
+CkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAw
+MDA5IDAwMDAwIG4gCjAwMDAwMDAxNzQgMDAwMDAgbiAKMDAwMDAwMDIzMSAwMDAwMCBuIAowMDAw
+MDAwMDc0IDAwMDAwIG4gCjAwMDAwMDAzNjkgMDAwMDAgbiAKdHJhaWxlcgo8PAovU2l6ZSA2Ci9S
+b290IDEgMCBSCj4+CnN0YXJ0eHJlZgo0ODkKJSVFT0Y=
+
+------=_FINAL_TEST--

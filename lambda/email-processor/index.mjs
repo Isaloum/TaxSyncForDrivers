@@ -3,6 +3,7 @@
 
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { TextractClient, StartDocumentTextDetectionCommand, GetDocumentTextDetectionCommand } from '@aws-sdk/client-textract';
 import { parseEmail, extractAttachments, isProcessableAttachment } from './lib/email-parser.js';
 import {
   generateSuccessEmail,
@@ -20,6 +21,7 @@ import { validateData } from '../../validation-engine.js';
 // Initialize AWS clients
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-2' });
 const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-2' });
+const textractClient = new TextractClient({ region: process.env.AWS_REGION || 'us-east-2' });
 
 /**
  * Process a single attachment
@@ -45,24 +47,81 @@ async function processAttachment(attachment) {
       };
     }
     
-    // For PDF and image files, we need OCR or PDF parsing
-    // Since we're in Lambda without browser APIs, we'll use a simplified approach
-    // For now, we'll return a message that these need manual processing
-    // In production, you'd integrate with AWS Textract or another OCR service
+    // For PDF and image files, use AWS Textract for OCR
     if (attachment.contentType.includes('pdf') || attachment.contentType.includes('image/')) {
-      return {
-        success: false,
-        documentType: 'UNKNOWN',
-        extractedData: {},
-        validation: {
-          isValid: false,
-          errors: ['PDF and image processing requires AWS Textract integration'],
-          warnings: ['Please send documents as plain text or implement Textract'],
-          confidenceScore: 0,
-        },
-        fileName: attachment.filename,
-        error: 'PDF/Image processing not yet implemented. Please send as text file or implement AWS Textract.',
-      };
+      try {
+        // Upload the file to a temporary S3 bucket for Textract (Textract requires S3 input)
+        // We'll use the same bucket as the email, but under a temp/ path
+        const tempKey = `temp/${Date.now()}-${attachment.filename}`;
+        await s3Client.send(new GetObjectCommand({ // check if bucket exists
+          Bucket: process.env.TEMP_BUCKET || process.env.S3_BUCKET || process.env.AWS_S3_BUCKET,
+          Key: tempKey
+        }).catch(async () => {
+          // If not, upload the file
+          await s3Client.send(new PutObjectCommand({
+            Bucket: process.env.TEMP_BUCKET || process.env.S3_BUCKET || process.env.AWS_S3_BUCKET,
+            Key: tempKey,
+            Body: attachment.content
+          }));
+        }));
+
+        // Start Textract job
+        const startCommand = new StartDocumentTextDetectionCommand({
+          DocumentLocation: {
+            S3Object: {
+              Bucket: process.env.TEMP_BUCKET || process.env.S3_BUCKET || process.env.AWS_S3_BUCKET,
+              Name: tempKey
+            }
+          }
+        });
+        const startResponse = await textractClient.send(startCommand);
+        const jobId = startResponse.JobId;
+
+        // Poll for job completion
+        let status = 'IN_PROGRESS';
+        let textractResult;
+        while (status === 'IN_PROGRESS') {
+          await new Promise(res => setTimeout(res, 2000));
+          const getCommand = new GetDocumentTextDetectionCommand({ JobId: jobId });
+          textractResult = await textractClient.send(getCommand);
+          status = textractResult.JobStatus;
+        }
+
+        if (status !== 'SUCCEEDED') {
+          throw new Error('Textract failed to process the document.');
+        }
+
+        // Concatenate all detected text
+        const text = textractResult.Blocks
+          .filter(block => block.BlockType === 'LINE')
+          .map(block => block.Text)
+          .join('\n');
+
+        // Process the extracted text as usual
+        const result = quickProcess(text);
+        return {
+          success: result.success,
+          documentType: result.documentType,
+          extractedData: result.extractedData,
+          validation: result.validation,
+          fileName: attachment.filename,
+          error: result.error,
+        };
+      } catch (err) {
+        return {
+          success: false,
+          documentType: 'UNKNOWN',
+          extractedData: {},
+          validation: {
+            isValid: false,
+            errors: ['Textract error: ' + err.message],
+            warnings: [],
+            confidenceScore: 0,
+          },
+          fileName: attachment.filename,
+          error: 'Textract error: ' + err.message,
+        };
+      }
     }
     
     return {

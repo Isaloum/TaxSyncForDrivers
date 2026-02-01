@@ -1,0 +1,14 @@
+{
+  "Records": [
+    {
+      "s3": {
+        "bucket": {
+          "name": "tax-sync-ihab-v3"
+        },
+        "object": {
+          "key": "test-email.eml"
+        }
+      }
+    }
+  ]
+}

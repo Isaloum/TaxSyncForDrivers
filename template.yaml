@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: TaxSync Email Automation
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        AWS_REGION: us-east-2
+        FROM_EMAIL: notifications@isaloumapps.com
+
+Resources:
+  # S3 Bucket (created first, no dependencies)
+  EmailBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'taxsync-incoming-emails-${AWS::AccountId}'
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldEmails
+            Status: Enabled
+            ExpirationInDays: 30
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # Lambda Function (no S3 event yet)
+  EmailProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/email-processor/
+      Handler: index.handler
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref EmailBucket
+        - Statement:
+          - Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendRawEmail
+            Resource: '*'
+
+  # S3 Bucket Notification (created after both bucket and function exist)
+  BucketNotification:
+    Type: AWS::S3::BucketNotification
+    DependsOn: EmailProcessorFunction
+    Properties:
+      Bucket: !Ref EmailBucket
+      LambdaConfigurations:
+        - Event: s3:ObjectCreated:*
+          Function: !GetAtt EmailProcessorFunction.Arn
+
+  # Lambda permission for S3 to invoke it
+  S3InvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref EmailProcessorFunction
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Sub 'arn:aws:s3:::taxsync-incoming-emails-${AWS::AccountId}'
+
+Outputs:
+  BucketName:
+    Description: S3 Bucket for incoming emails
+    Value: !Ref EmailBucket
+  FunctionName:
+    Description: Lambda function name
+    Value: !Ref EmailProcessorFunction
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt EmailProcessorFunction.Arn

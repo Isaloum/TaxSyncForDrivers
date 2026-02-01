@@ -1,0 +1,27 @@
+{
+    "Rules": [
+        {
+            "ID": "DeleteOldTestFiles",
+            "Status": "Enabled",
+            "Filter": {
+                "Prefix": "test-"
+            },
+            "Expiration": {
+                "Days": 30
+            }
+        },
+        {
+            "ID": "TransitionToIA",
+            "Status": "Enabled",
+            "Filter": {
+                "Prefix": "extracted-pdfs/"
+            },
+            "Transitions": [
+                {
+                    "Days": 90,
+                    "StorageClass": "STANDARD_IA"
+                }
+            ]
+        }
+    ]
+}

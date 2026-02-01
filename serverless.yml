@@ -1,6 +1,6 @@
 service: taxsync-email-automation
 
-frameworkVersion: '3'
+
 
 provider:
   name: aws

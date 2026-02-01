@@ -1,0 +1,31 @@
+From: test@example.com
+To: recipient@example.com
+Subject: Test Email with PDF Attachment
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_01234567.89ABCDEF"
+
+------=_NextPart_000_0000_01234567.89ABCDEF
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+This is a test email with a PDF attachment.
+
+------=_NextPart_000_0000_01234567.89ABCDEF
+Content-Type: application/pdf; name="test-document.pdf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="test-document.pdf"
+
+JVBERi0xLjQKJcOkw7zDtsO4DQoxIDAgb2JqCjw8Ci9UeXBlIC9DYXRhbG9nCi9QYWdlcyAyIDAg
+UgovTGFuZyAoZW4tVVMpCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBl
+IC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+
+PgplbmRvYmoKMiAwIG9iago8PAovVHlwZSAvUGFnZXMKL0tpZHMgWzMgMCBSXQovQ291bnQgMQo+
+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJveCBb
+MCA0NTAgNjEyIDc5Ml0KL0NvbnRlbnRzIDUgMCBSCi9SZXNvdXJjZXMgPDwKL0ZvbnQgPDwKL0Yx
+IDQgMCBSCj4+Cj4+Cj4+CmVuZG9iago1IDAgb2JqCjw8Ci9MZW5ndGggNDQKPj4Kc3RyZWFtCkJU
+Ci9GMSAxMiBUZgoxMCA3MDAgVGQKKFRlc3QgUERGIERvY3VtZW50KSBUagpFVAplbmRzdHJlYW0K
+ZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAow
+MDAwMDAwMTc0IDAwMDAwIG4gCjAwMDAwMDAyMzEgMDAwMDAgbiAKMDAwMDAwMDA3NCAwMDAwMCBu
+IAowMDAwMDAwMzY5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNgovUm9vdCAxIDAgUgo+Pgpz
+dGFydHhyZWYKNDYzCiUlRU9G
+
+------=_NextPart_000_0000_01234567.89ABCDEF--
