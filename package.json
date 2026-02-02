@@ -15,7 +15,7 @@
     "postinstall": "echo \"Production install completed\""
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.975.0",
+    "@aws-sdk/client-ses": "^3.980.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "dotenv": "^16.3.1",
