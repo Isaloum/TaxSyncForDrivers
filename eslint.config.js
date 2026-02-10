@@ -1,4 +1,4 @@
-// Flat config for ESLint v9+ (minimal, no extends/plugins)
+// Flat config for ESLint v10+
 export default [
   {
     ignores: [
@@ -15,6 +15,7 @@ export default [
     ],
   },
   {
+    files: ['**/*.js', '**/*.mjs'],
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'module',
