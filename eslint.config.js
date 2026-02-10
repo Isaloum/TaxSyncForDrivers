@@ -1,4 +1,6 @@
 // Flat config for ESLint v10+
+import globals from 'globals';
+
 export default [
   {
     ignores: [
@@ -20,6 +22,8 @@ export default [
       ecmaVersion: 2021,
       sourceType: 'module',
       globals: {
+        ...globals.browser,
+        ...globals.node,
         _: 'readonly',
         getFormData: 'readonly',
         TaxCalculator: 'readonly',
