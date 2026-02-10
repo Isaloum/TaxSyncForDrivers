@@ -24,7 +24,7 @@ jobs:
       - name: Lint
         run: npm run lint --if-present
       - name: Test
-        run: npm test --if-present
+        run: npm test -- --reporter=spec --if-present
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
